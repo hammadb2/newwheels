@@ -17,7 +17,7 @@ import { SITUATION_NAV } from "@/lib/site";
 export const metadata: Metadata = buildMetadata({
   title: "Car Loans Calgary | No Credit, Bad Credit, Newcomers Welcome",
   description:
-    "Calgary car loans approved in 24 hours. Bad credit, newcomers, work permits, self-employed welcome. Up to 6 months of payments covered. Apply free.",
+    "Calgary car loans approved in 24 hours. Bad credit, newcomers, work permits, and self-employed welcome. Up to 6 months of payments covered. Apply free now.",
   path: "/",
 });
 
@@ -72,7 +72,7 @@ export default function HomePage() {
 
       {/* How it works — the one section with #F9F9F9 background */}
       <section className="bg-[#F9F9F9]">
-        <div className="mx-auto max-w-6xl px-4 py-[120px]">
+        <div className="mx-auto max-w-6xl px-4 py-20 md:py-[120px]">
           <div className="mx-auto max-w-3xl text-center">
             <p className="text-sm font-semibold uppercase tracking-wide text-[#6B7280]">
               The NewWheels offer
@@ -114,7 +114,7 @@ export default function HomePage() {
 
       {/* Situations — white background, no card borders or icons */}
       <section>
-        <div className="mx-auto max-w-6xl px-4 py-[120px]">
+        <div className="mx-auto max-w-6xl px-4 py-20 md:py-[120px]">
           <div className="grid gap-8 md:grid-cols-2 md:items-center">
             <div>
               <p className="text-sm font-semibold uppercase tracking-wide text-[#6B7280]">
@@ -148,7 +148,7 @@ export default function HomePage() {
 
       {/* Nissan — white background */}
       <section>
-        <div className="mx-auto max-w-6xl px-4 py-[120px]">
+        <div className="mx-auto max-w-6xl px-4 py-20 md:py-[120px]">
           <div className="grid gap-8 md:grid-cols-2 md:items-center">
             <div>
               <p className="text-sm font-semibold uppercase tracking-wide text-[#6B7280]">

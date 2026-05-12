@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import PageShell from "@/components/PageShell";
 import { buildMetadata } from "@/lib/seo";
 import { personSchema } from "@/lib/schema";
@@ -7,9 +8,9 @@ import { BUSINESS } from "@/lib/site";
 const SLUG = "/about";
 
 export const metadata: Metadata = buildMetadata({
-  title: "About NewWheels Calgary | Hammad's Story & AMVIC Credentials",
+  title: "About NewWheels Calgary | Hammad Bhatti, AMVIC Licensed",
   description:
-    "About NewWheels and Hammad, your Calgary car-loan specialist at South Trail Nissan. AMVIC licensed, real Calgary address, real human on the phone.",
+    "Meet Hammad Bhatti, your AMVIC-licensed Calgary car-loan specialist at South Trail Nissan. Real human, real address, real approvals. Apply free today.",
   path: SLUG,
 });
 
@@ -47,10 +48,11 @@ const FAQ = [
 ];
 
 export default function Page() {
+  const name = `Hammad${BUSINESS.hammadLastName ? " " + BUSINESS.hammadLastName : ""}`;
   return (
     <PageShell
       slug={SLUG}
-      title={`About NewWheels, built by Hammad${BUSINESS.hammadLastName ? " " + BUSINESS.hammadLastName : ""}, your Calgary car-loan specialist`}
+      title={`About NewWheels, built by ${name}, your Calgary car-loan specialist`}
       tagline="About"
       intro="NewWheels exists because I got tired of seeing Calgary newcomers, bad-credit buyers, and self-employed contractors get bounced around by faceless online brokers. I'm Hammad. I work at South Trail Nissan. I built NewWheels to bring those approvals, including the 6-months-covered offer, to every Calgary buyer."
       breadcrumb={[{ name: "About", path: SLUG }]}
@@ -64,6 +66,43 @@ export default function Page() {
         { href: "/privacy", label: "Privacy policy" },
       ]}
     >
+      <div className="mb-8 flex flex-col items-center gap-4 sm:flex-row">
+        <Image
+          src="/hammad.jpg"
+          alt={name}
+          width={160}
+          height={160}
+          className="h-40 w-40 rounded-2xl object-cover"
+          priority
+        />
+        <div>
+          <p className="text-lg font-bold text-[#111111]">{name}</p>
+          <p className="text-[#6B7280]">Automotive Finance Specialist · Calgary, Alberta</p>
+          <p className="mt-1 text-sm text-[#6B7280]">
+            AMVIC licence:{" "}
+            <a
+              href={BUSINESS.amvicRegistryUrl}
+              className="font-semibold text-[#111111] underline"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {BUSINESS.amvic} &mdash; verify on AMVIC public registry
+            </a>
+          </p>
+        </div>
+      </div>
+
+      <h2>Why I built NewWheels</h2>
+      <p>
+        I built NewWheels because there was no honest option for Calgary buyers with bad credit,
+        no credit, or non-standard income. The national brokers like AutoNova and Canada Drives
+        treat every file the same. They run your application through an algorithm, blast it to
+        five lenders at once, damage your bureau with hard pulls, and send you a generic
+        approval email. Nobody calls you. Nobody knows which Calgary lender actually fits your
+        file. I wanted to build the opposite of that: one application, one matched lender, one
+        phone call from a real person who knows Calgary.
+      </p>
+
       <h2>The Calgary story</h2>
       <p>
         I&apos;ve sold cars in Calgary long enough to see two oil downturns, two newcomer

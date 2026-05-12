@@ -2,7 +2,7 @@ import type { FaqItem } from "@/lib/schema";
 
 export default function Faq({ items, heading = "Frequently asked questions" }: { items: FaqItem[]; heading?: string }) {
   return (
-    <section aria-labelledby="faq-heading" className="mx-auto max-w-3xl px-4 py-[120px]">
+    <section aria-labelledby="faq-heading" className="mx-auto max-w-3xl px-4 py-20 md:py-[120px]">
       <h2 id="faq-heading" className="text-2xl font-bold md:text-3xl">
         {heading}
       </h2>

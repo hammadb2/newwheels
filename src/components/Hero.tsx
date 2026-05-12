@@ -4,10 +4,10 @@ import LeadForm from "./LeadForm";
 
 export default function Hero() {
   return (
-    <section className="relative flex min-h-[100vh] items-center">
-      <div className="mx-auto grid w-full max-w-6xl gap-12 px-4 py-12 lg:grid-cols-[1.1fr_1fr] lg:items-center">
+    <section className="relative flex min-h-[100vh] items-center py-16 lg:py-20">
+      <div className="mx-auto grid w-full max-w-6xl gap-12 px-4 lg:grid-cols-[1.1fr_1fr] lg:items-center">
         <div>
-          <h1 className="text-[2.5rem] font-bold leading-[1.1] text-[#111111] md:text-[3.5rem] lg:text-[4.25rem]">
+          <h1 className="text-[2.5rem] font-bold leading-[1.08] text-[#111111] md:text-[3.5rem] lg:text-[4.5rem]">
             Car loans in Calgary, approved in 24 hours, even with no Canadian credit.
           </h1>
           <p className="mt-5 text-lg leading-relaxed text-[#6B7280]">
@@ -22,9 +22,19 @@ export default function Hero() {
             24-hour approval &nbsp;·&nbsp; No hard credit check &nbsp;·&nbsp; Up to 6 months covered
           </p>
 
-          <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center">
-            <Link href="#apply" className="btn-primary text-base">Apply free, 2 minutes</Link>
-            <Link href="/calculator" className="btn-secondary text-sm">Run the calculator</Link>
+          <div className="mt-7 flex flex-col gap-4 sm:flex-row sm:items-center">
+            <Link
+              href="#apply"
+              className="btn-primary min-h-[56px] w-full px-8 text-lg sm:w-auto"
+            >
+              Apply free, 2 minutes
+            </Link>
+            <Link
+              href="/calculator"
+              className="btn-secondary px-5 py-2.5 text-sm"
+            >
+              Run the calculator
+            </Link>
             <a
               href={`tel:${BUSINESS.phoneHref}`}
               className="text-sm font-semibold text-[#6B7280]"

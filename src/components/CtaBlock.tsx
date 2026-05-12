@@ -14,7 +14,7 @@ export default function CtaBlock({
   primaryLabel = "Apply free",
 }: Props) {
   return (
-    <section className="mx-auto max-w-5xl px-4 py-[120px]">
+    <section className="mx-auto max-w-5xl px-4 py-20 md:py-[120px]">
       <div className="rounded-2xl bg-brand-primary p-8 text-white md:p-10">
         <h2 className="text-2xl font-bold md:text-3xl">{heading}</h2>
         <p className="mt-2 max-w-2xl text-white/90">{body}</p>

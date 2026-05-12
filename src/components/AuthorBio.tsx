@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { BUSINESS, SITE_NAME } from "@/lib/site";
 
 type Props = { compact?: boolean };
@@ -6,12 +7,13 @@ export default function AuthorBio({ compact = false }: Props) {
   const name = `Hammad${BUSINESS.hammadLastName ? " " + BUSINESS.hammadLastName : ""}`;
   return (
     <div className={`flex ${compact ? "items-start" : "items-center"} gap-4`}>
-      <div
-        className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-brand-primary text-lg font-bold text-white"
-        aria-hidden="true"
-      >
-        H
-      </div>
+      <Image
+        src="/hammad.jpg"
+        alt={name}
+        width={56}
+        height={56}
+        className="h-14 w-14 shrink-0 rounded-full object-cover"
+      />
       <div className="text-sm">
         <p className="font-semibold text-[#111111]">{name} · Automotive Finance Specialist</p>
         <p className="mt-1 text-[#6B7280]">

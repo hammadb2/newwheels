@@ -26,8 +26,8 @@ export const BUSINESS = {
     country: "CA",
   },
   amvic: process.env.NEXT_PUBLIC_AMVIC_LICENSE || "AMVIC licence on file",
-  amvicRegistryUrl: "https://www.amvic.org/consumers/check-amvic-licensed-businesses-salespeople/",
-  hammadLastName: process.env.NEXT_PUBLIC_HAMMAD_LAST_NAME || "",
+  amvicRegistryUrl: "https://amvic.ca.thentiacloud.net/webs/amvic/register/#/profile/Hammad%20Bhatti/0/10/604bba19195c4e1d90c5990b",
+  hammadLastName: process.env.NEXT_PUBLIC_HAMMAD_LAST_NAME || "Bhatti",
   serviceAreas: [
     "Calgary",
     "Airdrie",
