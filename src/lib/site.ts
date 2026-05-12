@@ -14,8 +14,8 @@ export const SITE_DESCRIPTION =
 export const BUSINESS = {
   name: SITE_NAME,
   legalName: "NewWheels Calgary",
-  phone: process.env.NEXT_PUBLIC_BUSINESS_PHONE || "(403) 000-0000",
-  phoneHref: process.env.NEXT_PUBLIC_BUSINESS_PHONE_HREF || "+14030000000",
+  phone: process.env.NEXT_PUBLIC_BUSINESS_PHONE || "(587) 900-6051",
+  phoneHref: process.env.NEXT_PUBLIC_BUSINESS_PHONE_HREF || "+15879006051",
   email: process.env.LEAD_FROM_EMAIL || "hello@newwheels.ca",
   hours: "Mon-Sat 9 AM - 7 PM",
   address: {

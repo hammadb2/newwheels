@@ -98,8 +98,8 @@ export default function LeadForm({
         </p>
         <p className="mt-4 text-sm text-neutral-700">
           Can&apos;t wait? Call us directly at{" "}
-          <a href="tel:+14030000000" className="font-semibold text-brand-primary underline">
-            (403) 000-0000
+          <a href="tel:+15879006051" className="font-semibold text-brand-primary underline">
+            (587) 900-6051
           </a>
           .
         </p>
@@ -226,7 +226,7 @@ export default function LeadForm({
       </div>
       {status === "error" && (
         <p className="mt-3 text-sm text-red-600" role="alert">
-          {errorMsg || "We couldn't send that. Please try again, or call (403) 000-0000."}
+          {errorMsg || "We couldn't send that. Please try again, or call (587) 900-6051."}
         </p>
       )}
     </form>
