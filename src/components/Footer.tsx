@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { BUSINESS, PAGES, SITE_NAME } from "@/lib/site";
 import AuthorBio from "./AuthorBio";
+import Logo from "./Logo";
 
 export default function Footer() {
   const year = new Date().getFullYear();
@@ -9,7 +10,9 @@ export default function Footer() {
       <div className="mx-auto max-w-6xl px-4 py-12">
         <div className="grid gap-10 md:grid-cols-4">
           <div className="md:col-span-2">
-            <p className="text-lg font-bold text-brand-ink">{SITE_NAME}</p>
+            <Link href="/" aria-label="NewWheels home">
+              <Logo className="h-10 w-auto" />
+            </Link>
             <p className="mt-2 text-sm text-neutral-700">
               Calgary vehicle financing for bad credit, newcomers, work-permit holders, and
               self-employed buyers. Up to 6 months of payments covered on qualified deals.

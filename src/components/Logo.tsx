@@ -1,14 +1,30 @@
 import Image from "next/image";
 
-export default function Logo({ className }: { className?: string }) {
+export default function Logo({
+  className,
+  compact = false,
+}: {
+  className?: string;
+  compact?: boolean;
+}) {
   return (
-    <Image
-      src="/logo-horizontal.png"
-      alt="NewWheels"
-      width={160}
-      height={69}
-      className={className}
-      priority
-    />
+    <span className={`inline-flex items-center gap-2 ${className ?? ""}`}>
+      <Image
+        src="/logo-icon.png"
+        alt=""
+        width={740}
+        height={405}
+        className="h-full w-auto"
+        priority
+      />
+      <Image
+        src={compact ? "/logo-wordmark-compact.png" : "/logo-wordmark.png"}
+        alt="NewWheels"
+        width={compact ? 1362 : 1362}
+        height={compact ? 186 : 303}
+        className="h-[70%] w-auto"
+        priority
+      />
+    </span>
   );
 }
