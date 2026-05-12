@@ -1,6 +1,12 @@
 import Image from "next/image";
 
-export default function Logo({ className }: { className?: string }) {
+export default function Logo({
+  className,
+  compact = false,
+}: {
+  className?: string;
+  compact?: boolean;
+}) {
   return (
     <span className={`inline-flex items-center gap-2 ${className ?? ""}`}>
       <Image
@@ -12,11 +18,11 @@ export default function Logo({ className }: { className?: string }) {
         priority
       />
       <Image
-        src="/logo-wordmark.png"
+        src={compact ? "/logo-wordmark-compact.png" : "/logo-wordmark.png"}
         alt="NewWheels"
-        width={1362}
-        height={303}
-        className="h-[60%] w-auto"
+        width={compact ? 1362 : 1362}
+        height={compact ? 186 : 303}
+        className="h-[70%] w-auto"
         priority
       />
     </span>
