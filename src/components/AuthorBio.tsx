@@ -13,14 +13,14 @@ export default function AuthorBio({ compact = false }: Props) {
         H
       </div>
       <div className="text-sm">
-        <p className="font-semibold text-brand-ink">{name} · Automotive Finance Specialist</p>
-        <p className="mt-1 text-neutral-700">
+        <p className="font-semibold text-[#111111]">{name} · Automotive Finance Specialist</p>
+        <p className="mt-1 text-[#6B7280]">
           AMVIC-licensed automotive sales professional in Calgary, Alberta. Specializes in
           financing solutions for newcomers, buyers rebuilding credit, and self-employed
           Calgarians. Personally helped hundreds of Calgary families get into a vehicle
           regardless of credit situation. Author of every page on {SITE_NAME}.
         </p>
-        <p className="mt-1 text-xs text-neutral-600">
+        <p className="mt-1 text-xs text-[#9CA3AF]">
           AMVIC licence:{" "}
           <a href={BUSINESS.amvicRegistryUrl} className="underline" target="_blank" rel="noopener noreferrer">
             {BUSINESS.amvic}

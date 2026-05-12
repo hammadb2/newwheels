@@ -52,15 +52,15 @@ export default function PageShell({
     <>
       <JsonLd data={[...baseSchema, ...extraSchema]} />
       <article className="mx-auto max-w-6xl px-4 py-10 md:py-14">
-        <nav aria-label="Breadcrumb" className="mb-4 text-sm text-neutral-600">
+        <nav aria-label="Breadcrumb" className="mb-4 text-sm text-[#9CA3AF]">
           <ol className="flex flex-wrap items-center gap-1">
             <li>
-              <Link href="/" className="hover:text-brand-primary">Home</Link>
+              <Link href="/" className="hover:text-[#111111]">Home</Link>
             </li>
             {breadcrumb.map(b => (
               <li key={b.path} className="flex items-center gap-1">
-                <span aria-hidden="true">›</span>
-                <Link href={b.path} className="hover:text-brand-primary">
+                <span aria-hidden="true">&rsaquo;</span>
+                <Link href={b.path} className="hover:text-[#111111]">
                   {b.name}
                 </Link>
               </li>
@@ -69,18 +69,18 @@ export default function PageShell({
         </nav>
         <div className="grid gap-10 md:grid-cols-[1fr_400px]">
           <div className="prose-content">
-            {tagline && <p className="text-sm font-semibold uppercase tracking-wide text-brand-primary">{tagline}</p>}
-            <h1 className="mt-1 text-3xl font-bold leading-tight text-brand-ink md:text-4xl">{title}</h1>
-            <p className="mt-3 max-w-prose text-lg text-neutral-800">{intro}</p>
-            <div className="prose mt-6 max-w-prose text-neutral-800 [&>h2]:mt-8 [&>h2]:text-xl [&>h2]:font-bold [&>h2]:text-brand-ink [&>h3]:mt-6 [&>h3]:text-lg [&>h3]:font-semibold [&>p]:mt-3 [&>ul]:mt-3 [&>ul]:list-disc [&>ul]:pl-6 [&>ol]:mt-3 [&>ol]:list-decimal [&>ol]:pl-6 [&_li]:mt-1 [&_strong]:font-semibold">
+            {tagline && <p className="text-sm font-semibold uppercase tracking-wide text-[#6B7280]">{tagline}</p>}
+            <h1 className="mt-1 text-3xl font-bold leading-tight md:text-4xl">{title}</h1>
+            <p className="mt-3 max-w-prose text-lg text-[#6B7280]">{intro}</p>
+            <div className="prose mt-6 max-w-prose text-[#6B7280] [&>h2]:mt-8 [&>h2]:text-xl [&>h2]:font-bold [&>h2]:text-[#111111] [&>h3]:mt-6 [&>h3]:text-lg [&>h3]:font-semibold [&>p]:mt-3 [&>ul]:mt-3 [&>ul]:list-disc [&>ul]:pl-6 [&>ol]:mt-3 [&>ol]:list-decimal [&>ol]:pl-6 [&_li]:mt-1 [&_strong]:font-semibold">
               {children}
             </div>
-            <div className="mt-10 rounded-xl border border-brand-line bg-brand-muted p-5">
-              <p className="text-sm font-semibold text-brand-ink">Related pages</p>
+            <div className="mt-10 rounded-xl border border-brand-line bg-[#F9F9F9] p-5">
+              <p className="text-sm font-semibold text-[#111111]">Related pages</p>
               <ul className="mt-3 grid gap-2 sm:grid-cols-2">
                 {internalLinks.map(l => (
                   <li key={l.href}>
-                    <Link href={l.href} className="text-brand-primary underline-offset-4 hover:underline">
+                    <Link href={l.href} className="text-[#111111] underline-offset-4 hover:underline">
                       {l.label}
                     </Link>
                   </li>

@@ -14,14 +14,14 @@ export default function CtaBlock({
   primaryLabel = "Apply free",
 }: Props) {
   return (
-    <section className="mx-auto max-w-5xl px-4 py-12">
-      <div className="rounded-2xl bg-brand-primary p-8 text-white shadow-card md:p-10">
+    <section className="mx-auto max-w-5xl px-4 py-[120px]">
+      <div className="rounded-2xl bg-brand-primary p-8 text-white md:p-10">
         <h2 className="text-2xl font-bold md:text-3xl">{heading}</h2>
         <p className="mt-2 max-w-2xl text-white/90">{body}</p>
         <div className="mt-5 flex flex-col gap-3 md:flex-row">
           <Link
             href={primaryHref}
-            className="inline-flex items-center justify-center rounded-lg bg-white px-5 py-3 font-semibold text-brand-primary transition hover:bg-brand-muted"
+            className="inline-flex items-center justify-center rounded-lg bg-white px-5 py-3 font-semibold text-brand-primary transition hover:bg-[#F9F9F9]"
           >
             {primaryLabel}
           </Link>
