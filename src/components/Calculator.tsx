@@ -5,7 +5,7 @@ import { useMemo, useState } from "react";
 type Tier = "Excellent" | "Good" | "Fair" | "Poor" | "No Canadian Credit" | "Bankruptcy/Proposal";
 
 // Conservative Calgary subprime ranges as of mid-2026. These are estimates
-// only — the calculator headline makes that clear and pushes to the form.
+// only. The calculator headline makes that clear and pushes to the form.
 const RATE_RANGES: Record<Tier, [number, number]> = {
   Excellent: [5.99, 7.99],
   Good: [7.99, 10.99],
@@ -181,7 +181,7 @@ export default function Calculator() {
           <div className="md:col-span-2">
             <label htmlFor="province" className="label">Province</label>
             <select id="province" disabled className="input mt-1 bg-brand-muted" value="AB">
-              <option value="AB">Alberta — no PST</option>
+              <option value="AB">Alberta (no PST)</option>
             </select>
             <p className="mt-1 text-xs text-neutral-600">
               Alberta is the only province with no PST. We&apos;ve set this for you.
@@ -194,10 +194,10 @@ export default function Calculator() {
         <p className="text-sm uppercase tracking-wide text-white/80">Estimated monthly payment</p>
         <p className="mt-1 text-4xl font-bold leading-tight md:text-5xl">
           {fmtCAD(monthlyLow)}
-          <span className="text-xl font-semibold opacity-80"> – {fmtCAD(monthlyHigh)}</span>
+          <span className="text-xl font-semibold opacity-80"> - {fmtCAD(monthlyHigh)}</span>
         </p>
         <p className="mt-1 text-sm text-white/90">
-          Estimated rate range: {rLow.toFixed(2)}% – {rHigh.toFixed(2)}%
+          Estimated rate range: {rLow.toFixed(2)}% - {rHigh.toFixed(2)}%
         </p>
 
         <dl className="mt-5 space-y-3 text-sm">
@@ -208,13 +208,13 @@ export default function Calculator() {
           <div className="flex justify-between gap-3">
             <dt className="text-white/80">Total interest paid</dt>
             <dd className="font-semibold">
-              {fmtCAD(interestLow)} – {fmtCAD(interestHigh)}
+              {fmtCAD(interestLow)} - {fmtCAD(interestHigh)}
             </dd>
           </div>
           <div className="flex justify-between gap-3">
             <dt className="text-white/80">Total cost over {term} months</dt>
             <dd className="font-semibold">
-              {fmtCAD(totalLow + down)} – {fmtCAD(totalHigh + down)}
+              {fmtCAD(totalLow + down)} - {fmtCAD(totalHigh + down)}
             </dd>
           </div>
         </dl>

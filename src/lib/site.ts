@@ -7,7 +7,7 @@ const envUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
 export const SITE_URL = envUrl && envUrl.length > 0 ? envUrl : "https://newwheels.ca";
 
 export const SITE_NAME = "NewWheels";
-export const SITE_TAGLINE = "Calgary vehicle financing — bad credit, newcomers, work permits";
+export const SITE_TAGLINE = "Calgary vehicle financing for bad credit, newcomers, and work permits";
 export const SITE_DESCRIPTION =
   "Get approved for a car loan in Calgary in 24 hours. Bad credit, newcomers, work-permit holders, and self-employed buyers welcome. Up to 6 months of payments covered on qualifying deals. Apply free, no obligation.";
 
@@ -17,7 +17,7 @@ export const BUSINESS = {
   phone: process.env.NEXT_PUBLIC_BUSINESS_PHONE || "(403) 000-0000",
   phoneHref: process.env.NEXT_PUBLIC_BUSINESS_PHONE_HREF || "+14030000000",
   email: process.env.LEAD_FROM_EMAIL || "hello@newwheels.ca",
-  hours: "Mon–Sat 9:00 AM – 7:00 PM",
+  hours: "Mon-Sat 9 AM - 7 PM",
   address: {
     street: process.env.NEXT_PUBLIC_BUSINESS_ADDRESS_STREET || "Calgary, AB",
     locality: process.env.NEXT_PUBLIC_BUSINESS_ADDRESS_LOCALITY || "Calgary",

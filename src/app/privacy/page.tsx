@@ -6,7 +6,7 @@ import { BUSINESS } from "@/lib/site";
 const SLUG = "/privacy";
 
 export const metadata: Metadata = buildMetadata({
-  title: "Privacy Policy — NewWheels Calgary (PIPEDA Compliant)",
+  title: "Privacy Policy | NewWheels Calgary (PIPEDA Compliant)",
   description:
     "How NewWheels collects, uses, and protects your personal information. PIPEDA compliant. No selling, no sharing without consent, full opt-out at any time.",
   path: SLUG,
@@ -46,7 +46,7 @@ export default function PrivacyPage() {
       slug={SLUG}
       title="NewWheels privacy policy"
       tagline="Privacy & PIPEDA"
-      intro="We handle personal information the way we'd want our own handled — minimum collection, no selling, no surprises. This page explains exactly what we collect, why, where it goes, and how to delete it. PIPEDA-compliant under Canadian federal privacy law."
+      intro="We handle personal information the way we'd want our own handled: minimum collection, no selling, no surprises. This page explains exactly what we collect, why, where it goes, and how to delete it. PIPEDA-compliant under Canadian federal privacy law."
       breadcrumb={[{ name: "Privacy", path: SLUG }]}
       faq={FAQ}
       ctaHeading="Still want to apply? Go ahead."
@@ -59,11 +59,11 @@ export default function PrivacyPage() {
     >
       <h2>What we collect</h2>
       <ul>
-        <li>Name, phone, email, employment status, credit situation, and immigration status (only if applicable) — submitted by you on the application form.</li>
-        <li>Page-level analytics (page views, time on page, scroll depth) — collected by Google Analytics 4 via Google Tag Manager.</li>
-        <li>Session recordings and heatmaps — collected by Microsoft Clarity.</li>
-        <li>Marketing audience data — collected by Facebook Pixel for retargeting if you visited NewWheels via a paid ad.</li>
-        <li>IP address and browser metadata — logged by Vercel (our hosting provider) for security.</li>
+        <li>Name, phone, email, employment status, credit situation, and immigration status (only if applicable), submitted by you on the application form.</li>
+        <li>Page-level analytics (page views, time on page, scroll depth), collected by Google Analytics 4 via Google Tag Manager.</li>
+        <li>Session recordings and heatmaps, collected by Microsoft Clarity.</li>
+        <li>Marketing audience data, collected by Facebook Pixel for retargeting if you visited NewWheels via a paid ad.</li>
+        <li>IP address and browser metadata, logged by Vercel (our hosting provider) for security.</li>
       </ul>
 
       <h2>What we use it for</h2>
@@ -83,10 +83,10 @@ export default function PrivacyPage() {
 
       <h2>Your rights under PIPEDA</h2>
       <ul>
-        <li>Access — request a copy of everything we hold about you.</li>
-        <li>Correction — fix any inaccurate information.</li>
-        <li>Deletion — we delete within 30 days of a written request.</li>
-        <li>Opt-out — at any time, by any channel.</li>
+        <li>Access: request a copy of everything we hold about you.</li>
+        <li>Correction: fix any inaccurate information.</li>
+        <li>Deletion: we delete within 30 days of a written request.</li>
+        <li>Opt-out: at any time, by any channel.</li>
       </ul>
 
       <h2>How to make a request</h2>
