@@ -8,7 +8,7 @@ export default function Logo({
   compact?: boolean;
 }) {
   return (
-    <span className={`inline-flex items-center gap-2 ${className ?? ""}`}>
+    <span className={`inline-flex items-center gap-1.5 ${className ?? ""}`}>
       <Image
         src="/logo-icon.png"
         alt=""

@@ -5,9 +5,9 @@ import Logo from "./Logo";
 export default function Header() {
   return (
     <header className="sticky top-0 z-30 border-b border-brand-line bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">
-      <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-3 md:py-4">
-        <Link href="/" aria-label="NewWheels home" className="flex items-center gap-2">
-          <Logo className="h-9 w-auto" compact />
+      <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3 md:py-4">
+        <Link href="/" aria-label="NewWheels home" className="flex shrink-0 items-center gap-2">
+          <Logo className="h-7 w-auto" compact />
           <span className="sr-only">NewWheels</span>
         </Link>
         <nav aria-label="Primary" className="ml-4 hidden flex-1 md:flex">
