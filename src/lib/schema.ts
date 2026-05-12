@@ -14,7 +14,7 @@ export function localBusinessSchema() {
     telephone: BUSINESS.phone,
     email: BUSINESS.email,
     image: fullUrl("/og.png"),
-    logo: fullUrl("/logo-horizontal.png"),
+    logo: fullUrl("/logo-wordmark.png"),
     address: {
       "@type": "PostalAddress",
       streetAddress: BUSINESS.address.street,
@@ -81,7 +81,7 @@ export function organizationSchema() {
     "@id": `${SITE_URL}#organization`,
     name: SITE_NAME,
     url: SITE_URL,
-    logo: fullUrl("/logo-horizontal.png"),
+    logo: fullUrl("/logo-wordmark.png"),
     sameAs: Object.values(BUSINESS.socials),
     contactPoint: [
       {
@@ -135,7 +135,7 @@ export function articleSchema(opts: {
     publisher: {
       "@type": "Organization",
       name: SITE_NAME,
-      logo: { "@type": "ImageObject", url: fullUrl("/logo-horizontal.png") },
+      logo: { "@type": "ImageObject", url: fullUrl("/logo-wordmark.png") },
     },
   };
 }
