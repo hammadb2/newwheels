@@ -85,7 +85,7 @@ export default function LeadForm({
   if (status === "success") {
     return (
       <div
-        className={`rounded-xl bg-[#F9F9F9] p-6 ${variant === "compact" ? "" : "md:p-8"}`}
+        className={`bg-[#F9F9F9] p-6 ${variant === "compact" ? "" : "md:p-8"}`}
         role="status"
       >
         <h2 className="text-2xl font-bold text-[#111111]">Application received.</h2>
@@ -109,7 +109,7 @@ export default function LeadForm({
       onSubmit={onSubmit}
       id="apply"
       data-source={sourcePage}
-      className={`rounded-xl bg-[#F9F9F9] p-5 md:p-6 ${variant === "hero" ? "md:p-7" : ""}`}
+      className={`bg-[#F9F9F9] p-5 md:p-6 ${variant === "hero" ? "md:p-7" : ""}`}
       noValidate
     >
       <div className="mb-3">
@@ -217,7 +217,7 @@ export default function LeadForm({
 
       <button
         type="submit"
-        className="btn-primary mt-4 min-h-[56px] w-full text-base"
+        className="btn-primary mt-4 min-h-[56px] w-full text-lg font-bold"
         disabled={status === "submitting"}
       >
         {status === "submitting" ? "Submitting..." : "Get My Approval \u2014 Free"}
