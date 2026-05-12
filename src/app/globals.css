@@ -1,0 +1,82 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html,
+body {
+  background: #fff;
+  color: #111;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Reserve calculator output height so values updating doesn't shift layout. */
+.no-cls {
+  contain: layout paint;
+}
+
+/* Apply Now buttons reset */
+.btn-primary {
+  @apply inline-flex items-center justify-center rounded-lg bg-brand-primary px-5 py-3 font-semibold text-white shadow-card transition hover:bg-brand-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent focus-visible:ring-offset-2;
+}
+.btn-secondary {
+  @apply inline-flex items-center justify-center rounded-lg border border-brand-primary px-5 py-3 font-semibold text-brand-primary transition hover:bg-brand-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent focus-visible:ring-offset-2;
+}
+.btn-ghost {
+  @apply inline-flex items-center justify-center rounded-lg px-3 py-2 font-medium text-brand-ink transition hover:text-brand-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent focus-visible:ring-offset-2;
+}
+
+.input {
+  @apply w-full rounded-md border border-brand-line bg-white px-3 py-2 text-base text-brand-ink shadow-sm placeholder:text-neutral-400 focus:border-brand-primary focus:outline-none focus:ring-1 focus:ring-brand-primary;
+}
+.label {
+  @apply block text-sm font-medium text-brand-ink;
+}
+
+/* Default sliding range track */
+input[type="range"].slider {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 9999px;
+  background: linear-gradient(to right, #1A7A4A var(--pct, 0%), #E5E7EB var(--pct, 0%));
+  outline: none;
+}
+input[type="range"].slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 9999px;
+  background: #1A7A4A;
+  border: 3px solid #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+}
+input[type="range"].slider::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 9999px;
+  background: #1A7A4A;
+  border: 3px solid #fff;
+  cursor: pointer;
+}
+
+/* Skip link */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  background: #1A7A4A;
+  color: #fff;
+  padding: 8px 12px;
+  z-index: 100;
+}
+.skip-link:focus {
+  left: 8px;
+  top: 8px;
+}

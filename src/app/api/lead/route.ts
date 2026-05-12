@@ -1,0 +1,142 @@
+import { NextResponse } from "next/server";
+import { BUSINESS, SITE_NAME, SITE_URL } from "@/lib/site";
+
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
+type LeadPayload = {
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
+  email?: string;
+  credit?: string;
+  employment?: string;
+  visa?: string;
+  timeframe?: string;
+  notes?: string;
+  sourcePage?: string;
+};
+
+function required(v: unknown): v is string {
+  return typeof v === "string" && v.trim().length > 0;
+}
+
+async function sendResend(opts: {
+  to: string;
+  from: string;
+  subject: string;
+  html: string;
+  reply_to?: string;
+}) {
+  const key = process.env.RESEND_API_KEY;
+  if (!key) return { skipped: true as const, reason: "no RESEND_API_KEY" };
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${key}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(opts),
+  });
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    return { skipped: false as const, ok: false as const, status: res.status, error: text };
+  }
+  return { skipped: false as const, ok: true as const };
+}
+
+async function postToSheet(payload: LeadPayload, timestamp: string) {
+  const url = process.env.GOOGLE_SHEETS_WEBHOOK_URL;
+  if (!url) return { skipped: true as const };
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ ...payload, timestamp, site: SITE_URL }),
+  });
+  return { skipped: false as const, ok: res.ok, status: res.status };
+}
+
+export async function POST(req: Request) {
+  let data: LeadPayload;
+  try {
+    data = (await req.json()) as LeadPayload;
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+  }
+
+  for (const k of ["firstName", "lastName", "phone", "email", "credit", "employment", "timeframe"] as const) {
+    if (!required(data[k])) {
+      return NextResponse.json({ error: `Missing field: ${k}` }, { status: 400 });
+    }
+  }
+
+  const timestamp = new Date().toISOString();
+  const safe = {
+    firstName: String(data.firstName).slice(0, 80),
+    lastName: String(data.lastName).slice(0, 80),
+    phone: String(data.phone).slice(0, 40),
+    email: String(data.email).slice(0, 200),
+    credit: String(data.credit).slice(0, 80),
+    employment: String(data.employment).slice(0, 80),
+    visa: String(data.visa || "").slice(0, 120),
+    timeframe: String(data.timeframe).slice(0, 80),
+    notes: String(data.notes || "").slice(0, 2000),
+    sourcePage: String(data.sourcePage || "/").slice(0, 200),
+  };
+  const fullName = `${safe.firstName} ${safe.lastName}`.trim();
+
+  // Fire all three integrations in parallel for sub-60s SLA.
+  const from = process.env.LEAD_FROM_EMAIL || `${SITE_NAME} <${BUSINESS.email}>`;
+  const notifyTo = process.env.LEAD_NOTIFY_TO || BUSINESS.email;
+
+  const notifyHtml = `
+    <h2>New NewWheels lead</h2>
+    <p><strong>Name:</strong> ${fullName}</p>
+    <p><strong>Phone:</strong> ${safe.phone}</p>
+    <p><strong>Email:</strong> ${safe.email}</p>
+    <p><strong>Credit:</strong> ${safe.credit}</p>
+    <p><strong>Employment:</strong> ${safe.employment}</p>
+    <p><strong>Status in Canada:</strong> ${safe.visa || "—"}</p>
+    <p><strong>Timeframe:</strong> ${safe.timeframe}</p>
+    <p><strong>Source page:</strong> ${safe.sourcePage}</p>
+    <p><strong>Notes:</strong><br/>${safe.notes.replace(/\n/g, "<br/>") || "—"}</p>
+    <p style="color:#666;font-size:12px;margin-top:24px;">Submitted ${timestamp}</p>
+  `;
+
+  const autoReplyHtml = `
+    <p>Hi ${safe.firstName},</p>
+    <p>Thanks for applying with NewWheels. We received your application and Hammad will reach out within 1 hour during business hours (${BUSINESS.hours}).</p>
+    <p>If your situation is urgent, call us directly at <a href="tel:${BUSINESS.phoneHref}">${BUSINESS.phone}</a>.</p>
+    <p><strong>What happens next</strong><br/>
+    1. Hammad calls you to confirm your details.<br/>
+    2. We submit your file to our lender network — no hard credit check at this stage.<br/>
+    3. You get approval terms within 24 hours.</p>
+    <p>Talk soon,<br/>NewWheels · Calgary</p>
+  `;
+
+  const [notifyResult, autoReplyResult, sheetResult] = await Promise.all([
+    sendResend({
+      to: notifyTo,
+      from,
+      subject: `New Lead — ${fullName} — ${safe.phone}`,
+      html: notifyHtml,
+      reply_to: safe.email,
+    }),
+    sendResend({
+      to: safe.email,
+      from,
+      subject: "We received your application — NewWheels",
+      html: autoReplyHtml,
+    }),
+    postToSheet(safe, timestamp),
+  ]);
+
+  return NextResponse.json({
+    ok: true,
+    integrations: {
+      notify: notifyResult,
+      autoReply: autoReplyResult,
+      sheet: sheetResult,
+    },
+  });
+}
