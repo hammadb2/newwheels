@@ -9,9 +9,15 @@
 html,
 body {
   background: #fff;
-  color: #111;
+  color: #6B7280;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  line-height: 1.7;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #111111;
+  line-height: 1.15;
 }
 
 /* Reserve calculator output height so values updating doesn't shift layout. */
@@ -19,22 +25,20 @@ body {
   contain: layout paint;
 }
 
-/* Apply Now buttons reset */
+/* Primary — solid green */
 .btn-primary {
-  @apply inline-flex items-center justify-center rounded-lg bg-brand-primary px-5 py-3 font-semibold text-white shadow-card transition hover:bg-brand-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent focus-visible:ring-offset-2;
+  @apply inline-flex items-center justify-center rounded-lg bg-brand-primary px-5 py-3 font-semibold text-white transition hover:bg-brand-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent focus-visible:ring-offset-2;
 }
+/* Secondary — white with green border */
 .btn-secondary {
-  @apply inline-flex items-center justify-center rounded-lg border border-brand-primary px-5 py-3 font-semibold text-brand-primary transition hover:bg-brand-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent focus-visible:ring-offset-2;
-}
-.btn-ghost {
-  @apply inline-flex items-center justify-center rounded-lg px-3 py-2 font-medium text-brand-ink transition hover:text-brand-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent focus-visible:ring-offset-2;
+  @apply inline-flex items-center justify-center rounded-lg border border-brand-primary bg-white px-5 py-3 font-semibold text-brand-primary transition hover:bg-[#F9F9F9] focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent focus-visible:ring-offset-2;
 }
 
 .input {
-  @apply w-full rounded-md border border-brand-line bg-white px-3 py-2 text-base text-brand-ink shadow-sm placeholder:text-neutral-400 focus:border-brand-primary focus:outline-none focus:ring-1 focus:ring-brand-primary;
+  @apply w-full rounded-md border border-brand-line bg-white px-3 py-2 text-base text-[#111111] shadow-sm placeholder:text-[#9CA3AF] focus:border-brand-primary focus:outline-none focus:ring-1 focus:ring-brand-primary;
 }
 .label {
-  @apply block text-sm font-medium text-brand-ink;
+  @apply block text-sm font-medium text-[#111111];
 }
 
 /* Default sliding range track */

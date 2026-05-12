@@ -43,17 +43,17 @@ export default function BlogHubPage() {
         ]}
       />
       <article className="mx-auto max-w-5xl px-4 py-10 md:py-14">
-        <nav aria-label="Breadcrumb" className="mb-4 text-sm text-neutral-600">
+        <nav aria-label="Breadcrumb" className="mb-4 text-sm text-[#9CA3AF]">
           <ol className="flex flex-wrap items-center gap-1">
-            <li><Link href="/" className="hover:text-brand-primary">Home</Link></li>
-            <li className="flex items-center gap-1"><span aria-hidden="true">›</span> <span>Blog</span></li>
+            <li><Link href="/" className="hover:text-[#111111]">Home</Link></li>
+            <li className="flex items-center gap-1"><span aria-hidden="true">&rsaquo;</span> <span>Blog</span></li>
           </ol>
         </nav>
-        <p className="text-sm font-semibold uppercase tracking-wide text-brand-primary">NewWheels blog</p>
-        <h1 className="mt-1 text-3xl font-bold leading-tight text-brand-ink md:text-4xl">
+        <p className="text-sm font-semibold uppercase tracking-wide text-[#6B7280]">NewWheels blog</p>
+        <h1 className="mt-1 text-3xl font-bold leading-tight md:text-4xl">
           Calgary car-loan guides, written by Hammad, not a content mill.
         </h1>
-        <p className="mt-3 max-w-prose text-lg text-neutral-800">
+        <p className="mt-3 max-w-prose text-lg text-[#6B7280]">
           Plain-English guides covering newcomer documentation, post-bankruptcy timelines,
           work-permit financing, the 6-months-covered offer, and Calgary-specific rate
           patterns. Every post is reviewed for accuracy when lender programs or AMVIC rules
@@ -62,17 +62,17 @@ export default function BlogHubPage() {
 
         <ul className="mt-10 grid gap-5 md:grid-cols-2">
           {POSTS.map(p => (
-            <li key={p.slug} className="rounded-2xl border border-brand-line bg-white p-5 shadow-card transition hover:border-brand-primary">
-              <p className="text-xs font-semibold uppercase tracking-wide text-brand-primary">
+            <li key={p.slug} className="rounded-2xl border border-brand-line bg-white p-5 transition hover:border-[#111111]">
+              <p className="text-xs font-semibold uppercase tracking-wide text-[#9CA3AF]">
                 {new Date(p.datePublished).toLocaleDateString("en-CA", { year: "numeric", month: "short", day: "numeric" })}
               </p>
-              <h2 className="mt-1 text-xl font-bold text-brand-ink">
-                <Link href={`/blog/${p.slug}`} className="hover:text-brand-primary">
+              <h2 className="mt-1 text-xl font-bold">
+                <Link href={`/blog/${p.slug}`} className="hover:text-[#6B7280]">
                   {p.title}
                 </Link>
               </h2>
-              <p className="mt-2 text-sm text-neutral-700">{p.description}</p>
-              <p className="mt-3 text-xs text-neutral-500">Calgary signal: {p.calgarySignal}</p>
+              <p className="mt-2 text-sm text-[#6B7280]">{p.description}</p>
+              <p className="mt-3 text-xs text-[#9CA3AF]">Calgary signal: {p.calgarySignal}</p>
             </li>
           ))}
         </ul>

@@ -62,7 +62,6 @@ export default function LeadForm({
       }
       setStatus("success");
       form.reset();
-      // Fire tracking events on the client. Works with or without GTM.
       type LeadWindow = Window & {
         dataLayer?: unknown[];
         fbq?: (action: string, name: string, params?: Record<string, unknown>) => void;
@@ -86,19 +85,17 @@ export default function LeadForm({
   if (status === "success") {
     return (
       <div
-        className={`rounded-xl border border-brand-primary bg-white p-6 shadow-card ${
-          variant === "compact" ? "" : "md:p-8"
-        }`}
+        className={`rounded-xl bg-[#F9F9F9] p-6 ${variant === "compact" ? "" : "md:p-8"}`}
         role="status"
       >
-        <h2 className="text-2xl font-bold text-brand-primary">Application received.</h2>
-        <p className="mt-2 text-neutral-800">
+        <h2 className="text-2xl font-bold text-[#111111]">Application received.</h2>
+        <p className="mt-2 text-[#6B7280]">
           Hammad will call you within 1 hour during business hours. Watch for a Calgary number
           and an email from <strong>hello@newwheels.ca</strong> confirming your application.
         </p>
-        <p className="mt-4 text-sm text-neutral-700">
+        <p className="mt-4 text-sm text-[#6B7280]">
           Can&apos;t wait? Call us directly at{" "}
-          <a href="tel:+15879006051" className="font-semibold text-brand-primary underline">
+          <a href="tel:+15879006051" className="font-semibold text-[#111111] underline">
             (587) 900-6051
           </a>
           .
@@ -112,14 +109,12 @@ export default function LeadForm({
       onSubmit={onSubmit}
       id="apply"
       data-source={sourcePage}
-      className={`rounded-xl border border-brand-line bg-white p-5 shadow-card md:p-6 ${
-        variant === "hero" ? "md:p-7" : ""
-      }`}
+      className={`rounded-xl bg-[#F9F9F9] p-5 md:p-6 ${variant === "hero" ? "md:p-7" : ""}`}
       noValidate
     >
       <div className="mb-3">
-        <h2 className="text-xl font-bold text-brand-ink md:text-2xl">{heading}</h2>
-        <p className="mt-1 text-sm text-neutral-700">{subheading}</p>
+        <h2 className="text-xl font-bold text-[#111111] md:text-2xl">{heading}</h2>
+        <p className="mt-1 text-sm text-[#6B7280]">{subheading}</p>
       </div>
 
       <div className="grid gap-3 md:grid-cols-2">
@@ -160,7 +155,7 @@ export default function LeadForm({
         <div>
           <label htmlFor="credit" className="label">Credit situation</label>
           <select id="credit" name="credit" required className="input">
-            <option value="">Choose…</option>
+            <option value="">Choose...</option>
             {CREDIT_OPTIONS.map(o => (
               <option key={o} value={o}>{o}</option>
             ))}
@@ -169,7 +164,7 @@ export default function LeadForm({
         <div>
           <label htmlFor="employment" className="label">Employment status</label>
           <select id="employment" name="employment" required className="input">
-            <option value="">Choose…</option>
+            <option value="">Choose...</option>
             {EMPLOYMENT_OPTIONS.map(o => (
               <option key={o} value={o}>{o}</option>
             ))}
@@ -177,19 +172,19 @@ export default function LeadForm({
         </div>
         <div>
           <label htmlFor="visa" className="label">
-            Status in Canada <span className="text-neutral-500">(optional)</span>
+            Status in Canada <span className="text-[#9CA3AF]">(optional)</span>
           </label>
           <input
             id="visa"
             name="visa"
-            placeholder="Citizen, PR, work permit, study permit…"
+            placeholder="Citizen, PR, work permit, study permit..."
             className="input"
           />
         </div>
         <div>
           <label htmlFor="timeframe" className="label">When do you need a vehicle?</label>
           <select id="timeframe" name="timeframe" required className="input">
-            <option value="">Choose…</option>
+            <option value="">Choose...</option>
             {TIMEFRAME_OPTIONS.map(o => (
               <option key={o} value={o}>{o}</option>
             ))}
@@ -199,13 +194,13 @@ export default function LeadForm({
 
       <div className="mt-3">
         <label htmlFor="notes" className="label">
-          Anything we should know? <span className="text-neutral-500">(optional)</span>
+          Anything we should know? <span className="text-[#9CA3AF]">(optional)</span>
         </label>
         <textarea
           id="notes"
           name="notes"
           rows={3}
-          placeholder="Down payment, target vehicle, trade-in, hours you prefer to be reached…"
+          placeholder="Down payment, target vehicle, trade-in, hours you prefer to be reached..."
           className="input"
         />
       </div>
@@ -215,15 +210,19 @@ export default function LeadForm({
         Company<input type="text" name="company" tabIndex={-1} autoComplete="off" />
       </label>
 
-      <div className="mt-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-        <p className="text-xs text-neutral-600">
-          By submitting you consent to be contacted by NewWheels. We never sell your information.
-          Read our <a href="/privacy" className="underline">privacy policy</a>.
-        </p>
-        <button type="submit" className="btn-primary" disabled={status === "submitting"}>
-          {status === "submitting" ? "Submitting…" : "Apply free, start now"}
-        </button>
-      </div>
+      <p className="mt-4 text-xs text-[#9CA3AF]">
+        By submitting you consent to be contacted by NewWheels. We never sell your information.
+        Read our <a href="/privacy" className="underline">privacy policy</a>.
+      </p>
+
+      <button
+        type="submit"
+        className="btn-primary mt-4 min-h-[56px] w-full text-base"
+        disabled={status === "submitting"}
+      >
+        {status === "submitting" ? "Submitting..." : "Get My Approval \u2014 Free"}
+      </button>
+
       {status === "error" && (
         <p className="mt-3 text-sm text-red-600" role="alert">
           {errorMsg || "We couldn't send that. Please try again, or call (587) 900-6051."}

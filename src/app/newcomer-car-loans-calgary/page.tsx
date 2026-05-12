@@ -61,7 +61,7 @@ export default function Page() {
         { href: "/nissan-financing-calgary", label: "Nissan financing through South Trail" },
       ]}
     >
-      <p className="font-semibold text-brand-primary" lang="tl">
+      <p className="font-semibold italic text-[#6B7280]" lang="tl">
         Filipino newcomer? <span>Bagong dating sa Canada, kaya namin tulungan ka kahit walang Canadian credit history.</span>
       </p>
 

@@ -91,12 +91,12 @@ export default function Calculator() {
   }
 
   return (
-    <div className="grid gap-6 rounded-2xl border border-brand-line bg-white p-5 shadow-card md:p-8 lg:grid-cols-[1fr_360px]">
+    <div className="grid gap-6 rounded-2xl border border-brand-line bg-white p-5 md:p-8 lg:grid-cols-[1fr_360px]">
       <div className="space-y-6">
         <div>
           <div className="flex items-baseline justify-between">
             <label htmlFor="price" className="label">Vehicle price</label>
-            <span className="text-base font-semibold text-brand-primary">{fmtCAD(price)}</span>
+            <span className="text-base font-semibold text-[#111111]">{fmtCAD(price)}</span>
           </div>
           <input
             id="price"
@@ -113,7 +113,7 @@ export default function Calculator() {
             style={{ ["--pct" as string]: `${pricePct}%` } as React.CSSProperties}
             aria-label="Vehicle price"
           />
-          <div className="mt-1 flex justify-between text-xs text-neutral-500">
+          <div className="mt-1 flex justify-between text-xs text-[#9CA3AF]">
             <span>{fmtCAD(priceMin)}</span>
             <span>{fmtCAD(priceMax)}</span>
           </div>
@@ -122,7 +122,7 @@ export default function Calculator() {
         <div>
           <div className="flex items-baseline justify-between">
             <label htmlFor="down" className="label">Down payment</label>
-            <span className="text-base font-semibold text-brand-primary">{fmtCAD(down)}</span>
+            <span className="text-base font-semibold text-[#111111]">{fmtCAD(down)}</span>
           </div>
           <input
             id="down"
@@ -139,7 +139,7 @@ export default function Calculator() {
             style={{ ["--pct" as string]: `${downPct}%` } as React.CSSProperties}
             aria-label="Down payment"
           />
-          <div className="mt-1 flex justify-between text-xs text-neutral-500">
+          <div className="mt-1 flex justify-between text-xs text-[#9CA3AF]">
             <span>{fmtCAD(downMin)}</span>
             <span>{fmtCAD(downMax)}</span>
           </div>
@@ -180,10 +180,10 @@ export default function Calculator() {
           </div>
           <div className="md:col-span-2">
             <label htmlFor="province" className="label">Province</label>
-            <select id="province" disabled className="input mt-1 bg-brand-muted" value="AB">
+            <select id="province" disabled className="input mt-1 bg-[#F9F9F9]" value="AB">
               <option value="AB">Alberta (no PST)</option>
             </select>
-            <p className="mt-1 text-xs text-neutral-600">
+            <p className="mt-1 text-xs text-[#9CA3AF]">
               Alberta is the only province with no PST. We&apos;ve set this for you.
             </p>
           </div>
@@ -232,7 +232,7 @@ export default function Calculator() {
         </p>
         <a
           href="#apply"
-          className="mt-4 inline-flex w-full items-center justify-center rounded-lg bg-white px-4 py-3 font-semibold text-brand-primary transition hover:bg-brand-muted"
+          className="mt-4 inline-flex w-full items-center justify-center rounded-lg bg-white px-4 py-3 font-semibold text-brand-primary transition hover:bg-[#F9F9F9]"
         >
           Get my real numbers in 24 hours →
         </a>

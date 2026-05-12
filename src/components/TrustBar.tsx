@@ -8,12 +8,12 @@ const ITEMS = [
 
 export default function TrustBar() {
   return (
-    <div className="bg-brand-muted">
+    <div className="border-b border-brand-line">
       <ul className="mx-auto grid max-w-6xl grid-cols-2 gap-x-4 gap-y-3 px-4 py-4 text-sm md:grid-cols-5">
         {ITEMS.map(item => (
           <li key={item.label} className="flex flex-col">
-            <span className="font-semibold text-brand-primary">{item.label}</span>
-            <span className="text-xs text-neutral-700">{item.sub}</span>
+            <span className="font-semibold text-[#111111]">{item.label}</span>
+            <span className="text-xs text-[#6B7280]">{item.sub}</span>
           </li>
         ))}
       </ul>
