@@ -5,7 +5,7 @@ import { buildMetadata } from "@/lib/seo";
 const SLUG = "/bad-credit-car-loans-calgary";
 
 export const metadata: Metadata = buildMetadata({
-  title: "Bad Credit Car Loans Calgary — Approved in 24 Hours",
+  title: "Bad Credit Car Loans Calgary | Approved in 24 Hours",
   description:
     "Bad credit car loans in Calgary. No minimum credit score. SE oil workers, NE newcomers, NW professionals. 24-hour approval. Up to 6 months of payments covered.",
   path: SLUG,
@@ -15,7 +15,7 @@ const FAQ = [
   {
     question: "Can I get a car loan in Calgary with bad credit?",
     answer:
-      "Yes. NewWheels works with Calgary lenders who approve subprime files every day. There is no minimum credit score — we look at income stability, employment, and down payment together with credit.",
+      "Yes. NewWheels works with Calgary lenders who approve subprime files every day. There is no minimum credit score. We look at income stability, employment, and down payment together with credit.",
   },
   {
     question: "What is the minimum credit score required at NewWheels?",
@@ -25,7 +25,7 @@ const FAQ = [
   {
     question: "How does NewWheels cover 6 months of payments?",
     answer:
-      "On qualified deals, NewWheels structures the financing so your first 6 payments are covered. The exact mechanism depends on the deal — Hammad walks you through the math on the call.",
+      "On qualified deals, NewWheels structures the financing so your first 6 payments are covered. The exact mechanism depends on the deal. Hammad walks you through the math on the call.",
   },
   {
     question: "How long does approval take for bad credit in Calgary?",
@@ -40,7 +40,7 @@ const FAQ = [
   {
     question: "Will applying affect my credit score?",
     answer:
-      "No. Our application is a soft inquiry only. A hard pull only happens after you confirm the lender terms — and even then it's a single pull, not the scattershot multi-inquiry damage that other Calgary brokers cause.",
+      "No. Our application is a soft inquiry only. A hard pull only happens after you confirm the lender terms, and even then it's a single pull, not the scattershot multi-inquiry damage that other Calgary brokers cause.",
   },
 ];
 
@@ -48,9 +48,9 @@ export default function Page() {
   return (
     <PageShell
       slug={SLUG}
-      title="Bad credit car loans in Calgary — approved in 24 hours"
+      title="Bad credit car loans in Calgary, approved in 24 hours"
       tagline="Bad credit Calgary"
-      intro="Bad credit doesn't disqualify you in Calgary. It just changes which lender we send your file to. We finance discharged bankruptcies, R7 collections, repossessions, and credit in the 400s every week — and we tell you the rate before you commit."
+      intro="Bad credit doesn't disqualify you in Calgary. It just changes which lender we send your file to. We finance discharged bankruptcies, R7 collections, repossessions, and credit in the 400s every week, and we tell you the rate before you commit."
       breadcrumb={[{ name: "Bad Credit", path: SLUG }]}
       faq={FAQ}
       ctaHeading="Bad credit? We've seen worse. Apply free."
@@ -61,35 +61,35 @@ export default function Page() {
         { href: "/how-it-works", label: "How the 3-step process works" },
       ]}
     >
-      <h2>Calgary has a specific bad-credit story — and your lender file has to match it</h2>
+      <h2>Calgary has a specific bad-credit story, and your lender file has to match it</h2>
       <p>
         The boom-and-bust energy economy means a lot of Calgarians have credit damage from
         downturn-era job losses, missed Suncor or Cenovus contractor invoices, or a divorce
-        during the 2014–2016 oil collapse. Lenders know this. SE Calgary contractors in Forest
+        during the 2014-2016 oil collapse. Lenders know this. SE Calgary contractors in Forest
         Lawn and Dover often get approved at better rates than their score suggests because the
         lender weights their income history more than their FICO. NE Calgary newcomers with
-        thin Canadian credit need a different lender — usually NCF, ICCU, or Coast Capital —
+        thin Canadian credit need a different lender (usually NCF, ICCU, or Coast Capital)
         that prices off employment stability rather than score. NW professionals rebuilding
         after a proposal need a fourth lender entirely.
       </p>
       <p>
         AutoNova and the algorithm brokers don&apos;t make that distinction. They submit your
-        file blindly. Hammad picks the lender by hand — that&apos;s the difference.
+        file blindly. Hammad picks the lender by hand. That&apos;s the difference.
       </p>
 
       <h2>What &quot;bad credit&quot; actually looks like to a Calgary auto lender</h2>
       <ul>
         <li>
-          <strong>Score 600–680.</strong> Tier-2 alternative prime. Rates run roughly 8–11%. Fast
+          <strong>Score 600-680.</strong> Tier-2 alternative prime. Rates run roughly 8-11%. Fast
           approval, usually 24 hours.
         </li>
         <li>
-          <strong>Score 500–599.</strong> True subprime. Rates 12–17% depending on income and down
-          payment. Down payment of 5–10% usually unlocks a better rate.
+          <strong>Score 500-599.</strong> True subprime. Rates 12-17% depending on income and down
+          payment. Down payment of 5-10% usually unlocks a better rate.
         </li>
         <li>
-          <strong>Score under 500 or active collections.</strong> Deep subprime. Rates 17–22%. We
-          target a 24-month rebuild — pay this loan on time, refinance at 12 months into a normal
+          <strong>Score under 500 or active collections.</strong> Deep subprime. Rates 17-22%. We
+          target a 24-month rebuild. Pay this loan on time, refinance at 12 months into a normal
           rate.
         </li>
         <li>
@@ -99,11 +99,11 @@ export default function Page() {
         </li>
       </ul>
 
-      <h2>The Calgary rebuild path — what we actually recommend</h2>
+      <h2>The Calgary rebuild path: what we actually recommend</h2>
       <ol>
         <li>
           Take a 60- or 72-month term, not 84. You pay less interest and the loan is paid down
-          fast enough that refinancing at 12–18 months is realistic.
+          fast enough that refinancing at 12-18 months is realistic.
         </li>
         <li>
           Make every payment on time. Set up pre-authorised debits on payday. One late payment

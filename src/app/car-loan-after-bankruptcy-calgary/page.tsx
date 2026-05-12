@@ -5,9 +5,9 @@ import { buildMetadata } from "@/lib/seo";
 const SLUG = "/car-loan-after-bankruptcy-calgary";
 
 export const metadata: Metadata = buildMetadata({
-  title: "Car Loan After Bankruptcy Calgary — Discharged or In-Process",
+  title: "Car Loan After Bankruptcy Calgary | Discharged or In-Process",
   description:
-    "Car loans in Calgary after bankruptcy — discharged or in-process. Honest rate expectations, realistic timelines, and a credit-rebuild plan from day one.",
+    "Car loans in Calgary after bankruptcy. Discharged or in-process. Honest rate expectations, realistic timelines, and a credit-rebuild plan from day one.",
   path: SLUG,
 });
 
@@ -15,7 +15,7 @@ const FAQ = [
   {
     question: "How long after bankruptcy can I get a car loan in Calgary?",
     answer:
-      "You can apply immediately after discharge — many Calgary subprime lenders approve discharged bankruptcies in the same week. In-process bankruptcies require trustee approval but are still financeable.",
+      "You can apply immediately after discharge. Many Calgary subprime lenders approve discharged bankruptcies in the same week. In-process bankruptcies require trustee approval but are still financeable.",
   },
   {
     question: "Do I need to be fully discharged to apply?",
@@ -25,7 +25,7 @@ const FAQ = [
   {
     question: "What rates should I realistically expect after bankruptcy?",
     answer:
-      "Honestly, 14–19% for the first loan after discharge. Pay on time for 12 months and we refinance you into the 7–10% range. Anyone in Calgary promising prime rates immediately after bankruptcy is misleading you.",
+      "Honestly, 14-19% for the first loan after discharge. Pay on time for 12 months and we refinance you into the 7-10% range. Anyone in Calgary promising prime rates immediately after bankruptcy is misleading you.",
   },
   {
     question: "Will a bankruptcy disqualify me from any car?",
@@ -50,7 +50,7 @@ export default function Page() {
       slug={SLUG}
       title="Car loans after bankruptcy in Calgary"
       tagline="After bankruptcy"
-      intro="Calgary's energy economy puts more people into bankruptcy than any major city in Canada outside Toronto. We understand that. Your bankruptcy isn't a character flaw — it's a financial event. Lenders care about behaviour after discharge, not the discharge itself."
+      intro="Calgary's energy economy puts more people into bankruptcy than any major city in Canada outside Toronto. We understand that. Your bankruptcy isn't a character flaw. It's a financial event. Lenders care about behaviour after discharge, not the discharge itself."
       breadcrumb={[{ name: "After Bankruptcy", path: SLUG }]}
       faq={FAQ}
       ctaHeading="Bankruptcy or proposal in your past? Apply free."
@@ -63,17 +63,17 @@ export default function Page() {
     >
       <h2>Honest timeline for Calgary post-bankruptcy buyers</h2>
       <ul>
-        <li><strong>Day 1 after discharge.</strong> Some lenders approve immediately. Expect 17–19%.</li>
-        <li><strong>3 months post-discharge with 1 paid trade-line.</strong> Rate drops to 14–17%.</li>
-        <li><strong>12 months of on-time car payments.</strong> Score has typically jumped 80–120 points. We refinance into 8–11%.</li>
-        <li><strong>24 months of clean history.</strong> Prime territory. 6–9% on a refinance.</li>
+        <li><strong>Day 1 after discharge.</strong> Some lenders approve immediately. Expect 17-19%.</li>
+        <li><strong>3 months post-discharge with 1 paid trade-line.</strong> Rate drops to 14-17%.</li>
+        <li><strong>12 months of on-time car payments.</strong> Score has typically jumped 80-120 points. We refinance into 8-11%.</li>
+        <li><strong>24 months of clean history.</strong> Prime territory. 6-9% on a refinance.</li>
       </ul>
 
       <h2>If you&apos;re still in your bankruptcy period</h2>
       <p>
-        You can still finance a vehicle. You&apos;ll need written trustee approval — most
+        You can still finance a vehicle. You&apos;ll need written trustee approval. Most
         trustees grant it routinely if the payment is reasonable. The rate will be in the
-        18–22% range. We&apos;ll only recommend this route if you genuinely need a vehicle for
+        18-22% range. We&apos;ll only recommend this route if you genuinely need a vehicle for
         employment or family reasons; for buyers who can wait 6 months for discharge, waiting
         usually saves several thousand dollars.
       </p>
@@ -83,7 +83,7 @@ export default function Page() {
         <li>Get your discharge certificate. We need a copy.</li>
         <li>Pay your phone bill, hydro, and rent on time for at least 90 days. These show on alternative credit reports.</li>
         <li>Open one secured credit card if you don&apos;t have any active trade-lines. Even $300 limit helps.</li>
-        <li>Save $1,000–2,500 for a down payment. It will dramatically improve your rate.</li>
+        <li>Save $1,000-2,500 for a down payment. It will dramatically improve your rate.</li>
       </ol>
 
       <h2>What you should not do</h2>

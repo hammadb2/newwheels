@@ -15,7 +15,7 @@ import { buildMetadata } from "@/lib/seo";
 import { SITUATION_NAV } from "@/lib/site";
 
 export const metadata: Metadata = buildMetadata({
-  title: "Car Loans Calgary — No Credit, Bad Credit, Newcomers Welcome",
+  title: "Car Loans Calgary | No Credit, Bad Credit, Newcomers Welcome",
   description:
     "Calgary car loans approved in 24 hours. Bad credit, newcomers, work permits, self-employed welcome. Up to 6 months of payments covered. Apply free.",
   path: "/",
@@ -35,12 +35,12 @@ const FAQ = [
   {
     question: "Does NewWheels really cover 6 months of payments?",
     answer:
-      "On qualified deals NewWheels covers up to 6 months of payments. The exact amount depends on the deal structure — your specialist explains the terms in plain language when you apply.",
+      "On qualified deals NewWheels covers up to 6 months of payments. The exact amount depends on the deal structure. Your specialist explains the terms in plain language when you apply.",
   },
   {
     question: "Will applying hurt my credit score?",
     answer:
-      "No. Applying with NewWheels is a soft inquiry — it doesn't affect your credit score. Only a final lender submission triggers a hard pull, and that only happens after you confirm the terms.",
+      "No. Applying with NewWheels is a soft inquiry and it doesn't affect your credit score. Only a final lender submission triggers a hard pull, and that only happens after you confirm the terms.",
   },
   {
     question: "What if I've had a bankruptcy or consumer proposal?",
@@ -50,7 +50,7 @@ const FAQ = [
   {
     question: "Can I get a new Nissan through NewWheels?",
     answer:
-      "Yes. Hammad works at South Trail Nissan, so brand-new 2026 Nissans — Rogue, Kicks, Sentra, Armada — are available alongside our full pre-owned inventory.",
+      "Yes. Hammad works at South Trail Nissan, so brand-new 2026 Nissans (Rogue, Kicks, Sentra, Armada) are available alongside our full pre-owned inventory.",
   },
 ];
 
@@ -81,7 +81,7 @@ export default function HomePage() {
           <p className="mt-3 text-neutral-700">
             AutoNova and the big online brokers will run your file through an algorithm. We
             won&apos;t. Hammad reviews every application personally, picks the right lender for
-            your file, and tells you the truth about your rate up front — even if it&apos;s not
+            your file, and tells you the truth about your rate up front, even if it&apos;s not
             what you wanted to hear.
           </p>
         </div>
@@ -97,7 +97,7 @@ export default function HomePage() {
               body: "Within 1 hour during business hours. We confirm your details and your goals.",
             },
             {
-              title: "3. Drive in 24–72 hours",
+              title: "3. Drive in 24-72 hours",
               body: "We submit to the right lender, get approval, finalise paperwork, hand you the keys.",
             },
           ].map(step => (
@@ -120,8 +120,8 @@ export default function HomePage() {
                 We have a dedicated page for your exact situation.
               </h2>
               <p className="mt-3 text-neutral-700">
-                We don&apos;t do generic financing. Pick the page that matches your situation —
-                each one is written by Hammad, with realistic timelines, document lists, and
+                We don&apos;t do generic financing. Pick the page that matches your situation.
+                Each one is written by Hammad, with realistic timelines, document lists, and
                 Calgary-specific context.
               </p>
             </div>
@@ -152,7 +152,7 @@ export default function HomePage() {
               New 2026 Nissans, through Hammad at South Trail Nissan.
             </h2>
             <p className="mt-3 text-neutral-700">
-              Most Calgary brokers can&apos;t get you into a brand-new vehicle. We can — Hammad
+              Most Calgary brokers can&apos;t get you into a brand-new vehicle. We can. Hammad
               is on the floor at South Trail Nissan and brings every program promotion through
               NewWheels first.
             </p>

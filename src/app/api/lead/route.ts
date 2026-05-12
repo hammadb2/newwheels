@@ -96,10 +96,10 @@ export async function POST(req: Request) {
     <p><strong>Email:</strong> ${safe.email}</p>
     <p><strong>Credit:</strong> ${safe.credit}</p>
     <p><strong>Employment:</strong> ${safe.employment}</p>
-    <p><strong>Status in Canada:</strong> ${safe.visa || "—"}</p>
+    <p><strong>Status in Canada:</strong> ${safe.visa || "N/A"}</p>
     <p><strong>Timeframe:</strong> ${safe.timeframe}</p>
     <p><strong>Source page:</strong> ${safe.sourcePage}</p>
-    <p><strong>Notes:</strong><br/>${safe.notes.replace(/\n/g, "<br/>") || "—"}</p>
+    <p><strong>Notes:</strong><br/>${safe.notes.replace(/\n/g, "<br/>") || "N/A"}</p>
     <p style="color:#666;font-size:12px;margin-top:24px;">Submitted ${timestamp}</p>
   `;
 
@@ -109,7 +109,7 @@ export async function POST(req: Request) {
     <p>If your situation is urgent, call us directly at <a href="tel:${BUSINESS.phoneHref}">${BUSINESS.phone}</a>.</p>
     <p><strong>What happens next</strong><br/>
     1. Hammad calls you to confirm your details.<br/>
-    2. We submit your file to our lender network — no hard credit check at this stage.<br/>
+    2. We submit your file to our lender network. No hard credit check at this stage.<br/>
     3. You get approval terms within 24 hours.</p>
     <p>Talk soon,<br/>NewWheels · Calgary</p>
   `;
@@ -118,14 +118,14 @@ export async function POST(req: Request) {
     sendResend({
       to: notifyTo,
       from,
-      subject: `New Lead — ${fullName} — ${safe.phone}`,
+      subject: `New Lead: ${fullName} - ${safe.phone}`,
       html: notifyHtml,
       reply_to: safe.email,
     }),
     sendResend({
       to: safe.email,
       from,
-      subject: "We received your application — NewWheels",
+      subject: "We received your application - NewWheels",
       html: autoReplyHtml,
     }),
     postToSheet(safe, timestamp),

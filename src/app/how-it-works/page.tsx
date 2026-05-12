@@ -5,7 +5,7 @@ import { buildMetadata } from "@/lib/seo";
 const SLUG = "/how-it-works";
 
 export const metadata: Metadata = buildMetadata({
-  title: "How It Works — NewWheels Calgary Car Loan Approval Process",
+  title: "How It Works | NewWheels Calgary Car Loan Approval Process",
   description:
     "How NewWheels approves Calgary car loans in 24 hours. The 3-step process, what Hammad does on your behalf, what you sign, and how 6-months-covered works.",
   path: SLUG,
@@ -15,7 +15,7 @@ const FAQ = [
   {
     question: "How does the NewWheels car loan approval process work in Calgary?",
     answer:
-      "Three steps: apply free (90 seconds), Hammad calls within 1 hour, you drive the vehicle in 24–72 hours. We handle every lender submission, document collection, and dealership negotiation for you.",
+      "Three steps: apply free (90 seconds), Hammad calls within 1 hour, you drive the vehicle in 24-72 hours. We handle every lender submission, document collection, and dealership negotiation for you.",
   },
   {
     question: "What happens after I submit the application?",
@@ -30,7 +30,7 @@ const FAQ = [
   {
     question: "How does the 6-months-covered offer actually work?",
     answer:
-      "On qualified deals NewWheels structures the financing so your first 6 monthly payments are covered. We bake the cost into the deal structure so you genuinely don't pay for 6 months. Eligibility depends on the lender and the vehicle — your specialist explains the exact mechanics.",
+      "On qualified deals NewWheels structures the financing so your first 6 monthly payments are covered. We bake the cost into the deal structure so you genuinely don't pay for 6 months. Eligibility depends on the lender and the vehicle. Your specialist explains the exact mechanics.",
   },
   {
     question: "Do I have to come to a dealership?",
@@ -40,7 +40,7 @@ const FAQ = [
   {
     question: "What if I'm declined?",
     answer:
-      "We tell you why, and what to fix. Most declines are fixable in 30–90 days — usually a missing piece of documentation or a need for a co-signer. Real declines that we can't work around happen on fewer than 5% of applications.",
+      "We tell you why, and what to fix. Most declines are fixable in 30-90 days, usually a missing piece of documentation or a need for a co-signer. Real declines that we can't work around happen on fewer than 5% of applications.",
   },
 ];
 
@@ -61,7 +61,7 @@ export default function Page() {
         { href: "/", label: "Back to homepage" },
       ]}
     >
-      <h2>Step 1 — Apply free (90 seconds)</h2>
+      <h2>Step 1: Apply free (90 seconds)</h2>
       <p>
         Fill out the application on this site. We need eight pieces of information: name,
         phone, email, credit situation, employment, immigration status (if applicable),
@@ -72,44 +72,44 @@ export default function Page() {
       <ul>
         <li>The application emails Hammad and lands in our CRM within 60 seconds.</li>
         <li>You receive an automated confirmation email at the address you provided.</li>
-        <li>Your application is logged in our secure Google Sheets pipeline — never sold, never shared.</li>
+        <li>Your application is logged in our secure Google Sheets pipeline. Never sold, never shared.</li>
       </ul>
 
-      <h2>Step 2 — Hammad calls you (within 1 hour during business hours)</h2>
+      <h2>Step 2: Hammad calls you (within 1 hour during business hours)</h2>
       <p>
-        Real human, real Calgary number. The call takes 10–15 minutes. We confirm your details,
-        ask follow-up questions, and tell you the realistic rate range you&apos;ll see — before
+        Real human, real Calgary number. The call takes 10-15 minutes. We confirm your details,
+        ask follow-up questions, and tell you the realistic rate range you&apos;ll see, before
         we submit anywhere. You get a chance to ask anything.
       </p>
       <h3>Documents we ask for at this stage</h3>
       <ul>
-        <li>Two pieces of ID — Alberta driver&apos;s licence + one other.</li>
-        <li>Proof of income — recent paystub, 6 months bank statements (self-employed), or NOA.</li>
-        <li>Proof of Calgary address — lease, utility bill, or bank statement.</li>
+        <li>Two pieces of ID (Alberta driver&apos;s licence + one other).</li>
+        <li>Proof of income: recent paystub, 6 months bank statements (self-employed), or NOA.</li>
+        <li>Proof of Calgary address: lease, utility bill, or bank statement.</li>
         <li>For newcomers: passport + permit document.</li>
         <li>For consumer proposal: trustee contact.</li>
       </ul>
 
-      <h2>Step 3 — Drive in 24–72 hours</h2>
+      <h2>Step 3: Drive in 24-72 hours</h2>
       <p>
         We submit your file to the right lender (or two, if it&apos;s a close call). Approval
         comes back within 24 hours. We send you the terms in writing. If you accept, we
-        coordinate vehicle delivery — either at South Trail Nissan if you&apos;re buying new,
+        coordinate vehicle delivery, either at South Trail Nissan if you&apos;re buying new,
         or at our partner pre-owned lots in Calgary. Final paperwork takes about 30 minutes.
         You drive away.
       </p>
 
-      <h2>The 6-months-covered offer — how it actually works</h2>
+      <h2>The 6-months-covered offer: how it actually works</h2>
       <p>
         We structure your financing so your first six monthly payments are pre-funded into the
         deal. You don&apos;t pay anything from month 1 to month 6. Then your normal payment
-        schedule starts at month 7. The mechanism varies by lender and dealer — sometimes
+        schedule starts at month 7. The mechanism varies by lender and dealer. Sometimes
         we&apos;re absorbing a portion of the dealer holdback, sometimes a manufacturer
         program covers it. Hammad explains the exact math during your call.
       </p>
       <p>
         Eligibility: qualified deals only. Most newcomers with stable employment qualify. Bad
-        credit with $3K+ down payment qualifies. Some files don&apos;t — we tell you up front.
+        credit with $3K+ down payment qualifies. Some files don&apos;t, and we tell you up front.
       </p>
 
       <h2>What we charge you</h2>

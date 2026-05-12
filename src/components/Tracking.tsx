@@ -1,7 +1,7 @@
 import Script from "next/script";
 import { TRACKING } from "@/lib/site";
 
-// GTM is the umbrella container — load it once in <head>. GA4, FB Pixel,
+// GTM is the umbrella container. Load it once in <head>. GA4, FB Pixel,
 // and Clarity are typically loaded *inside GTM* in production. We still
 // fall back to direct fragments here so the site has working tracking
 // the moment any single ID is set in env, even before GTM is configured.

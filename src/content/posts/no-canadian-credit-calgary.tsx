@@ -2,9 +2,9 @@ import type { Post } from "../posts";
 
 const post: Post = {
   slug: "car-loan-no-canadian-credit-calgary",
-  title: "Car Loan in Calgary With No Canadian Credit — Yes, You Can",
+  title: "Car Loan in Calgary With No Canadian Credit: Yes, You Can",
   description:
-    "Yes — Calgary lenders have dedicated newcomer programs that don't need Canadian credit. The visa-by-visa playbook, document list, and realistic rate ranges.",
+    "Yes. Calgary lenders have dedicated newcomer programs that don't need Canadian credit. The visa-by-visa playbook, document list, and realistic rate ranges.",
   datePublished: "2026-05-01",
   dateModified: "2026-05-10",
   primaryKeyword: "car loan no Canadian credit Calgary",
@@ -29,13 +29,13 @@ const post: Post = {
     {
       question: "What rate range can a newcomer expect in Calgary?",
       answer:
-        "8–14% depending on visa type, employment stability, and down payment. PGWP holders land lowest; TFW and caregiver pathway slightly higher.",
+        "8-14% depending on visa type, employment stability, and down payment. PGWP holders land lowest; TFW and caregiver pathway slightly higher.",
     },
   ],
   Body: () => (
     <>
       <p>
-        The short answer is yes — Calgary lenders finance newcomers with zero Canadian credit
+        The short answer is yes. Calgary lenders finance newcomers with zero Canadian credit
         every single day. The longer answer is that it matters enormously which lender we send
         your file to first. There are at least four distinct newcomer programs in the Canadian
         auto-finance market, each with different documentation requirements and rate sheets,
@@ -45,11 +45,11 @@ const post: Post = {
       <h2>The four newcomer lender categories</h2>
       <p>
         Manufacturer-backed newcomer programs (Nissan Canada Finance, Toyota Financial
-        Services, Hyundai Capital) typically offer the best rates — they&apos;re subsidised by
+        Services, Hyundai Capital) typically offer the best rates because they&apos;re subsidised by
         the brand to attract loyal future buyers. Alternative-prime newcomer lenders price off
         employment stability rather than credit; they handle most LMIA and open work-permit
         files. True subprime newcomer lenders handle TFW, caregiver pathway, and complex visa
-        cases — rates are higher (13–17%) but approvals are routine. And bank newcomer
+        cases. Rates are higher (13-17%) but approvals are routine. And bank newcomer
         programs (Scotiabank StartRight, RBC Newcomer, TD New to Canada) are the rarest
         because the major banks underwrite cautiously on auto loans for thin-file newcomers.
       </p>
@@ -57,7 +57,7 @@ const post: Post = {
       <p>
         Calgary has the country&apos;s second-largest Filipino community per capita, a fast-growing
         Punjabi and Tamil community in the NE quadrant, and an established pathway for
-        PGWP-to-PR transitions out of SAIT and U of C. Lenders have priced this in — newcomer
+        PGWP-to-PR transitions out of SAIT and U of C. Lenders have priced this in. Newcomer
         program rates in Calgary often beat Toronto and Vancouver because the lender book is
         statistically lower-risk.
       </p>
@@ -70,10 +70,10 @@ const post: Post = {
       </p>
       <h2>Don&apos;t do these things</h2>
       <p>
-        Don&apos;t apply at multiple brokers in one week — each is a hard pull and Canadian
+        Don&apos;t apply at multiple brokers in one week. Each is a hard pull and Canadian
         lenders see the pattern as a risk signal. Don&apos;t put $0 down if you can put even
-        $1,000 — every dollar of down payment improves your rate. Don&apos;t accept the first
-        offer without comparing — we routinely negotiate 1–2% off the initial lender quote on
+        $1,000. Every dollar of down payment improves your rate. Don&apos;t accept the first
+        offer without comparing. We routinely negotiate 1-2% off the initial lender quote on
         newcomer files.
       </p>
     </>
