@@ -2,9 +2,9 @@ import type { Post } from "../posts";
 
 const post: Post = {
   slug: "newcomer-car-loan-documents-canada",
-  title: "Newcomer Car Loan Documents in Canada — The Full Checklist",
+  title: "Newcomer Car Loan Documents in Canada: The Full Checklist",
   description:
-    "The full documentation checklist for newcomers applying for a Calgary car loan — passport, permit, SIN, address, income — with visa-by-visa notes.",
+    "The full documentation checklist for newcomers applying for a Calgary car loan (passport, permit, SIN, address, income) with visa-by-visa notes.",
   datePublished: "2026-05-06",
   dateModified: "2026-05-10",
   primaryKeyword: "newcomer car loan documents Canada",
@@ -14,7 +14,7 @@ const post: Post = {
     {
       question: "Do I need a Canadian driver's licence to finance a car as a newcomer?",
       answer:
-        "Not for the financing itself — you can finance with an international permit. You'll need a Class 7 Alberta learner's or an Alberta licence to register and insure the vehicle.",
+        "Not for the financing itself. You can finance with an international permit. You'll need a Class 7 Alberta learner's or an Alberta licence to register and insure the vehicle.",
     },
     {
       question: "Is a temporary 9-prefixed SIN acceptable?",
@@ -29,14 +29,14 @@ const post: Post = {
     {
       question: "What if my Calgary address is a temporary basement rental?",
       answer:
-        "Acceptable. A signed lease, a recent utility bill, or a recent bank statement works. Many newcomer buyers in NE Calgary use a roommate-share lease — that's fine.",
+        "Acceptable. A signed lease, a recent utility bill, or a recent bank statement works. Many newcomer buyers in NE Calgary use a roommate-share lease, and that's fine.",
     },
   ],
   Body: () => (
     <>
       <p>
-        Calgary&apos;s newcomer communities — Filipino, Punjabi, Tamil, Eritrean, Sudanese,
-        Venezuelan — all hit the same documentation list when they apply for a car loan. The
+        Calgary&apos;s newcomer communities (Filipino, Punjabi, Tamil, Eritrean, Sudanese,
+        Venezuelan) all hit the same documentation list when they apply for a car loan. The
         list is shorter than most people expect, but the order matters because some documents
         depend on others.
       </p>
@@ -58,7 +58,7 @@ const post: Post = {
       </p>
       <h3>LMIA / Employer-specific work permit</h3>
       <p>
-        Include your LMIA approval letter. It proves a named Canadian employer — which to
+        Include your LMIA approval letter. It proves a named Canadian employer, which to
         lenders is the strongest possible employment signal.
       </p>
       <h3>Open work permit</h3>
@@ -74,7 +74,7 @@ const post: Post = {
       <h2>What we do that other Calgary brokers don&apos;t</h2>
       <p>
         We pre-screen your documentation before submission. Missing the wrong document at the
-        lender stage causes a 3–5 day delay — we catch it during the initial phone call so
+        lender stage causes a 3-5 day delay. We catch it during the initial phone call so
         your file moves clean through to approval. That&apos;s why our newcomer approvals
         consistently hit the 24-hour target.
       </p>

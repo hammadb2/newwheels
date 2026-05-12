@@ -17,7 +17,7 @@ import { buildMetadata } from "@/lib/seo";
 const Calculator = dynamic(() => import("@/components/Calculator"));
 
 export const metadata: Metadata = buildMetadata({
-  title: "Car Loan Calculator Calgary — Estimate Your Monthly Payment",
+  title: "Car Loan Calculator Calgary | Estimate Your Monthly Payment",
   description:
     "Free Calgary car loan calculator. Estimate your monthly payment, rate range, total interest, and Alberta no-PST savings vs. BC and Ontario. Updates instantly.",
   path: "/calculator",
@@ -32,17 +32,17 @@ const FAQ = [
   {
     question: "Why is Alberta cheaper than BC and Ontario on a car?",
     answer:
-      "Alberta only charges 5% GST. BC adds 7% PST on top of GST (12% total). Ontario charges 13% HST. On a $30,000 vehicle that's about $2,100 in savings vs. BC and $2,400 vs. Ontario — before financing.",
+      "Alberta only charges 5% GST. BC adds 7% PST on top of GST (12% total). Ontario charges 13% HST. On a $30,000 vehicle that's about $2,100 in savings vs. BC and $2,400 vs. Ontario, before financing.",
   },
   {
     question: "What loan term should I pick in Calgary?",
     answer:
-      "Most Calgary buyers land at 60–72 months. 84 months keeps your payment lowest but you pay more interest. We help you pick the term that minimises lifetime cost given your goals.",
+      "Most Calgary buyers land at 60-72 months. 84 months keeps your payment lowest but you pay more interest. We help you pick the term that minimises lifetime cost given your goals.",
   },
   {
     question: "Does the calculator factor in the 6-months-covered offer?",
     answer:
-      "No. The estimate is your raw monthly cost. The 6 months covered offer is applied separately on qualified deals — we explain it on the call.",
+      "No. The estimate is your raw monthly cost. The 6 months covered offer is applied separately on qualified deals. We explain it on the call.",
   },
   {
     question: "Can I get this rate range if I have bad credit?",
@@ -52,7 +52,7 @@ const FAQ = [
   {
     question: "What's the smallest down payment NewWheels will accept?",
     answer:
-      "On qualifying deals we can do $0 down. The right down payment is usually 5–10% of the vehicle price — it lowers your monthly and improves your rate.",
+      "On qualifying deals we can do $0 down. The right down payment is usually 5-10% of the vehicle price. It lowers your monthly and improves your rate.",
   },
 ];
 
@@ -82,10 +82,10 @@ export default function CalculatorPage() {
           Calgary car loan calculator
         </p>
         <h1 className="mt-1 text-3xl font-bold leading-tight text-brand-ink md:text-4xl">
-          Estimate your monthly payment in Calgary — Alberta no-PST savings included.
+          Estimate your monthly payment in Calgary. Alberta no-PST savings included.
         </h1>
         <p className="mt-3 max-w-prose text-lg text-neutral-800">
-          Move the sliders. Pick your credit situation. The estimate updates instantly — no
+          Move the sliders. Pick your credit situation. The estimate updates instantly. No
           page reload, no calling first. When you&apos;re ready, apply free and Hammad gets you
           the real numbers within 24 hours.
         </p>
@@ -102,7 +102,7 @@ export default function CalculatorPage() {
               and apply the realistic rate range for your credit situation. The result is your
               estimated monthly payment over the loan term you pick. We also compute total
               interest over the life of the loan and your savings vs. BC and Ontario where
-              sales tax is 12% or 13% — Alberta is the only province with no PST and on a
+              sales tax is 12% or 13%. Alberta is the only province with no PST and on a
               $30,000 vehicle that&apos;s about $2,100 in tax you don&apos;t pay.
             </p>
             <h2 className="mt-6 text-xl font-bold text-brand-ink">Why we show a range, not one number</h2>
@@ -113,11 +113,11 @@ export default function CalculatorPage() {
               realistic range so you can plan honestly. When you apply we match you to the
               lender most likely to give you the bottom of that range.
             </p>
-            <h2 className="mt-6 text-xl font-bold text-brand-ink">Tip — pick your term carefully</h2>
+            <h2 className="mt-6 text-xl font-bold text-brand-ink">Tip: pick your term carefully</h2>
             <p className="mt-2 text-neutral-800">
               A 60-month loan costs more per month than 84 months but you pay thousands less in
               interest. If you can afford a 5-year term, take it. If you need a 7-year term to
-              fit the payment in your budget that&apos;s fine too — just refinance later when
+              fit the payment in your budget that&apos;s fine too. Just refinance later when
               your credit improves.
             </p>
             <div className="mt-10 rounded-xl border border-brand-line bg-brand-muted p-5">

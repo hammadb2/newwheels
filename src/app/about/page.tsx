@@ -7,9 +7,9 @@ import { BUSINESS } from "@/lib/site";
 const SLUG = "/about";
 
 export const metadata: Metadata = buildMetadata({
-  title: "About NewWheels Calgary — Hammad's Story & AMVIC Credentials",
+  title: "About NewWheels Calgary | Hammad's Story & AMVIC Credentials",
   description:
-    "About NewWheels and Hammad — your Calgary car-loan specialist at South Trail Nissan. AMVIC licensed, real Calgary address, real human on the phone.",
+    "About NewWheels and Hammad, your Calgary car-loan specialist at South Trail Nissan. AMVIC licensed, real Calgary address, real human on the phone.",
   path: SLUG,
 });
 
@@ -27,12 +27,12 @@ const FAQ = [
   {
     question: "What's an AMVIC licence and why does it matter?",
     answer:
-      "AMVIC (Alberta Motor Vehicle Industry Council) licenses every legal vehicle salesperson and dealership in Alberta. It's a consumer-protection requirement. Unlicensed sellers can't legally advertise vehicle financing in Alberta — if a Calgary lender doesn't display a licence number, that's a red flag.",
+      "AMVIC (Alberta Motor Vehicle Industry Council) licenses every legal vehicle salesperson and dealership in Alberta. It's a consumer-protection requirement. Unlicensed sellers can't legally advertise vehicle financing in Alberta. If a Calgary lender doesn't display a licence number, that's a red flag.",
   },
   {
     question: "How is NewWheels different from AutoNova or Canada Drives?",
     answer:
-      "We're a Calgary specialist with a named person responsible for every file. AutoNova is a generic broker, Canada Drives is a national algorithm. We pick up the phone within an hour. We know which Calgary lender to send your file to. And our 6-months-covered offer is unique in Calgary — nobody else does it on new vehicles.",
+      "We're a Calgary specialist with a named person responsible for every file. AutoNova is a generic broker, Canada Drives is a national algorithm. We pick up the phone within an hour. We know which Calgary lender to send your file to. And our 6-months-covered offer is unique in Calgary. Nobody else does it on new vehicles.",
   },
   {
     question: "Does Hammad really work at South Trail Nissan?",
@@ -50,9 +50,9 @@ export default function Page() {
   return (
     <PageShell
       slug={SLUG}
-      title={`About NewWheels — built by Hammad${BUSINESS.hammadLastName ? " " + BUSINESS.hammadLastName : ""}, your Calgary car-loan specialist`}
+      title={`About NewWheels, built by Hammad${BUSINESS.hammadLastName ? " " + BUSINESS.hammadLastName : ""}, your Calgary car-loan specialist`}
       tagline="About"
-      intro="NewWheels exists because I got tired of seeing Calgary newcomers, bad-credit buyers, and self-employed contractors get bounced around by faceless online brokers. I'm Hammad. I work at South Trail Nissan. I built NewWheels to bring those approvals — and the 6-months-covered offer — to every Calgary buyer."
+      intro="NewWheels exists because I got tired of seeing Calgary newcomers, bad-credit buyers, and self-employed contractors get bounced around by faceless online brokers. I'm Hammad. I work at South Trail Nissan. I built NewWheels to bring those approvals, including the 6-months-covered offer, to every Calgary buyer."
       breadcrumb={[{ name: "About", path: SLUG }]}
       faq={FAQ}
       extraSchema={[personSchema()]}
@@ -74,7 +74,7 @@ export default function Page() {
       </p>
       <p>
         AutoNova&apos;s playbook is to push every file through the same generic lender list. I
-        watched that approach burn applicants for years — they&apos;d submit to five places at
+        watched that approach burn applicants for years. They&apos;d submit to five places at
         once, wreck the bureau with hard pulls, and end up with a worse rate than they should
         have gotten. I built NewWheels to do the opposite: one application, one matched
         lender, one phone call from a real Calgary specialist.
@@ -84,11 +84,11 @@ export default function Page() {
       <p>
         Because being on the dealer floor gives me access to manufacturer programs that
         independent brokers never see. The Nissan Rogue at $99/week, the Kicks at 0%
-        financing, the Sentra newcomer program — those come from inside the dealer network. I
+        financing, the Sentra newcomer program. Those come from inside the dealer network. I
         bring them to NewWheels customers first.
       </p>
       <p>
-        It also keeps me sharp. The AMVIC licence isn&apos;t a piece of paper — it&apos;s a
+        It also keeps me sharp. The AMVIC licence isn&apos;t just a piece of paper. It&apos;s a
         commitment to a standard of conduct that gets audited regularly. Every Calgary buyer
         deserves a sales professional who&apos;s actually licensed and accountable.
       </p>
@@ -96,7 +96,7 @@ export default function Page() {
       <h2>The 6 months covered story</h2>
       <p>
         Nobody else in Calgary does it on new vehicles. I built the offer because the first 6
-        months after a new car purchase are the hardest — registration, insurance setup, new
+        months after a new car purchase are the hardest: registration, insurance setup, new
         tires before winter, unexpected expenses. If I can lift the loan payment for those 6
         months I dramatically reduce the failure rate. That&apos;s the whole point of
         responsible subprime lending: structure the deal so the buyer actually succeeds.

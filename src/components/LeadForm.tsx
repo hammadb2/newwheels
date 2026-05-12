@@ -33,7 +33,7 @@ const TIMEFRAME_OPTIONS = ["This week", "This month", "Within 60 days", "Just ex
 export default function LeadForm({
   variant = "inline",
   sourcePage,
-  heading = "Apply free — Hammad calls you in 1 hour",
+  heading = "Apply free. Hammad calls you in 1 hour",
   subheading = "100% free, no obligation, no hard credit check. We work with every major Canadian lender.",
 }: Props) {
   const [status, setStatus] = useState<Status>("idle");
@@ -45,7 +45,7 @@ export default function LeadForm({
     setErrorMsg("");
     const form = e.currentTarget;
     const data = Object.fromEntries(new FormData(form).entries());
-    // Honeypot — bots fill hidden fields. Pretend success without sending anywhere.
+    // Honeypot: bots fill hidden fields. Pretend success without sending anywhere.
     if ((data.company as string) && (data.company as string).length > 0) {
       setStatus("success");
       return;
@@ -93,7 +93,7 @@ export default function LeadForm({
       >
         <h2 className="text-2xl font-bold text-brand-primary">Application received.</h2>
         <p className="mt-2 text-neutral-800">
-          Hammad will call you within 1 hour during business hours. Watch for a Calgary number —
+          Hammad will call you within 1 hour during business hours. Watch for a Calgary number
           and an email from <strong>hello@newwheels.ca</strong> confirming your application.
         </p>
         <p className="mt-4 text-sm text-neutral-700">
@@ -221,7 +221,7 @@ export default function LeadForm({
           Read our <a href="/privacy" className="underline">privacy policy</a>.
         </p>
         <button type="submit" className="btn-primary" disabled={status === "submitting"}>
-          {status === "submitting" ? "Submitting…" : "Apply free — start now"}
+          {status === "submitting" ? "Submitting…" : "Apply free, start now"}
         </button>
       </div>
       {status === "error" && (

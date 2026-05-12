@@ -170,7 +170,7 @@ export function softwareApplicationSchema() {
     operatingSystem: "All",
     url: fullUrl("/calculator"),
     description:
-      "Free Calgary car loan calculator — estimate your monthly payment, interest, and Alberta no-PST savings before you apply.",
+      "Free Calgary car loan calculator. Estimate your monthly payment, interest, and Alberta no-PST savings before you apply.",
     offers: { "@type": "Offer", price: "0", priceCurrency: "CAD" },
     publisher: { "@id": `${SITE_URL}#organization` },
   };
