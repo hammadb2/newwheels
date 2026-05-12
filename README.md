@@ -10,8 +10,8 @@ Next.js 16 (App Router) + Tailwind production site for **NewWheels**, a Calgary 
 - Google Sheets webhook (Apps Script) for lead pipeline
 - Schema.org JSON-LD on every page
 
-## Pages (Phase 1 — 14 launch pages + blog)
-- `/` — homepage (`LocalBusiness`, `WebSite`, `Organization`, `FAQPage`)
+## Pages (Phase 1: 14 launch pages + blog)
+- `/` - homepage (`LocalBusiness`, `WebSite`, `Organization`, `FAQPage`)
 - `/bad-credit-car-loans-calgary`
 - `/newcomer-car-loans-calgary`
 - `/car-loan-work-permit-calgary`
@@ -36,14 +36,14 @@ cp .env.example .env.local
 npm run dev
 ```
 
-Visit `http://localhost:3000`. The site is fully functional with **no** env vars set — tracking, Resend, and Sheets all gracefully no-op.
+Visit `http://localhost:3000`. The site is fully functional with **no** env vars set. Tracking, Resend, and Sheets all gracefully no-op.
 
 ## Scripts
-- `npm run dev` — local dev server
-- `npm run build` — production build
-- `npm run start` — serve production build
-- `npm run lint` — ESLint (flat config, `eslint-config-next` 16)
-- `npm run typecheck` — strict `tsc --noEmit`
+- `npm run dev` - local dev server
+- `npm run build` - production build
+- `npm run start` - serve production build
+- `npm run lint` - ESLint (flat config, `eslint-config-next` 16)
+- `npm run typecheck` - strict `tsc --noEmit`
 
 ## Environment variables
 
@@ -79,7 +79,7 @@ All env vars are **optional**. Site builds and renders without any of them, with
 ## Performance & SEO targets (per playbook)
 - Mobile PageSpeed ≥ 90
 - LCP < 2.5 s, CLS < 0.1
-- Unique title 50–60 chars + meta description 150–160 chars on every page
+- Unique title 50-60 chars + meta description 150-160 chars on every page
 - Self-referencing canonical, OG + Twitter Card, one H1 per page
 - Auto-generated `sitemap.xml` (`/sitemap.ts`) covering pages + blog posts
 - `robots.txt` allows all content, disallows `/api/`, `/admin/`, `/thank-you`
@@ -91,7 +91,7 @@ All env vars are **optional**. Site builds and renders without any of them, with
 
 ## Deploying to Vercel
 1. Import the repo in Vercel.
-2. Set the env vars above (optional — site deploys without them).
+2. Set the env vars above (optional, site deploys without them).
 3. Add `newwheels.ca` (apex) as the primary domain.
 4. Add `www.newwheels.ca` and `yourapproved.ca` as redirect domains pointing to apex.
 5. Verify the GSC property using `NEXT_PUBLIC_GSC_VERIFICATION` (already injected into the `<head>`).

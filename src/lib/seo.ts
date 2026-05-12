@@ -14,7 +14,7 @@ export function buildMetadata({ title, description, path, imageAlt }: SeoInput):
   // og.png is regenerated from public/og.svg at build time. The PNG is what most social platforms read.
   // Bare title in <title> to respect Google's 50-60 char limit; brand suffix
   // appears in OG/Twitter cards (which display larger and outside SERPs).
-  const socialTitle = title.endsWith(SITE_NAME) ? title : `${title} — ${SITE_NAME}`;
+  const socialTitle = title.endsWith(SITE_NAME) ? title : `${title} | ${SITE_NAME}`;
   return {
     title,
     description,
