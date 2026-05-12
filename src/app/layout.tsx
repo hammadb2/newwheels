@@ -15,10 +15,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: {
-    default: `${SITE_NAME} — Car Loans Calgary, No Credit & Bad Credit Welcome`,
-    template: `%s — ${SITE_NAME}`,
-  },
+  title: `${SITE_NAME} — Car Loans Calgary, No Credit & Bad Credit Welcome`,
   description: SITE_DESCRIPTION,
   applicationName: SITE_NAME,
   formatDetection: { telephone: true, email: true, address: true },

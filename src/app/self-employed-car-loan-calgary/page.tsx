@@ -5,9 +5,9 @@ import { buildMetadata } from "@/lib/seo";
 const SLUG = "/self-employed-car-loan-calgary";
 
 export const metadata: Metadata = buildMetadata({
-  title: "Self-Employed Car Loan Calgary — Oil & Gas, Trades, Gig Workers",
+  title: "Self-Employed Car Loan Calgary — Oil & Gas, Trades, Gig",
   description:
-    "Self-employed car loans in Calgary for oil and gas contractors, trades workers, and gig economy. We accept NOAs, bank statements, and contracts as income proof. 24-hour approval.",
+    "Self-employed car loans in Calgary for oil and gas, trades, and gig workers. We accept NOAs, bank statements, and contracts as income proof. 24-hour approval.",
   path: SLUG,
 });
 

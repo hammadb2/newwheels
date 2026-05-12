@@ -12,7 +12,7 @@ const SLUG = "/blog";
 export const metadata: Metadata = buildMetadata({
   title: "NewWheels Blog — Calgary Car Loan Guides & Newcomer Tips",
   description:
-    "Honest Calgary car-loan guides — newcomer documentation, post-bankruptcy timelines, work-permit financing, and the 6-months-covered offer explained. Written by Hammad, AMVIC-licensed.",
+    "Honest Calgary car-loan guides — newcomer documentation, post-bankruptcy timelines, work-permit financing, and the 6-months-covered offer explained by Hammad.",
   path: SLUG,
 });
 

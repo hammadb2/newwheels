@@ -17,7 +17,7 @@ import { SITUATION_NAV } from "@/lib/site";
 export const metadata: Metadata = buildMetadata({
   title: "Car Loans Calgary — No Credit, Bad Credit, Newcomers Welcome",
   description:
-    "Calgary car loans approved in 24 hours. Bad credit, newcomers, work permits, self-employed — all welcome. Up to 6 months of payments covered. Apply free, no obligation.",
+    "Calgary car loans approved in 24 hours. Bad credit, newcomers, work permits, self-employed welcome. Up to 6 months of payments covered. Apply free.",
   path: "/",
 });
 

@@ -5,9 +5,9 @@ import { buildMetadata } from "@/lib/seo";
 const SLUG = "/car-loan-work-permit-calgary";
 
 export const metadata: Metadata = buildMetadata({
-  title: "Work Permit Car Loan Calgary — LMIA, Open, PGWP, TFW Approved",
+  title: "Work Permit Car Loan Calgary — LMIA, PGWP, TFW Approved",
   description:
-    "Car loans for work-permit holders in Calgary. LMIA, open work permit, PGWP, TFW — each has a different lender and a different documentation list. We pick the right one. 24-hour approval.",
+    "Calgary car loans for work-permit holders. LMIA, open, PGWP, TFW — each has a different lender. We pick the right one. 24-hour approval, no Canadian credit.",
   path: SLUG,
 });
 

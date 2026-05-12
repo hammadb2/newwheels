@@ -2,9 +2,9 @@ import type { Post } from "../posts";
 
 const post: Post = {
   slug: "car-loan-after-bankruptcy-canada-how-long",
-  title: "How Long After Bankruptcy Can You Get a Car Loan in Canada?",
+  title: "How Long After Bankruptcy Can I Get a Car Loan in Canada?",
   description:
-    "Immediately, technically — but the rate depends on how long it's been since discharge. Here's the realistic timeline for Canada, with specific Calgary subprime lender behaviour and rate expectations.",
+    "Immediately, technically — but the rate depends on how long it's been since discharge. Realistic Canadian timeline with Calgary subprime lender behaviour.",
   datePublished: "2026-05-04",
   dateModified: "2026-05-10",
   primaryKeyword: "car loan after bankruptcy Canada how long",

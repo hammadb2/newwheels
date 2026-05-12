@@ -7,7 +7,7 @@ const SLUG = "/first-time-car-buyer-calgary";
 export const metadata: Metadata = buildMetadata({
   title: "First Time Car Buyer Calgary — No Credit, First Vehicle",
   description:
-    "First-time car buyer in Calgary? Students, young professionals, and brand-new arrivals get approved here. No credit needed. We explain every line of the deal — no upsells, no tricks.",
+    "First-time car buyers in Calgary — students, young professionals, newcomers. No credit needed. We explain every line of the deal. No upsells, no tricks.",
   path: SLUG,
 });
 

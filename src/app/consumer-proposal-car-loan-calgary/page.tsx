@@ -7,7 +7,7 @@ const SLUG = "/consumer-proposal-car-loan-calgary";
 export const metadata: Metadata = buildMetadata({
   title: "Consumer Proposal Car Loan Calgary — Active or Completed",
   description:
-    "Car loans during or after a consumer proposal in Calgary. Active R7 or completed proposal — both finance. Trustee communication explained. Realistic rates, no false promises.",
+    "Car loans during or after a consumer proposal in Calgary. Active R7 or completed — both finance. Trustee letters handled. Honest rates, no false promises.",
   path: SLUG,
 });
 

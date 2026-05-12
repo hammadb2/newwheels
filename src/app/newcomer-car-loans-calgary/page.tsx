@@ -7,7 +7,7 @@ const SLUG = "/newcomer-car-loans-calgary";
 export const metadata: Metadata = buildMetadata({
   title: "Newcomer Car Loans Calgary — No Canadian Credit Needed",
   description:
-    "Newcomer to Canada in Calgary? Get a car loan with no Canadian credit history. Work permits, study permits, PR all welcome. 24-hour approval. Filipino, South Asian, and international newcomers approved daily.",
+    "Newcomer car loans in Calgary — no Canadian credit needed. Work permits, study permits, PR all welcome. 24-hour approval. Filipino & South Asian friendly.",
   path: SLUG,
 });
 

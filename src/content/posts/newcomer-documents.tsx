@@ -2,9 +2,9 @@ import type { Post } from "../posts";
 
 const post: Post = {
   slug: "newcomer-car-loan-documents-canada",
-  title: "What Documents Do Newcomers Need for a Car Loan in Canada?",
+  title: "Newcomer Car Loan Documents in Canada — The Full Checklist",
   description:
-    "The complete documentation checklist for newcomers applying for a Calgary car loan — passport, permit, SIN, address, income — with visa-by-visa notes from a real Calgary specialist.",
+    "The full documentation checklist for newcomers applying for a Calgary car loan — passport, permit, SIN, address, income — with visa-by-visa notes.",
   datePublished: "2026-05-06",
   dateModified: "2026-05-10",
   primaryKeyword: "newcomer car loan documents Canada",

@@ -2,9 +2,9 @@ import type { Post } from "../posts";
 
 const post: Post = {
   slug: "car-loan-no-canadian-credit-calgary",
-  title: "Can I Get a Car Loan in Calgary With No Canadian Credit History?",
+  title: "Car Loan in Calgary With No Canadian Credit — Yes, You Can",
   description:
-    "Yes — Calgary lenders have dedicated newcomer programs that don't require Canadian credit. Here's the visa-by-visa playbook, the documentation list, and what to expect for rates.",
+    "Yes — Calgary lenders have dedicated newcomer programs that don't need Canadian credit. The visa-by-visa playbook, document list, and realistic rate ranges.",
   datePublished: "2026-05-01",
   dateModified: "2026-05-10",
   primaryKeyword: "car loan no Canadian credit Calgary",

@@ -7,7 +7,7 @@ const SLUG = "/nissan-financing-calgary";
 export const metadata: Metadata = buildMetadata({
   title: "Nissan Financing Calgary — Rogue, Kicks, Sentra Programs",
   description:
-    "Brand-new 2026 Nissan financing in Calgary through Hammad at South Trail Nissan. Rogue, Kicks, Sentra, and Armada with current manufacturer programs. Newcomer and bad credit welcome.",
+    "Brand-new Nissan financing in Calgary through Hammad at South Trail Nissan. Rogue, Kicks, Sentra, Armada with current programs. Newcomer & bad credit welcome.",
   path: SLUG,
 });
 

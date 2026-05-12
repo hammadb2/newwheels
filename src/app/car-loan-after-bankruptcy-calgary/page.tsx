@@ -7,7 +7,7 @@ const SLUG = "/car-loan-after-bankruptcy-calgary";
 export const metadata: Metadata = buildMetadata({
   title: "Car Loan After Bankruptcy Calgary — Discharged or In-Process",
   description:
-    "Yes, you can get a car loan in Calgary after bankruptcy. Discharged or in-process, both qualify. Realistic timelines, honest rate expectations, and a credit-rebuild plan from day one.",
+    "Car loans in Calgary after bankruptcy — discharged or in-process. Honest rate expectations, realistic timelines, and a credit-rebuild plan from day one.",
   path: SLUG,
 });
 

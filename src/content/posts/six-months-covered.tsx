@@ -2,7 +2,7 @@ import type { Post } from "../posts";
 
 const post: Post = {
   slug: "how-six-months-payments-covered-works",
-  title: "How Does the 6 Months Payments Covered Offer Work at NewWheels?",
+  title: "How the 6 Months Payments Covered Offer Works in Calgary",
   description:
     "Up to 6 months of car payments covered on qualified Calgary deals — the offer, what 'qualified' means, and exactly how the cost gets structured into the financing.",
   datePublished: "2026-05-05",

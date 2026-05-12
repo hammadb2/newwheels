@@ -2,9 +2,9 @@ import type { Post } from "../posts";
 
 const post: Post = {
   slug: "car-loan-work-permit-alberta",
-  title: "How to Get Approved for a Car Loan With a Work Permit in Alberta",
+  title: "Work Permit Car Loan Alberta: LMIA, Open, PGWP, TFW Approved",
   description:
-    "LMIA, open work permit, PGWP, TFW — each visa type finances differently. Here's the lender-by-lender breakdown for Alberta work-permit holders, with documentation and realistic rate expectations.",
+    "LMIA, open work permit, PGWP, TFW — each visa type finances differently in Alberta. Lender-by-lender breakdown with documentation and realistic rates.",
   datePublished: "2026-05-03",
   dateModified: "2026-05-10",
   primaryKeyword: "car loan work permit Alberta",

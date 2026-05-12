@@ -9,7 +9,7 @@ const SLUG = "/about";
 export const metadata: Metadata = buildMetadata({
   title: "About NewWheels Calgary — Hammad's Story & AMVIC Credentials",
   description:
-    "About NewWheels and Hammad — your Calgary car-loan specialist at South Trail Nissan. AMVIC licensed, real Calgary address, real story, real specialist who picks up the phone.",
+    "About NewWheels and Hammad — your Calgary car-loan specialist at South Trail Nissan. AMVIC licensed, real Calgary address, real human on the phone.",
   path: SLUG,
 });
 
