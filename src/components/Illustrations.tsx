@@ -35,9 +35,10 @@ function PainterlyTile({
   priority,
 }: { src: string; alt: string } & PainterlyProps) {
   // Source art is 1:1; reserve square space so layouts that only set width
-  // (e.g. PageShell hero) still render at the right height.
+  // (e.g. PageShell hero) still render at the right height. Rounded corners
+  // match the rest of the app's card / hero treatments.
   return (
-    <div className={`relative aspect-square overflow-hidden ${className ?? ""}`}>
+    <div className={`relative aspect-square overflow-hidden rounded-4xl ${className ?? ""}`}>
       <Image
         src={src}
         alt={alt}
