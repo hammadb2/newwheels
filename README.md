@@ -85,7 +85,6 @@ All env vars are **optional**. Site builds and renders without any of them, with
 - `robots.txt` allows all content, disallows `/api/`, `/admin/`, `/thank-you`
 
 ## Redirects (`src/proxy.ts`)
-- `yourapproved.ca` (and any subdomain) → `newwheels.ca` (301)
 - `www.newwheels.ca` → `newwheels.ca` (301)
 - HTTPS enforcement is handled at the Vercel edge.
 
@@ -93,5 +92,5 @@ All env vars are **optional**. Site builds and renders without any of them, with
 1. Import the repo in Vercel.
 2. Set the env vars above (optional, site deploys without them).
 3. Add `newwheels.ca` (apex) as the primary domain.
-4. Add `www.newwheels.ca` and `yourapproved.ca` as redirect domains pointing to apex.
+4. Add `www.newwheels.ca` as a redirect domain pointing to apex.
 5. Verify the GSC property using `NEXT_PUBLIC_GSC_VERIFICATION` (already injected into the `<head>`).
