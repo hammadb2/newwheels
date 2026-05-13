@@ -85,17 +85,22 @@ export default function LeadForm({
   if (status === "success") {
     return (
       <div
-        className={`bg-[#F9F9F9] p-6 ${variant === "compact" ? "" : "md:p-8"}`}
+        className={`rounded-4xl bg-brand-accent p-7 text-brand-ink shadow-card ${
+          variant === "compact" ? "" : "md:p-9"
+        }`}
         role="status"
       >
-        <h2 className="text-2xl font-bold text-[#111111]">Application received.</h2>
-        <p className="mt-2 text-[#6B7280]">
+        <span className="chip">You&rsquo;re in</span>
+        <h2 className="mt-3 text-3xl font-extrabold leading-tight text-brand-ink">
+          Application received.
+        </h2>
+        <p className="mt-2 text-brand-ink/80">
           Hammad will call you within 1 hour during business hours. Watch for a Calgary number
           and an email from <strong>hello@newwheels.ca</strong> confirming your application.
         </p>
-        <p className="mt-4 text-sm text-[#6B7280]">
+        <p className="mt-4 text-sm text-brand-ink/80">
           Can&apos;t wait? Call us directly at{" "}
-          <a href="tel:+15879006051" className="font-semibold text-[#111111] underline">
+          <a href="tel:+15879006051" className="font-semibold text-brand-ink underline-offset-4 underline">
             (587) 900-6051
           </a>
           .
@@ -109,12 +114,17 @@ export default function LeadForm({
       onSubmit={onSubmit}
       id="apply"
       data-source={sourcePage}
-      className={`bg-[#F9F9F9] p-5 md:p-6 ${variant === "hero" ? "md:p-7" : ""}`}
+      className={`rounded-4xl bg-white p-6 shadow-card ring-1 ring-brand-line md:p-8 ${
+        variant === "hero" ? "md:p-9" : ""
+      }`}
       noValidate
     >
-      <div className="mb-3">
-        <h2 className="text-xl font-bold text-[#111111] md:text-2xl">{heading}</h2>
-        <p className="mt-1 text-sm text-[#6B7280]">{subheading}</p>
+      <div className="mb-5">
+        <span className="chip-accent">2 minute application</span>
+        <h2 className="mt-3 text-2xl font-extrabold leading-tight text-brand-ink md:text-3xl">
+          {heading}
+        </h2>
+        <p className="mt-2 text-sm text-brand-muted">{subheading}</p>
       </div>
 
       <div className="grid gap-3 md:grid-cols-2">
@@ -172,7 +182,7 @@ export default function LeadForm({
         </div>
         <div>
           <label htmlFor="visa" className="label">
-            Status in Canada <span className="text-[#9CA3AF]">(optional)</span>
+            Status in Canada <span className="text-brand-muted/70">(optional)</span>
           </label>
           <input
             id="visa"
@@ -192,9 +202,9 @@ export default function LeadForm({
         </div>
       </div>
 
-      <div className="mt-3">
+      <div className="mt-4">
         <label htmlFor="notes" className="label">
-          Anything we should know? <span className="text-[#9CA3AF]">(optional)</span>
+          Anything we should know? <span className="text-brand-muted/70">(optional)</span>
         </label>
         <textarea
           id="notes"
@@ -210,21 +220,21 @@ export default function LeadForm({
         Company<input type="text" name="company" tabIndex={-1} autoComplete="off" />
       </label>
 
-      <p className="mt-4 text-xs text-[#9CA3AF]">
+      <p className="mt-5 text-xs text-brand-muted">
         By submitting you consent to be contacted by NewWheels. We never sell your information.
-        Read our <a href="/privacy" className="underline">privacy policy</a>.
+        Read our <a href="/privacy" className="underline underline-offset-2 hover:text-brand-ink">privacy policy</a>.
       </p>
 
       <button
         type="submit"
-        className="btn-primary mt-4 min-h-[56px] w-full text-lg font-bold"
+        className="btn-primary mt-5 min-h-[60px] w-full text-base font-extrabold"
         disabled={status === "submitting"}
       >
-        {status === "submitting" ? "Submitting..." : "Get My Approval \u2014 Free"}
+        {status === "submitting" ? "Submitting..." : "Get my approval \u2014 free"}
       </button>
 
       {status === "error" && (
-        <p className="mt-3 text-sm text-red-600" role="alert">
+        <p className="mt-3 text-sm font-medium text-red-700" role="alert">
           {errorMsg || "We couldn't send that. Please try again, or call (587) 900-6051."}
         </p>
       )}

@@ -70,76 +70,105 @@ export default function CalculatorPage() {
           ]),
         ]}
       />
-      <article className="mx-auto max-w-6xl px-4 py-10 md:py-14">
-        <nav aria-label="Breadcrumb" className="mb-4 text-sm text-[#9CA3AF]">
-          <ol className="flex flex-wrap items-center gap-1">
-            <li><Link href="/" className="hover:text-[#111111]">Home</Link></li>
-            <li className="flex items-center gap-1"><span aria-hidden="true">&rsaquo;</span> <span>Calculator</span></li>
-          </ol>
-        </nav>
 
-        <p className="text-sm font-semibold uppercase tracking-wide text-[#6B7280]">
-          Calgary car loan calculator
-        </p>
-        <h1 className="mt-1 text-3xl font-bold leading-tight md:text-4xl">
-          Estimate your monthly payment in Calgary. Alberta no-PST savings included.
-        </h1>
-        <p className="mt-3 max-w-prose text-lg text-[#6B7280]">
-          Move the sliders. Pick your credit situation. The estimate updates instantly. No
-          page reload, no calling first. When you&apos;re ready, apply free and Hammad gets you
-          the real numbers within 24 hours.
-        </p>
+      <section className="section-deep relative overflow-hidden">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 opacity-[0.05]"
+          style={{
+            backgroundImage:
+              "radial-gradient(rgba(217,255,78,0.9) 1px, transparent 1px)",
+            backgroundSize: "26px 26px",
+          }}
+        />
+        <div className="relative mx-auto max-w-6xl px-4 pb-12 pt-10 md:pb-16 md:pt-14">
+          <nav aria-label="Breadcrumb" className="text-sm text-white/55">
+            <ol className="flex flex-wrap items-center gap-1.5">
+              <li><Link href="/" className="hover:text-brand-accent">Home</Link></li>
+              <li className="flex items-center gap-1.5">
+                <span aria-hidden="true" className="text-white/30">/</span>
+                <span>Calculator</span>
+              </li>
+            </ol>
+          </nav>
 
-        <div className="mt-8">
+          <div className="mt-6 max-w-3xl text-white">
+            <span className="chip-accent">Calgary car loan calculator</span>
+            <h1 className="display-headline mt-4 text-hero font-extrabold uppercase text-white">
+              Estimate your payment.
+              <span className="block text-brand-accent">No PST in Alberta.</span>
+            </h1>
+            <p className="mt-5 text-lg text-white/85">
+              Move the sliders. Pick your credit situation. The estimate updates instantly. When
+              you&apos;re ready, apply free and Hammad gets you the real numbers within 24 hours.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-brand-creamSoft">
+        <div className="mx-auto max-w-6xl px-4 py-12 md:py-16">
           <Calculator />
         </div>
+      </section>
 
-        <div className="mt-12 grid gap-8 md:grid-cols-[1fr_400px]">
-          <div className="prose-content">
-            <h2 className="text-xl font-bold">How this calculator works</h2>
-            <p className="mt-2 text-[#6B7280]">
-              We take your vehicle price, add Alberta&apos;s 5% GST, subtract your down payment,
-              and apply the realistic rate range for your credit situation. The result is your
-              estimated monthly payment over the loan term you pick. We also compute total
-              interest over the life of the loan and your savings vs. BC and Ontario where
-              sales tax is 12% or 13%. Alberta is the only province with no PST and on a
-              $30,000 vehicle that&apos;s about $2,100 in tax you don&apos;t pay.
-            </p>
-            <h2 className="mt-6 text-xl font-bold">Why we show a range, not one number</h2>
-            <p className="mt-2 text-[#6B7280]">
-              Every Canadian auto lender uses a different rate sheet. Two buyers with the same
-              credit score can land at different rates depending on income stability, the
-              vehicle (new vs. used), the loan-to-value ratio, and even the season. We show a
-              realistic range so you can plan honestly. When you apply we match you to the
-              lender most likely to give you the bottom of that range.
-            </p>
-            <h2 className="mt-6 text-xl font-bold">Tip: pick your term carefully</h2>
-            <p className="mt-2 text-[#6B7280]">
-              A 60-month loan costs more per month than 84 months but you pay thousands less in
-              interest. If you can afford a 5-year term, take it. If you need a 7-year term to
-              fit the payment in your budget that&apos;s fine too. Just refinance later when
-              your credit improves.
-            </p>
-            <div className="mt-10 rounded-xl border border-brand-line bg-[#F9F9F9] p-5">
-              <p className="text-sm font-semibold text-[#111111]">Related pages</p>
-              <ul className="mt-3 grid gap-2 sm:grid-cols-2">
-                <li><Link className="text-[#111111] underline-offset-4 hover:underline" href="/bad-credit-car-loans-calgary">Bad credit car loans Calgary</Link></li>
-                <li><Link className="text-[#111111] underline-offset-4 hover:underline" href="/newcomer-car-loans-calgary">Newcomer car loans Calgary</Link></li>
-                <li><Link className="text-[#111111] underline-offset-4 hover:underline" href="/how-it-works">How it works</Link></li>
-                <li><Link className="text-[#111111] underline-offset-4 hover:underline" href="/nissan-financing-calgary">Nissan financing Calgary</Link></li>
-              </ul>
+      <section className="bg-brand-cream">
+        <div className="mx-auto max-w-6xl px-4 py-16 md:py-20">
+          <div className="grid gap-12 md:grid-cols-[1fr_420px]">
+            <div className="prose-content">
+              <div className="prose max-w-prose text-base leading-relaxed text-brand-ink/85 [&>h2]:display-headline [&>h2]:mt-10 [&>h2]:text-2xl [&>h2]:font-extrabold [&>h2]:uppercase [&>h2]:text-brand-ink [&>h2]:first:mt-0 [&>p]:mt-4 [&_strong]:font-bold">
+                <h2>How this calculator works</h2>
+                <p>
+                  We take your vehicle price, add Alberta&apos;s 5% GST, subtract your down payment,
+                  and apply the realistic rate range for your credit situation. The result is your
+                  estimated monthly payment over the loan term you pick. We also compute total
+                  interest over the life of the loan and your savings vs. BC and Ontario where
+                  sales tax is 12% or 13%. Alberta is the only province with no PST and on a
+                  $30,000 vehicle that&apos;s about $2,100 in tax you don&apos;t pay.
+                </p>
+                <h2>Why we show a range, not one number</h2>
+                <p>
+                  Every Canadian auto lender uses a different rate sheet. Two buyers with the same
+                  credit score can land at different rates depending on income stability, the
+                  vehicle (new vs. used), the loan-to-value ratio, and even the season. We show a
+                  realistic range so you can plan honestly. When you apply we match you to the
+                  lender most likely to give you the bottom of that range.
+                </p>
+                <h2>Tip: pick your term carefully</h2>
+                <p>
+                  A 60-month loan costs more per month than 84 months but you pay thousands less in
+                  interest. If you can afford a 5-year term, take it. If you need a 7-year term to
+                  fit the payment in your budget that&apos;s fine too. Just refinance later when
+                  your credit improves.
+                </p>
+              </div>
+
+              <div className="mt-10 rounded-4xl bg-white p-7 ring-1 ring-brand-line">
+                <span className="chip">Related</span>
+                <p className="mt-3 text-lg font-bold text-brand-ink">
+                  Other Calgary financing pages
+                </p>
+                <ul className="mt-4 grid gap-2 sm:grid-cols-2">
+                  <li><Link className="font-semibold text-brand-ink underline-offset-4 hover:underline" href="/bad-credit-car-loans-calgary">Bad credit car loans →</Link></li>
+                  <li><Link className="font-semibold text-brand-ink underline-offset-4 hover:underline" href="/newcomer-car-loans-calgary">Newcomer loans →</Link></li>
+                  <li><Link className="font-semibold text-brand-ink underline-offset-4 hover:underline" href="/how-it-works">How it works →</Link></li>
+                  <li><Link className="font-semibold text-brand-ink underline-offset-4 hover:underline" href="/nissan-financing-calgary">Nissan financing →</Link></li>
+                </ul>
+              </div>
+
+              <div className="mt-10 rounded-4xl bg-white p-7 shadow-card ring-1 ring-brand-line">
+                <AuthorBio />
+              </div>
             </div>
-            <div className="mt-10">
-              <AuthorBio />
-            </div>
+            <aside className="md:sticky md:top-24 md:self-start" id="apply">
+              <LeadForm sourcePage="/calculator" />
+            </aside>
           </div>
-          <aside className="md:sticky md:top-24 md:self-start">
-            <LeadForm sourcePage="/calculator" />
-          </aside>
         </div>
-      </article>
+      </section>
+
       <Faq items={FAQ} />
-      <CtaBlock heading="Want the real numbers, not an estimate?" />
+      <CtaBlock heading="Want the real numbers?" />
     </>
   );
 }

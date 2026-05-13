@@ -91,12 +91,12 @@ export default function Calculator() {
   }
 
   return (
-    <div className="grid gap-6 rounded-2xl border border-brand-line bg-white p-5 md:p-8 lg:grid-cols-[1fr_360px]">
-      <div className="space-y-6">
+    <div className="grid gap-6 rounded-4xl bg-white p-6 shadow-card ring-1 ring-brand-line md:p-10 lg:grid-cols-[1fr_380px]">
+      <div className="space-y-7">
         <div>
           <div className="flex items-baseline justify-between">
             <label htmlFor="price" className="label">Vehicle price</label>
-            <span className="text-base font-semibold text-[#111111]">{fmtCAD(price)}</span>
+            <span className="text-lg font-extrabold text-brand-ink">{fmtCAD(price)}</span>
           </div>
           <input
             id="price"
@@ -113,7 +113,7 @@ export default function Calculator() {
             style={{ ["--pct" as string]: `${pricePct}%` } as React.CSSProperties}
             aria-label="Vehicle price"
           />
-          <div className="mt-1 flex justify-between text-xs text-[#9CA3AF]">
+          <div className="mt-1 flex justify-between text-xs text-brand-muted/70">
             <span>{fmtCAD(priceMin)}</span>
             <span>{fmtCAD(priceMax)}</span>
           </div>
@@ -122,7 +122,7 @@ export default function Calculator() {
         <div>
           <div className="flex items-baseline justify-between">
             <label htmlFor="down" className="label">Down payment</label>
-            <span className="text-base font-semibold text-[#111111]">{fmtCAD(down)}</span>
+            <span className="text-lg font-extrabold text-brand-ink">{fmtCAD(down)}</span>
           </div>
           <input
             id="down"
@@ -139,7 +139,7 @@ export default function Calculator() {
             style={{ ["--pct" as string]: `${downPct}%` } as React.CSSProperties}
             aria-label="Down payment"
           />
-          <div className="mt-1 flex justify-between text-xs text-[#9CA3AF]">
+          <div className="mt-1 flex justify-between text-xs text-brand-muted/70">
             <span>{fmtCAD(downMin)}</span>
             <span>{fmtCAD(downMax)}</span>
           </div>
@@ -180,61 +180,61 @@ export default function Calculator() {
           </div>
           <div className="md:col-span-2">
             <label htmlFor="province" className="label">Province</label>
-            <select id="province" disabled className="input mt-1 bg-[#F9F9F9]" value="AB">
+            <select id="province" disabled className="input mt-1 bg-brand-cream" value="AB">
               <option value="AB">Alberta (no PST)</option>
             </select>
-            <p className="mt-1 text-xs text-[#9CA3AF]">
+            <p className="mt-1 text-xs text-brand-muted">
               Alberta is the only province with no PST. We&apos;ve set this for you.
             </p>
           </div>
         </div>
       </div>
 
-      <div className="no-cls rounded-xl bg-brand-primary p-5 text-white md:p-6">
-        <p className="text-sm uppercase tracking-wide text-white/80">Estimated monthly payment</p>
-        <p className="mt-1 text-4xl font-bold leading-tight md:text-5xl">
+      <div className="no-cls rounded-3xl bg-brand-deep p-6 text-white md:p-8">
+        <span className="chip-accent">Estimated monthly</span>
+        <p className="mt-3 text-4xl font-extrabold leading-none md:text-[3.25rem]">
           {fmtCAD(monthlyLow)}
-          <span className="text-xl font-semibold opacity-80"> - {fmtCAD(monthlyHigh)}</span>
+          <span className="text-lg font-semibold text-white/70"> &ndash; {fmtCAD(monthlyHigh)}</span>
         </p>
-        <p className="mt-1 text-sm text-white/90">
-          Estimated rate range: {rLow.toFixed(2)}% - {rHigh.toFixed(2)}%
+        <p className="mt-2 text-sm text-brand-accent">
+          Rate range: {rLow.toFixed(2)}% &ndash; {rHigh.toFixed(2)}%
         </p>
 
-        <dl className="mt-5 space-y-3 text-sm">
+        <dl className="mt-6 space-y-3 border-t border-white/15 pt-5 text-sm">
           <div className="flex justify-between gap-3">
-            <dt className="text-white/80">Loan amount (incl. 5% GST)</dt>
+            <dt className="text-white/70">Loan amount (incl. 5% GST)</dt>
             <dd className="font-semibold">{fmtCAD(principal)}</dd>
           </div>
           <div className="flex justify-between gap-3">
-            <dt className="text-white/80">Total interest paid</dt>
+            <dt className="text-white/70">Total interest paid</dt>
             <dd className="font-semibold">
-              {fmtCAD(interestLow)} - {fmtCAD(interestHigh)}
+              {fmtCAD(interestLow)} &ndash; {fmtCAD(interestHigh)}
             </dd>
           </div>
           <div className="flex justify-between gap-3">
-            <dt className="text-white/80">Total cost over {term} months</dt>
+            <dt className="text-white/70">Total cost over {term} months</dt>
             <dd className="font-semibold">
-              {fmtCAD(totalLow + down)} - {fmtCAD(totalHigh + down)}
+              {fmtCAD(totalLow + down)} &ndash; {fmtCAD(totalHigh + down)}
             </dd>
           </div>
         </dl>
 
-        <div className="mt-5 rounded-lg bg-white/10 p-3 text-sm">
-          <p className="font-semibold">Alberta has no PST.</p>
-          <p className="mt-1 text-white/90">
-            On this vehicle you&apos;d save about <strong>{fmtCAD(albertaSavingsVsBC)}</strong> vs.
-            BC and <strong>{fmtCAD(albertaSavingsVsON)}</strong> vs. Ontario in sales tax alone.
+        <div className="mt-5 rounded-2xl bg-brand-accent/10 p-4 text-sm ring-1 ring-brand-accent/30">
+          <p className="font-bold text-brand-accent">Alberta has no PST.</p>
+          <p className="mt-1 text-white/85">
+            On this vehicle you&apos;d save about <strong className="text-brand-accent">{fmtCAD(albertaSavingsVsBC)}</strong> vs.
+            BC and <strong className="text-brand-accent">{fmtCAD(albertaSavingsVsON)}</strong> vs. Ontario in sales tax alone.
           </p>
         </div>
 
-        <p className="mt-4 text-xs text-white/80">
+        <p className="mt-4 text-xs text-white/55">
           Estimates only. Your real rate depends on your credit profile, income, and the vehicle.
         </p>
         <a
           href="#apply"
-          className="mt-4 inline-flex w-full items-center justify-center rounded-lg bg-white px-4 py-3 font-semibold text-brand-primary transition hover:bg-[#F9F9F9]"
+          className="btn-primary-dark mt-5 w-full text-sm"
         >
-          Get my real numbers in 24 hours →
+          Get my real numbers →
         </a>
       </div>
     </div>
