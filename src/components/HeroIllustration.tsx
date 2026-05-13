@@ -1,126 +1,85 @@
+import Image from "next/image";
+
 /**
- * Stylized hero illustration for the homepage hero. Pure inline SVG so it
- * scales, renders crisp at any density, and is fully themable.
- *
- * It pairs a stylised Calgary mountain backdrop with a "NewWheels approval
- * card" mockup in the foreground, echoing the card-on-dark hero used by
+ * Hero visual for the homepage. A photo of a Calgary customer with car keys
+ * sits as the backdrop, with the NewWheels "APPROVAL" card mockup and a
+ * floating key icon overlaid on top — echoing the card-on-photo hero used by
  * modern fintechs like Koho.
  */
 export default function HeroIllustration() {
   return (
-    <div className="relative">
+    <div className="relative aspect-[5/6] w-full overflow-hidden rounded-5xl shadow-card ring-1 ring-white/10">
+      {/* Customer photo */}
+      <Image
+        src="/photos/hero-keys-handover.jpg"
+        alt="Smiling Calgary customer holding car keys beside her newly financed SUV"
+        fill
+        priority
+        sizes="(min-width: 1024px) 520px, (min-width: 640px) 60vw, 100vw"
+        className="object-cover"
+        style={{ objectPosition: "50% 25%" }}
+      />
+
+      {/* Dark wash to anchor the card and tie back to the deep-green hero */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "linear-gradient(180deg, rgba(10,40,24,0.05) 0%, rgba(10,40,24,0.15) 45%, rgba(10,40,24,0.75) 100%)",
+        }}
+      />
+
+      {/* Floating key badge, top-right */}
       <svg
-        viewBox="0 0 520 560"
-        xmlns="http://www.w3.org/2000/svg"
-        role="img"
-        aria-label="NewWheels — Calgary financing approval"
-        className="w-full"
+        viewBox="0 0 96 60"
+        aria-hidden="true"
+        className="absolute right-5 top-5 h-12 w-auto drop-shadow-lg md:right-7 md:top-7 md:h-14"
       >
-        <defs>
-          <linearGradient id="sky" x1="0" x2="0" y1="0" y2="1">
-            <stop offset="0" stopColor="#155235" />
-            <stop offset="1" stopColor="#0A2818" />
-          </linearGradient>
-          <linearGradient id="cardGrad" x1="0" x2="1" y1="0" y2="1">
-            <stop offset="0" stopColor="#0E3D24" />
-            <stop offset="1" stopColor="#155235" />
-          </linearGradient>
-          <linearGradient id="limeGrad" x1="0" x2="1" y1="0" y2="1">
-            <stop offset="0" stopColor="#D9FF4E" />
-            <stop offset="1" stopColor="#E9FF8E" />
-          </linearGradient>
-          <linearGradient id="roadGrad" x1="0" x2="0" y1="0" y2="1">
-            <stop offset="0" stopColor="#155235" />
-            <stop offset="1" stopColor="#0A2818" />
-          </linearGradient>
-        </defs>
-
-        {/* Rounded backdrop */}
-        <rect x="0" y="0" width="520" height="560" rx="40" fill="url(#sky)" />
-
-        {/* Sun / accent disc */}
-        <circle cx="360" cy="130" r="62" fill="url(#limeGrad)" opacity="0.95" />
-
-        {/* Mountain range */}
-        <path
-          d="M-10 360 L80 240 L150 320 L220 220 L300 330 L380 250 L470 340 L530 280 L530 420 L-10 420 Z"
-          fill="#0E3D24"
-        />
-        <path
-          d="M-10 380 L70 300 L150 360 L240 270 L320 360 L400 300 L530 380 L530 420 L-10 420 Z"
-          fill="#0A2818"
-          opacity="0.85"
-        />
-        {/* Snow caps */}
-        <path d="M210 230 L220 220 L232 235 L226 240 L218 232 Z" fill="#FAF7F0" opacity="0.9" />
-        <path d="M370 258 L380 250 L392 265 L386 270 L378 263 Z" fill="#FAF7F0" opacity="0.85" />
-
-        {/* Road */}
-        <path d="M-10 420 L530 420 L530 560 L-10 560 Z" fill="url(#roadGrad)" />
-        {/* Lane stripes */}
-        <g fill="#D9FF4E" opacity="0.55">
-          <rect x="120" y="500" width="40" height="6" rx="3" />
-          <rect x="200" y="500" width="40" height="6" rx="3" />
-          <rect x="280" y="500" width="40" height="6" rx="3" />
-          <rect x="360" y="500" width="40" height="6" rx="3" />
-          <rect x="440" y="500" width="40" height="6" rx="3" />
-        </g>
-
-        {/* Approval card */}
-        <g transform="translate(70 270)">
-          <rect width="380" height="220" rx="28" fill="url(#cardGrad)" stroke="#D9FF4E" strokeWidth="2" />
-          <rect width="380" height="220" rx="28" fill="#D9FF4E" opacity="0.08" />
-
-          {/* Card top row */}
-          <text x="28" y="46" fontFamily="Bricolage Grotesque, Inter, sans-serif" fontSize="14" fontWeight="600" fill="#D9FF4E" letterSpacing="2">
-            APPROVAL
-          </text>
-          <circle cx="346" cy="42" r="10" fill="#D9FF4E" opacity="0.95" />
-          <circle cx="328" cy="42" r="10" fill="#FAF7F0" opacity="0.85" />
-
-          {/* Big number */}
-          <text
-            x="28"
-            y="116"
-            fontFamily="Bricolage Grotesque, Inter, sans-serif"
-            fontSize="46"
-            fontWeight="800"
-            fill="#FAF7F0"
-            letterSpacing="-0.02em"
-          >
-            $24,500
-          </text>
-          <text x="28" y="142" fontFamily="Bricolage Grotesque, Inter, sans-serif" fontSize="13" fill="#D9FF4E" letterSpacing="1.5">
-            PRE-APPROVED FINANCING
-          </text>
-
-          {/* Bottom info row */}
-          <g transform="translate(28 168)">
-            <text fontFamily="Bricolage Grotesque, Inter, sans-serif" fontSize="11" fill="#FAF7F0" opacity="0.6" letterSpacing="1">
-              APPLICANT
-            </text>
-            <text y="20" fontFamily="Bricolage Grotesque, Inter, sans-serif" fontSize="15" fontWeight="600" fill="#FAF7F0">
-              Calgary Resident
-            </text>
-          </g>
-          <g transform="translate(220 168)">
-            <text fontFamily="Bricolage Grotesque, Inter, sans-serif" fontSize="11" fill="#FAF7F0" opacity="0.6" letterSpacing="1">
-              SPECIALIST
-            </text>
-            <text y="20" fontFamily="Bricolage Grotesque, Inter, sans-serif" fontSize="15" fontWeight="600" fill="#FAF7F0">
-              Hammad B.
-            </text>
-          </g>
-        </g>
-
-        {/* "key" floating element */}
-        <g transform="translate(380 60) rotate(15)">
+        <g transform="translate(24 30) rotate(15)">
           <circle cx="0" cy="0" r="22" fill="#0E3D24" stroke="#D9FF4E" strokeWidth="3" />
           <rect x="18" y="-6" width="46" height="12" rx="3" fill="#D9FF4E" />
           <rect x="48" y="6" width="10" height="8" rx="1.5" fill="#D9FF4E" />
           <rect x="60" y="6" width="6" height="8" rx="1.5" fill="#D9FF4E" />
         </g>
       </svg>
+
+      {/* Approval card mockup, anchored to the bottom of the frame */}
+      <div className="absolute inset-x-4 bottom-4 md:inset-x-6 md:bottom-6">
+        <div className="rounded-3xl bg-gradient-to-br from-brand-forest to-[#155235] p-5 shadow-2xl ring-2 ring-brand-accent/90 md:p-6">
+          <div className="flex items-start justify-between">
+            <span className="text-xs font-semibold tracking-[0.2em] text-brand-accent">
+              APPROVAL
+            </span>
+            <div className="flex gap-1.5">
+              <span className="h-2.5 w-2.5 rounded-full bg-white/80" />
+              <span className="h-2.5 w-2.5 rounded-full bg-brand-accent" />
+            </div>
+          </div>
+
+          <p className="mt-3 font-display text-3xl font-extrabold leading-none text-white md:text-4xl">
+            $24,500
+          </p>
+          <p className="mt-1.5 text-[11px] font-semibold tracking-[0.18em] text-brand-accent">
+            PRE-APPROVED FINANCING
+          </p>
+
+          <div className="mt-4 grid grid-cols-2 gap-3 text-white">
+            <div>
+              <p className="text-[10px] font-medium tracking-[0.18em] text-white/60">
+                APPLICANT
+              </p>
+              <p className="mt-0.5 text-sm font-semibold">Calgary Resident</p>
+            </div>
+            <div>
+              <p className="text-[10px] font-medium tracking-[0.18em] text-white/60">
+                SPECIALIST
+              </p>
+              <p className="mt-0.5 text-sm font-semibold">Hammad B.</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
