@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { BUSINESS, PAGES } from "@/lib/site";
 import Logo from "./Logo";
+import ApplyFreeButton from "./ApplyFreeButton";
 
 const MENU_LINKS = PAGES.filter(p => p.slug !== "/" && p.slug !== "/privacy");
 
@@ -44,9 +45,7 @@ export default function Header() {
           >
             {BUSINESS.phone}
           </a>
-          <Link href="/#apply" className="btn-primary px-5 py-2.5 text-sm">
-            Apply free
-          </Link>
+          <ApplyFreeButton className="btn-primary px-5 py-2.5 text-sm" />
         </div>
       </div>
     </header>

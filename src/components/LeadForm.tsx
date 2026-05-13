@@ -45,11 +45,6 @@ export default function LeadForm({
     setErrorMsg("");
     const form = e.currentTarget;
     const data = Object.fromEntries(new FormData(form).entries());
-    // Honeypot: bots fill hidden fields. Pretend success without sending anywhere.
-    if ((data.company as string) && (data.company as string).length > 0) {
-      setStatus("success");
-      return;
-    }
     try {
       const res = await fetch("/api/lead", {
         method: "POST",
@@ -214,11 +209,6 @@ export default function LeadForm({
           className="input"
         />
       </div>
-
-      {/* Honeypot */}
-      <label className="sr-only" aria-hidden="true">
-        Company<input type="text" name="company" tabIndex={-1} autoComplete="off" />
-      </label>
 
       <p className="mt-5 text-xs text-brand-muted">
         By submitting you consent to be contacted by NewWheels. We never sell your information.

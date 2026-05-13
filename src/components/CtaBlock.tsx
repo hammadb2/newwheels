@@ -1,16 +1,15 @@
 import Link from "next/link";
+import ApplyFreeButton from "./ApplyFreeButton";
 
 type Props = {
   heading?: string;
   body?: string;
-  primaryHref?: string;
   primaryLabel?: string;
 };
 
 export default function CtaBlock({
   heading = "Ready to get approved in Calgary?",
   body = "Apply free in under 2 minutes. Hammad calls you back within 1 hour during business hours.",
-  primaryHref = "/#apply",
   primaryLabel = "Apply free",
 }: Props) {
   return (
@@ -40,12 +39,10 @@ export default function CtaBlock({
               </p>
             </div>
             <div className="flex flex-col gap-3 md:items-end">
-              <Link
-                href={primaryHref}
+              <ApplyFreeButton
                 className="inline-flex w-full items-center justify-center rounded-pill bg-brand-ink px-8 py-4 text-base font-bold text-brand-accent transition hover:bg-brand-forest md:w-auto"
-              >
-                {primaryLabel}
-              </Link>
+                label={primaryLabel}
+              />
               <Link
                 href="/calculator"
                 className="inline-flex w-full items-center justify-center rounded-pill border-2 border-brand-ink px-8 py-3.5 text-base font-bold text-brand-ink transition hover:bg-brand-ink hover:text-brand-accent md:w-auto"
