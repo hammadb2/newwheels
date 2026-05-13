@@ -1,10 +1,13 @@
 /**
- * Inline SVG illustrations used across the marketing site. Themed with the
- * NewWheels evergreen + lime palette and Bricolage Grotesque-friendly shapes.
+ * Illustrations used across the marketing site. The three "situation" art
+ * pieces (bad credit / newcomer / family) are painterly JPGs delivered via
+ * next/image; the supporting illustrations are still inline SVGs themed with
+ * the NewWheels evergreen + lime palette.
  *
  * Each illustration is a self-contained square (1:1) component so it can be
  * dropped into any feature card or page section.
  */
+import Image from "next/image";
 import type { SVGProps } from "react";
 
 type Common = SVGProps<SVGSVGElement>;
@@ -23,114 +26,63 @@ function Frame({ children, ...rest }: { children: React.ReactNode } & Common) {
   );
 }
 
-/** Calgary skyline behind a stylised sedan — used for "drive to work" / general car loan cards. */
-export function CalgaryDriveIllustration(props: Common) {
+type PainterlyProps = { className?: string; priority?: boolean };
+
+function PainterlyTile({
+  src,
+  alt,
+  className,
+  priority,
+}: { src: string; alt: string } & PainterlyProps) {
+  // Source art is 1:1; reserve square space so layouts that only set width
+  // (e.g. PageShell hero) still render at the right height.
   return (
-    <Frame {...props}>
-      <rect width="400" height="400" rx="32" fill="#F5F1E8" />
-      <circle cx="305" cy="110" r="48" fill="#D9FF4E" />
-      <path d="M0 270 L70 200 L130 250 L200 180 L260 240 L330 200 L400 270 L400 320 L0 320 Z" fill="#155235" />
-      <path d="M0 295 L80 250 L160 290 L240 240 L320 295 L400 260 L400 320 L0 320 Z" fill="#0E3D24" />
-      {/* Road */}
-      <rect x="0" y="320" width="400" height="80" fill="#0A2818" />
-      <rect x="40" y="358" width="40" height="4" rx="2" fill="#D9FF4E" />
-      <rect x="120" y="358" width="40" height="4" rx="2" fill="#D9FF4E" />
-      <rect x="200" y="358" width="40" height="4" rx="2" fill="#D9FF4E" />
-      <rect x="280" y="358" width="40" height="4" rx="2" fill="#D9FF4E" />
-      {/* Car */}
-      <g transform="translate(120 280)">
-        <path d="M0 30 L20 0 L130 0 L150 30 L160 30 L160 60 L0 60 Z" fill="#D9FF4E" />
-        <path d="M28 5 L60 5 L65 27 L25 27 Z" fill="#FAF7F0" opacity="0.8" />
-        <path d="M75 5 L120 5 L130 27 L80 27 Z" fill="#FAF7F0" opacity="0.8" />
-        <circle cx="30" cy="60" r="14" fill="#0A2818" />
-        <circle cx="30" cy="60" r="6" fill="#D9FF4E" />
-        <circle cx="130" cy="60" r="14" fill="#0A2818" />
-        <circle cx="130" cy="60" r="6" fill="#D9FF4E" />
-      </g>
-    </Frame>
+    <div className={`relative aspect-square overflow-hidden ${className ?? ""}`}>
+      <Image
+        src={src}
+        alt={alt}
+        fill
+        sizes="(min-width: 1024px) 380px, (min-width: 640px) 50vw, 100vw"
+        priority={priority}
+        className="object-cover"
+      />
+    </div>
   );
 }
 
-/** "Family road trip" — minivan + suitcases. */
-export function FamilyRoadTripIllustration(props: Common) {
+/** Painterly winding mountain road with a small green car — bad credit / first-time buyer. */
+export function CalgaryDriveIllustration({ className, priority }: PainterlyProps) {
   return (
-    <Frame {...props}>
-      <rect width="400" height="400" rx="32" fill="#155235" />
-      {/* Sun */}
-      <circle cx="80" cy="100" r="40" fill="#D9FF4E" />
-      {/* Mountain */}
-      <path d="M150 250 L220 130 L290 250 Z" fill="#0E3D24" />
-      <path d="M230 145 L240 130 L252 148 L246 153 L238 147 Z" fill="#FAF7F0" />
-      {/* Road */}
-      <rect x="0" y="300" width="400" height="100" fill="#0A2818" />
-      <rect x="60" y="350" width="40" height="4" rx="2" fill="#D9FF4E" />
-      <rect x="140" y="350" width="40" height="4" rx="2" fill="#D9FF4E" />
-      <rect x="220" y="350" width="40" height="4" rx="2" fill="#D9FF4E" />
-      <rect x="300" y="350" width="40" height="4" rx="2" fill="#D9FF4E" />
-      {/* Van */}
-      <g transform="translate(100 240)">
-        <rect x="0" y="20" width="180" height="50" rx="8" fill="#FAF7F0" />
-        <rect x="20" y="0" width="100" height="30" fill="#FAF7F0" />
-        <rect x="28" y="6" width="35" height="20" fill="#0A2818" opacity="0.8" />
-        <rect x="70" y="6" width="46" height="20" fill="#0A2818" opacity="0.8" />
-        <circle cx="40" cy="72" r="14" fill="#0A2818" />
-        <circle cx="40" cy="72" r="6" fill="#D9FF4E" />
-        <circle cx="150" cy="72" r="14" fill="#0A2818" />
-        <circle cx="150" cy="72" r="6" fill="#D9FF4E" />
-        {/* Roof rack with bag */}
-        <rect x="35" y="-12" width="120" height="6" rx="2" fill="#0A2818" />
-        <rect x="55" y="-30" width="90" height="20" rx="4" fill="#D9FF4E" />
-      </g>
-    </Frame>
+    <PainterlyTile
+      src="/illustrations/painterly-bad-credit.jpg"
+      alt="Painterly illustration of a small green car driving a sunlit mountain road"
+      className={className}
+      priority={priority}
+    />
   );
 }
 
-/** "First Canadian car" — newcomer + maple leaf accent. */
-export function NewcomerIllustration(props: Common) {
+/** Painterly family loading an SUV with the Calgary skyline in the background. */
+export function FamilyRoadTripIllustration({ className, priority }: PainterlyProps) {
   return (
-    <Frame {...props}>
-      <rect width="400" height="400" rx="32" fill="#D9FF4E" />
-      {/* Maple leaf */}
-      <g transform="translate(60 60)" fill="#0E3D24">
-        <path d="M40 0 L48 18 L70 14 L58 30 L80 38 L60 44 L66 62 L48 56 L40 80 L32 56 L14 62 L20 44 L0 38 L22 30 L10 14 L32 18 Z" />
-      </g>
-      {/* Big number */}
-      <text
-        x="200"
-        y="190"
-        textAnchor="middle"
-        fontFamily="Bricolage Grotesque, Inter, sans-serif"
-        fontSize="120"
-        fontWeight="800"
-        fill="#0E3D24"
-        letterSpacing="-0.05em"
-      >
-        1ST
-      </text>
-      <text
-        x="200"
-        y="220"
-        textAnchor="middle"
-        fontFamily="Bricolage Grotesque, Inter, sans-serif"
-        fontSize="22"
-        fontWeight="700"
-        fill="#0E3D24"
-        letterSpacing="0.05em"
-      >
-        CANADIAN CAR
-      </text>
-      {/* Mini car */}
-      <g transform="translate(120 270)">
-        <rect x="0" y="20" width="160" height="40" rx="6" fill="#0E3D24" />
-        <rect x="20" y="0" width="120" height="25" rx="4" fill="#0E3D24" />
-        <rect x="30" y="6" width="40" height="15" fill="#FAF7F0" opacity="0.7" />
-        <rect x="80" y="6" width="50" height="15" fill="#FAF7F0" opacity="0.7" />
-        <circle cx="40" cy="60" r="12" fill="#0A2818" />
-        <circle cx="40" cy="60" r="5" fill="#D9FF4E" />
-        <circle cx="130" cy="60" r="12" fill="#0A2818" />
-        <circle cx="130" cy="60" r="5" fill="#D9FF4E" />
-      </g>
-    </Frame>
+    <PainterlyTile
+      src="/illustrations/painterly-family.jpg"
+      alt="Painterly illustration of a Calgary family packing an SUV with the city skyline behind"
+      className={className}
+      priority={priority}
+    />
+  );
+}
+
+/** Painterly newcomer driving past a "Welcome to Canada" sign toward a mountain skyline. */
+export function NewcomerIllustration({ className, priority }: PainterlyProps) {
+  return (
+    <PainterlyTile
+      src="/illustrations/painterly-newcomer.jpg"
+      alt="Painterly illustration of an SUV passing a Welcome to Canada sign with mountains and a city skyline"
+      className={className}
+      priority={priority}
+    />
   );
 }
 
@@ -267,32 +219,33 @@ export function ApprovalCardIllustration(props: Common) {
 /** Selector that returns the right illustration for a given situation slug. */
 export function SituationIllustration({
   slug,
+  className,
   ...rest
-}: { slug: string } & Common) {
+}: { slug: string; className?: string } & Common) {
   switch (slug) {
     case "/bad-credit-car-loans-calgary":
-      return <CreditRebuildIllustration {...rest} />;
+      return <CalgaryDriveIllustration className={className} />;
     case "/newcomer-car-loans-calgary":
-      return <NewcomerIllustration {...rest} />;
+      return <NewcomerIllustration className={className} />;
     case "/car-loan-work-permit-calgary":
-      return <WorkPermitIllustration {...rest} />;
+      return <WorkPermitIllustration className={className} {...rest} />;
     case "/car-loan-after-bankruptcy-calgary":
-      return <CreditRebuildIllustration {...rest} />;
+      return <CreditRebuildIllustration className={className} {...rest} />;
     case "/self-employed-car-loan-calgary":
-      return <SelfEmployedIllustration {...rest} />;
+      return <SelfEmployedIllustration className={className} {...rest} />;
     case "/first-time-car-buyer-calgary":
-      return <CalgaryDriveIllustration {...rest} />;
+      return <CalgaryDriveIllustration className={className} />;
     case "/consumer-proposal-car-loan-calgary":
-      return <CreditRebuildIllustration {...rest} />;
+      return <CreditRebuildIllustration className={className} {...rest} />;
     case "/nissan-financing-calgary":
-      return <CalgaryDriveIllustration {...rest} />;
+      return <CalgaryDriveIllustration className={className} />;
     case "/how-it-works":
-      return <FamilyRoadTripIllustration {...rest} />;
+      return <FamilyRoadTripIllustration className={className} />;
     case "/about":
-      return <ApprovalCardIllustration {...rest} />;
+      return <ApprovalCardIllustration className={className} {...rest} />;
     case "/calculator":
-      return <ApprovalCardIllustration {...rest} />;
+      return <ApprovalCardIllustration className={className} {...rest} />;
     default:
-      return <ApprovalCardIllustration {...rest} />;
+      return <ApprovalCardIllustration className={className} {...rest} />;
   }
 }
