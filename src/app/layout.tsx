@@ -4,6 +4,7 @@ import { Bricolage_Grotesque } from "next/font/google";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CallClickTracker from "@/components/CallClickTracker";
+import ApplyAnchorScroll from "@/components/ApplyAnchorScroll";
 import { TrackingBody, TrackingHead } from "@/components/Tracking";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, TRACKING } from "@/lib/site";
 
@@ -49,6 +50,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <TrackingBody />
         <Header />
         <CallClickTracker />
+        <ApplyAnchorScroll />
         <main id="main">{children}</main>
         <Footer />
       </body>
