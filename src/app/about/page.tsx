@@ -66,23 +66,23 @@ export default function Page() {
         { href: "/privacy", label: "Privacy policy" },
       ]}
     >
-      <div className="mb-8 flex flex-col items-center gap-4 sm:flex-row">
+      <div className="mb-10 flex flex-col items-start gap-5 rounded-4xl bg-brand-cream p-6 ring-1 ring-brand-line sm:flex-row sm:items-center">
         <Image
           src="/hammad.jpg"
           alt={name}
           width={160}
           height={160}
-          className="h-40 w-40 rounded-2xl object-cover"
+          className="h-32 w-32 shrink-0 rounded-3xl object-cover ring-2 ring-brand-accent sm:h-40 sm:w-40"
           priority
         />
         <div>
-          <p className="text-lg font-bold text-[#111111]">{name}</p>
-          <p className="text-[#6B7280]">Automotive Finance Specialist · Calgary, Alberta</p>
-          <p className="mt-1 text-sm text-[#6B7280]">
+          <p className="text-xl font-extrabold text-brand-ink">{name}</p>
+          <p className="text-brand-muted">Automotive Finance Specialist &middot; Calgary, Alberta</p>
+          <p className="mt-2 text-sm text-brand-muted">
             AMVIC licence:{" "}
             <a
               href={BUSINESS.amvicRegistryUrl}
-              className="font-semibold text-[#111111] underline"
+              className="font-semibold text-brand-ink underline-offset-4 hover:underline"
               target="_blank"
               rel="noopener noreferrer"
             >

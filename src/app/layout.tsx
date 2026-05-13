@@ -1,16 +1,17 @@
 import "./globals.css";
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Bricolage_Grotesque } from "next/font/google";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CallClickTracker from "@/components/CallClickTracker";
 import { TrackingBody, TrackingHead } from "@/components/Tracking";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, TRACKING } from "@/lib/site";
 
-const inter = Inter({
+const bricolage = Bricolage_Grotesque({
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-inter",
+  variable: "--font-bricolage",
+  weight: ["300", "400", "500", "600", "700", "800"],
 });
 
 export const metadata: Metadata = {
@@ -32,18 +33,18 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#1A7A4A",
+  themeColor: "#0E3D24",
   width: "device-width",
   initialScale: 1,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en-CA" className={inter.variable}>
+    <html lang="en-CA" className={bricolage.variable}>
       <head>
         <TrackingHead />
       </head>
-      <body className="bg-white font-sans text-brand-ink">
+      <body className="bg-brand-creamSoft font-sans text-brand-ink">
         <a className="skip-link" href="#main">Skip to content</a>
         <TrackingBody />
         <Header />

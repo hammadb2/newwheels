@@ -6,24 +6,27 @@ const MENU_LINKS = PAGES.filter(p => p.slug !== "/" && p.slug !== "/privacy");
 
 export default function Header() {
   return (
-    <header className="sticky top-0 z-30 border-b border-brand-line bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">
+    <header className="sticky top-0 z-30 border-b border-brand-line bg-brand-creamSoft/90 backdrop-blur supports-[backdrop-filter]:bg-brand-creamSoft/75">
       <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3 md:py-4">
-        <Link href="/" aria-label="NewWheels home" className="flex shrink-0 items-center gap-2">
-          <Logo className="h-7 w-auto" compact />
-          <span className="sr-only">NewWheels</span>
+        <Link href="/" aria-label="NewWheels home" className="flex shrink-0 items-center">
+          <Logo className="h-9 w-auto md:h-10" />
         </Link>
 
-        <nav aria-label="Primary" className="ml-4 hidden flex-1 md:flex">
+        <nav aria-label="Primary" className="ml-6 hidden flex-1 md:flex">
           <div className="group relative">
-            <button type="button" className="inline-flex items-center gap-1 rounded-lg px-3 py-2 font-medium text-[#111111] transition hover:text-[#6B7280]" aria-haspopup="true">
-              Menu <span aria-hidden="true" className="text-xs">▾</span>
+            <button
+              type="button"
+              className="inline-flex items-center gap-1.5 rounded-pill px-4 py-2 text-sm font-semibold text-brand-ink transition hover:bg-brand-cream"
+              aria-haspopup="true"
+            >
+              Menu <span aria-hidden="true" className="text-[10px]">▼</span>
             </button>
-            <ul className="invisible absolute left-0 top-full mt-1 w-64 rounded-lg border border-brand-line bg-white p-2 opacity-0 shadow-card transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+            <ul className="invisible absolute left-0 top-full mt-2 w-72 rounded-3xl border border-brand-line bg-white p-2 opacity-0 shadow-card transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
               {MENU_LINKS.map(p => (
                 <li key={p.slug}>
                   <Link
                     href={p.slug}
-                    className="block rounded-md px-3 py-2 text-sm text-[#111111] hover:bg-[#F9F9F9] hover:text-brand-primary"
+                    className="block rounded-2xl px-3 py-2 text-sm font-medium text-brand-ink hover:bg-brand-cream"
                   >
                     {p.shortTitle}
                   </Link>
@@ -36,13 +39,13 @@ export default function Header() {
         <div className="ml-auto flex items-center gap-3">
           <a
             href={`tel:${BUSINESS.phoneHref}`}
-            className="hidden text-sm font-medium text-[#111111] sm:inline-flex"
+            className="hidden text-sm font-semibold text-brand-ink hover:text-brand-forest sm:inline-flex"
             data-analytics="call_click"
           >
             {BUSINESS.phone}
           </a>
-          <Link href="/#apply" className="btn-primary text-sm">
-            Apply Free
+          <Link href="/#apply" className="btn-primary px-5 py-2.5 text-sm">
+            Apply free
           </Link>
         </div>
       </div>

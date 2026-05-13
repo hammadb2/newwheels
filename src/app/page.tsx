@@ -4,7 +4,15 @@ import Hero from "@/components/Hero";
 import TrustBar from "@/components/TrustBar";
 import Faq from "@/components/Faq";
 import CtaBlock from "@/components/CtaBlock";
+import LeadForm from "@/components/LeadForm";
 import JsonLd from "@/components/JsonLd";
+import AuthorBio from "@/components/AuthorBio";
+import {
+  CalgaryDriveIllustration,
+  FamilyRoadTripIllustration,
+  NewcomerIllustration,
+  ApprovalCardIllustration,
+} from "@/components/Illustrations";
 import {
   faqSchema,
   localBusinessSchema,
@@ -61,26 +69,62 @@ const VEHICLES = [
   { name: "Pre-owned trucks", note: "Trades, oil and gas, and contractor approvals." },
 ];
 
+const FEATURE_CARDS: Array<{
+  badge: string;
+  heading: string;
+  body: string;
+  cta: { href: string; label: string };
+  bg: "cream" | "lime" | "white";
+  Illustration: React.ComponentType<{ className?: string }>;
+}> = [
+  {
+    badge: "Bad credit & rebuild",
+    heading: "Approvals even when your score is rough.",
+    body: "We work with sub-prime and prime lenders who care more about your full picture than a 3-digit number.",
+    cta: { href: "/bad-credit-car-loans-calgary", label: "See bad-credit loans" },
+    bg: "cream",
+    Illustration: ({ className }) => <CalgaryDriveIllustration className={className} />,
+  },
+  {
+    badge: "Newcomer to Canada",
+    heading: "Your first Canadian car, on day one.",
+    body: "Work permit, study permit, or brand-new PR? Lenders we work with approve newcomers without Canadian credit history.",
+    cta: { href: "/newcomer-car-loans-calgary", label: "Newcomer loans" },
+    bg: "lime",
+    Illustration: ({ className }) => <NewcomerIllustration className={className} />,
+  },
+  {
+    badge: "Family in Calgary",
+    heading: "A vehicle big enough for everything ahead.",
+    body: "Roadtrips, hockey practice, Costco runs. Up to 6 months of payments covered on qualified deals.",
+    cta: { href: "/how-it-works", label: "How it works" },
+    bg: "white",
+    Illustration: ({ className }) => <FamilyRoadTripIllustration className={className} />,
+  },
+];
+
 export default function HomePage() {
   return (
     <>
       <JsonLd
         data={[localBusinessSchema(), websiteSchema(), organizationSchema(), faqSchema(FAQ)]}
       />
+
       <Hero />
       <TrustBar />
 
-      {/* How it works — the one section with #F9F9F9 background */}
-      <section className="bg-[#F9F9F9]">
-        <div className="mx-auto max-w-6xl px-4 py-20 md:py-[120px]">
-          <div className="mx-auto max-w-3xl text-center">
-            <p className="text-sm font-semibold uppercase tracking-wide text-[#6B7280]">
-              The NewWheels offer
-            </p>
-            <h2 className="mt-2 text-3xl font-bold md:text-4xl">
-              Real approvals. Real Calgary specialist. Up to 6 months of payments covered.
-            </h2>
-            <p className="mt-3 text-[#6B7280]">
+      {/* ===== The NewWheels offer ===== */}
+      <section className="bg-brand-cream">
+        <div className="mx-auto max-w-6xl px-4 py-20 md:py-28">
+          <div className="grid gap-10 md:grid-cols-[1fr_1.4fr] md:items-end">
+            <div>
+              <span className="chip">The NewWheels offer</span>
+              <h2 className="display-headline mt-4 text-section font-extrabold uppercase text-brand-ink">
+                Real approvals.
+                <span className="block text-brand-forest">Real Calgary specialist.</span>
+              </h2>
+            </div>
+            <p className="text-base text-brand-muted md:text-lg">
               AutoNova and the big online brokers will run your file through an algorithm. We
               won&apos;t. Hammad reviews every application personally, picks the right lender for
               your file, and tells you the truth about your rate up front, even if it&apos;s not
@@ -88,45 +132,137 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="mt-10 grid gap-5 md:grid-cols-3">
+          <div className="mt-12 grid gap-5 md:grid-cols-3">
             {[
               {
-                title: "1. Apply free",
+                step: "01",
+                title: "Apply free",
                 body: "Fill the form. 90 seconds. No hard credit check, no obligation.",
               },
               {
-                title: "2. Hammad calls you",
+                step: "02",
+                title: "Hammad calls",
                 body: "Within 1 hour during business hours. We confirm your details and your goals.",
               },
               {
-                title: "3. Drive in 24-72 hours",
+                step: "03",
+                title: "Drive in 24–72 hrs",
                 body: "We submit to the right lender, get approval, finalise paperwork, hand you the keys.",
               },
-            ].map(step => (
-              <div key={step.title} className="rounded-2xl bg-white p-6">
-                <p className="text-lg font-bold text-[#111111]">{step.title}</p>
-                <p className="mt-2 text-[#6B7280]">{step.body}</p>
+            ].map(s => (
+              <div
+                key={s.step}
+                className="rounded-4xl bg-white p-7 shadow-card ring-1 ring-brand-line"
+              >
+                <span className="font-display text-5xl font-extrabold text-brand-accent">
+                  {s.step}
+                </span>
+                <p className="mt-4 text-xl font-bold text-brand-ink">{s.title}</p>
+                <p className="mt-2 text-sm leading-relaxed text-brand-muted">{s.body}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Situations — white background, no card borders or icons */}
-      <section>
-        <div className="mx-auto max-w-6xl px-4 py-20 md:py-[120px]">
-          <div className="grid gap-8 md:grid-cols-2 md:items-center">
+      {/* ===== Feature cards (Koho-style trio) ===== */}
+      <section className="bg-brand-creamSoft">
+        <div className="mx-auto max-w-6xl px-4 py-20 md:py-28">
+          <div className="max-w-3xl">
+            <span className="chip">Built for you</span>
+            <h2 className="display-headline mt-4 text-section font-extrabold uppercase text-brand-ink">
+              Whatever your situation,
+              <span className="block text-brand-forest">we have a plan.</span>
+            </h2>
+          </div>
+
+          <div className="mt-12 grid gap-6 md:grid-cols-3">
+            {FEATURE_CARDS.map(card => {
+              const bg =
+                card.bg === "lime"
+                  ? "bg-brand-accent text-brand-ink"
+                  : card.bg === "cream"
+                  ? "bg-brand-cream text-brand-ink"
+                  : "bg-white text-brand-ink";
+              return (
+                <article
+                  key={card.heading}
+                  className={`flex flex-col overflow-hidden rounded-4xl shadow-card ring-1 ring-brand-line ${bg}`}
+                >
+                  <card.Illustration className="aspect-square w-full" />
+                  <div className="flex flex-1 flex-col p-7">
+                    <span className="text-xs font-bold uppercase tracking-widest text-brand-forest">
+                      {card.badge}
+                    </span>
+                    <h3 className="mt-3 text-xl font-extrabold leading-tight md:text-2xl">
+                      {card.heading}
+                    </h3>
+                    <p className="mt-3 text-sm leading-relaxed text-brand-ink/75">
+                      {card.body}
+                    </p>
+                    <Link
+                      href={card.cta.href}
+                      className="mt-5 inline-flex items-center gap-1.5 self-start text-sm font-bold text-brand-ink underline-offset-4 hover:underline"
+                    >
+                      {card.cta.label} <span aria-hidden="true">→</span>
+                    </Link>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ===== Lead form section (dedicated dark section) ===== */}
+      <section id="apply" className="section-dark relative overflow-hidden">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 opacity-[0.05]"
+          style={{
+            backgroundImage:
+              "radial-gradient(rgba(217,255,78,0.9) 1px, transparent 1px)",
+            backgroundSize: "26px 26px",
+          }}
+        />
+        <div className="relative mx-auto grid max-w-6xl gap-12 px-4 py-20 md:grid-cols-[1fr_1.05fr] md:py-28">
+          <div className="text-white">
+            <span className="chip-dark">2 minutes · No hard pull</span>
+            <h2 className="display-headline mt-4 text-section font-extrabold uppercase text-white">
+              Apply free.
+              <span className="block text-brand-accent">Drive this week.</span>
+            </h2>
+            <p className="mt-5 max-w-md text-lg text-white/85">
+              Fill the form and Hammad personally calls you within 1 hour during business hours.
+              No bots. No call centres. No surprises.
+            </p>
+            <div className="mt-8">
+              <ApprovalCardIllustration className="w-full max-w-md" />
+            </div>
+          </div>
+          <div>
+            <LeadForm
+              variant="hero"
+              sourcePage="/"
+              heading="Get pre-approved for free"
+              subheading="No hard credit check. Hammad personally calls every applicant within 1 hour during business hours."
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* ===== Situation directory ===== */}
+      <section className="bg-brand-cream">
+        <div className="mx-auto max-w-6xl px-4 py-20 md:py-28">
+          <div className="grid gap-10 md:grid-cols-[1fr_1.3fr]">
             <div>
-              <p className="text-sm font-semibold uppercase tracking-wide text-[#6B7280]">
-                Built for every Calgary situation
-              </p>
-              <h2 className="mt-2 text-3xl font-bold md:text-4xl">
-                We have a dedicated page for your exact situation.
+              <span className="chip">Pick your page</span>
+              <h2 className="display-headline mt-4 text-section font-extrabold uppercase text-brand-ink">
+                A page for every situation.
               </h2>
-              <p className="mt-3 text-[#6B7280]">
-                We don&apos;t do generic financing. Pick the page that matches your situation.
-                Each one is written by Hammad, with realistic timelines, document lists, and
-                Calgary-specific context.
+              <p className="mt-4 max-w-sm text-base text-brand-muted">
+                We don&apos;t do generic financing. Each page is written by Hammad with realistic
+                timelines, document lists, and Calgary-specific context.
               </p>
             </div>
             <ul className="grid gap-3 sm:grid-cols-2">
@@ -134,10 +270,22 @@ export default function HomePage() {
                 <li key={p.slug}>
                   <Link
                     href={p.slug}
-                    className="block p-4 transition hover:text-[#111111]"
+                    className="group block rounded-3xl bg-white p-5 ring-1 ring-brand-line transition hover:-translate-y-1 hover:ring-brand-accent"
                   >
-                    <span className="font-semibold text-[#111111]">{p.shortTitle}</span>
-                    <span className="mt-1 block text-sm text-[#6B7280]">{p.title}</span>
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <p className="font-bold text-brand-ink">{p.shortTitle}</p>
+                        <p className="mt-1 text-sm leading-relaxed text-brand-muted">
+                          {p.title}
+                        </p>
+                      </div>
+                      <span
+                        aria-hidden="true"
+                        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-pill bg-brand-cream text-brand-ink transition group-hover:bg-brand-accent"
+                      >
+                        →
+                      </span>
+                    </div>
                   </Link>
                 </li>
               ))}
@@ -146,37 +294,50 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Nissan — white background */}
-      <section>
-        <div className="mx-auto max-w-6xl px-4 py-20 md:py-[120px]">
-          <div className="grid gap-8 md:grid-cols-2 md:items-center">
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-wide text-[#6B7280]">
-                The Calgary advantage
-              </p>
-              <h2 className="mt-2 text-3xl font-bold md:text-4xl">
-                New 2026 Nissans, through Hammad at South Trail Nissan.
+      {/* ===== Nissan / vehicles ===== */}
+      <section className="bg-brand-creamSoft">
+        <div className="mx-auto max-w-6xl px-4 py-20 md:py-28">
+          <div className="grid gap-12 md:grid-cols-[1fr_1fr] md:items-center">
+            <div className="rounded-4xl bg-brand-deep p-10 text-white md:p-12">
+              <span className="chip-dark">The Calgary advantage</span>
+              <h2 className="display-headline mt-4 text-section font-extrabold uppercase text-white md:text-[clamp(2rem,4vw,3.25rem)]">
+                New <span className="text-brand-accent">2026</span> Nissans,
+                <span className="block">through Hammad.</span>
               </h2>
-              <p className="mt-3 text-[#6B7280]">
+              <p className="mt-4 text-base text-white/80">
                 Most Calgary brokers can&apos;t get you into a brand-new vehicle. We can. Hammad
                 is on the floor at South Trail Nissan and brings every program promotion through
                 NewWheels first.
               </p>
-              <div className="mt-5 flex flex-wrap gap-2">
-                <Link href="/nissan-financing-calgary" className="btn-secondary">
+              <div className="mt-6 flex flex-wrap gap-3">
+                <Link href="/nissan-financing-calgary" className="btn-primary-dark text-sm">
                   Nissan financing Calgary
                 </Link>
-                <Link href="/calculator" className="btn-secondary text-sm">Estimate my payment</Link>
+                <Link href="/calculator" className="btn-ghost-dark text-sm">
+                  Estimate my payment
+                </Link>
               </div>
             </div>
-            <ul className="grid gap-3 sm:grid-cols-2">
+            <ul className="grid gap-4 sm:grid-cols-2">
               {VEHICLES.map(v => (
-                <li key={v.name} className="p-5">
-                  <p className="font-semibold text-[#111111]">{v.name}</p>
-                  <p className="mt-1 text-sm text-[#6B7280]">{v.note}</p>
+                <li
+                  key={v.name}
+                  className="rounded-3xl bg-white p-6 ring-1 ring-brand-line"
+                >
+                  <p className="text-lg font-bold text-brand-ink">{v.name}</p>
+                  <p className="mt-2 text-sm leading-relaxed text-brand-muted">{v.note}</p>
                 </li>
               ))}
             </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* ===== Hammad bio teaser ===== */}
+      <section className="bg-brand-cream">
+        <div className="mx-auto max-w-5xl px-4 py-16 md:py-24">
+          <div className="rounded-4xl bg-white p-8 shadow-card ring-1 ring-brand-line md:p-12">
+            <AuthorBio />
           </div>
         </div>
       </section>

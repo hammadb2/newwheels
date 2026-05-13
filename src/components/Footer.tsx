@@ -6,54 +6,62 @@ import Logo from "./Logo";
 export default function Footer() {
   const year = new Date().getFullYear();
   return (
-    <footer className="mt-16 border-t border-brand-line">
-      <div className="mx-auto max-w-6xl px-4 py-12">
-        <div className="grid gap-10 md:grid-cols-4">
+    <footer className="section-deep">
+      <div className="mx-auto max-w-6xl px-4 py-16 md:py-20">
+        <div className="grid gap-12 md:grid-cols-4">
           <div className="md:col-span-2">
-            <Link href="/" aria-label="NewWheels home">
-              <Logo className="h-10 w-auto" />
+            <Link href="/" aria-label="NewWheels home" className="inline-flex">
+              <Logo className="h-10 w-auto md:h-12" dark />
             </Link>
-            <p className="mt-2 text-sm text-[#6B7280]">
+            <p className="mt-4 max-w-md text-sm leading-relaxed text-white/75">
               Calgary vehicle financing for bad credit, newcomers, work-permit holders, and
               self-employed buyers. Up to 6 months of payments covered on qualified deals.
             </p>
-            <p className="mt-4 text-sm text-[#6B7280]">
-              <span className="block font-semibold text-[#111111]">{BUSINESS.address.street}</span>
+            <p className="mt-5 text-sm text-white/75">
+              <span className="block font-semibold text-white">{BUSINESS.address.street}</span>
               <span className="block">
                 {BUSINESS.address.locality}, {BUSINESS.address.region}{" "}
                 {BUSINESS.address.postal}
               </span>
               <span className="block">{BUSINESS.address.country}</span>
             </p>
-            <p className="mt-3 text-sm">
+            <p className="mt-4 text-sm">
               <a
                 href={`tel:${BUSINESS.phoneHref}`}
-                className="font-semibold text-[#111111]"
+                className="font-semibold text-brand-accent underline-offset-4 hover:underline"
                 data-analytics="call_click"
               >
                 {BUSINESS.phone}
-              </a>{" "}
-              · <a href={`mailto:${BUSINESS.email}`} className="underline">{BUSINESS.email}</a>
+              </a>
+              <span className="px-2 text-white/40">·</span>
+              <a
+                href={`mailto:${BUSINESS.email}`}
+                className="text-white underline-offset-4 hover:underline"
+              >
+                {BUSINESS.email}
+              </a>
             </p>
-            <p className="mt-2 text-sm text-[#6B7280]">{BUSINESS.hours}</p>
-            <p className="mt-4 text-xs text-[#9CA3AF]">
+            <p className="mt-2 text-sm text-white/65">{BUSINESS.hours}</p>
+            <p className="mt-5 text-xs text-white/50">
               AMVIC licensed.{" "}
               <a
                 href={BUSINESS.amvicRegistryUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="underline"
+                className="text-white/80 underline-offset-4 hover:text-brand-accent hover:underline"
               >
                 {BUSINESS.amvic}
               </a>
             </p>
           </div>
           <div>
-            <p className="text-sm font-semibold text-[#111111]">Sitemap</p>
-            <ul className="mt-3 space-y-2 text-sm">
+            <p className="text-xs font-bold uppercase tracking-widest text-brand-accent">
+              Sitemap
+            </p>
+            <ul className="mt-4 space-y-2 text-sm">
               {PAGES.filter(p => p.slug !== "/").map(p => (
                 <li key={p.slug}>
-                  <Link href={p.slug} className="text-[#6B7280] hover:text-[#111111]">
+                  <Link href={p.slug} className="text-white/80 hover:text-brand-accent">
                     {p.shortTitle}
                   </Link>
                 </li>
@@ -61,23 +69,32 @@ export default function Footer() {
             </ul>
           </div>
           <div>
-            <p className="text-sm font-semibold text-[#111111]">We serve</p>
-            <ul className="mt-3 space-y-2 text-sm text-[#6B7280]">
+            <p className="text-xs font-bold uppercase tracking-widest text-brand-accent">
+              We serve
+            </p>
+            <ul className="mt-4 space-y-2 text-sm text-white/80">
               {BUSINESS.serviceAreas.map(area => (
                 <li key={area}>{area}</li>
               ))}
             </ul>
           </div>
         </div>
-        <div className="mt-10 border-t border-brand-line pt-8">
-          <AuthorBio compact />
+        <div className="mt-12 rounded-3xl bg-brand-forest/40 p-6 ring-1 ring-white/10">
+          <AuthorBio compact dark />
         </div>
-        <div className="mt-8 flex flex-col gap-2 border-t border-brand-line pt-6 text-xs text-[#9CA3AF] md:flex-row md:items-center md:justify-between">
+        <div className="mt-10 flex flex-col gap-2 border-t border-white/15 pt-6 text-xs text-white/55 md:flex-row md:items-center md:justify-between">
           <span>&copy; {year} {SITE_NAME}. All rights reserved.</span>
           <span>
-            <Link href="/privacy" className="underline">Privacy</Link>
-            {" · "}
-            <Link href="/how-it-works" className="underline">How it works</Link>
+            <Link href="/privacy" className="underline-offset-4 hover:text-brand-accent hover:underline">
+              Privacy
+            </Link>
+            <span className="px-2 text-white/40">·</span>
+            <Link
+              href="/how-it-works"
+              className="underline-offset-4 hover:text-brand-accent hover:underline"
+            >
+              How it works
+            </Link>
           </span>
         </div>
       </div>
