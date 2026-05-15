@@ -56,7 +56,7 @@ function emailWrapper(body: string): string {
                     &nbsp;·&nbsp;
                     <a href="mailto:${BUSINESS.email}" style="color:${BRAND.forest};text-decoration:none;">${BUSINESS.email}</a><br/>
                     ${BUSINESS.hours}<br/>
-                    <a href="${BUSINESS.amvicRegistryUrl}" style="color:${BRAND.muted};text-decoration:underline;font-size:12px;" target="_blank" rel="noopener noreferrer">AMVIC licensed</a>
+                    <span style="color:${BRAND.muted};font-size:12px;">Working with AMVIC-licensed dealer partners across Calgary &amp; Alberta.</span>
                   </td>
                 </tr>
                 <tr>

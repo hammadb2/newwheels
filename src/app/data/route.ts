@@ -5,13 +5,13 @@
 // that ingests this URL sees the same facts.
 //
 // The JSON contains:
-//   - Identity (name, legal name, AMVIC registration, founding location)
+//   - Identity (name, legal name, founding location)
 //   - NAP (name / address / phone) in canonical form
 //   - Service areas (every city served)
 //   - Services offered (with descriptions)
 //   - Buyer audiences with rate ranges
 //   - Languages spoken
-//   - Trust signals (AMVIC URL, sameAs directory)
+//   - Trust signals (sameAs directory)
 //
 // All values are sourced from `src/lib/site.ts` and the programmatic data
 // layer — there is one canonical source of truth.
@@ -53,11 +53,9 @@ export function GET() {
     },
     serviceArea: BUSINESS.serviceAreas.map(name => ({ "@type": "City", name })),
     sameAs: BUSINESS.sameAs,
-    license: {
-      "@type": "Certification",
-      name: "AMVIC (Alberta Motor Vehicle Industry Council)",
-      certificationStatus: "Active",
-      url: BUSINESS.amvicRegistryUrl,
+    partners: {
+      description:
+        "NewWheels works exclusively with AMVIC-licensed dealer partners across Calgary and Alberta.",
     },
     languages: Object.keys(LANGUAGE_HREFLANG).filter(k => k !== "x-default"),
     services: PAGES.filter(p => p.group === "situation").map(p => ({

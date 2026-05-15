@@ -119,8 +119,9 @@ export default function Page() {
         Don&apos;t apply at five places in a week. Each application is a hard credit pull and
         Canadian lenders see the pattern as a risk signal. Don&apos;t put $0 down if you can
         put $1,000. Even a small down payment dramatically improves your rate. And don&apos;t
-        sign anything you don&apos;t understand. AMVIC mandates plain-language disclosure in
-        Alberta and we hold ourselves to it.
+        sign anything you don&apos;t understand. Alberta consumer-protection rules require
+        plain-language disclosure and our AMVIC-licensed dealer partners hold themselves to
+        it.
       </p>
 
       <HubSpokes

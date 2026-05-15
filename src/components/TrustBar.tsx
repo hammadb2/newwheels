@@ -3,7 +3,7 @@ const ITEMS = [
   { label: "No hard credit check", sub: "Doesn't ding your score" },
   { label: "24-hour approval", sub: "A specialist calls in 1 hour" },
   { label: "Up to 6 months covered", sub: "On qualified deals" },
-  { label: "AMVIC licensed", sub: "Real Calgary specialist" },
+  { label: "AMVIC-licensed dealer partners", sub: "Across Calgary & Alberta" },
 ];
 
 export default function TrustBar() {

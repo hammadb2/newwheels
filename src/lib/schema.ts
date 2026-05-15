@@ -48,12 +48,6 @@ export function localBusinessSchema() {
     ],
     priceRange: "Free to apply",
     sameAs: BUSINESS.sameAs,
-    employee: {
-      "@type": "Person",
-      name: "NewWheels Specialist",
-      jobTitle: "Automotive Finance Specialist",
-      description: "AMVIC-licensed automotive sales professional in Calgary, Alberta.",
-    },
   };
 }
 
@@ -184,14 +178,13 @@ export function teamSchema() {
     name: SITE_NAME,
     url: SITE_URL,
     description:
-      "Calgary's specialist vehicle financing platform. AMVIC-licensed. Bad credit, newcomers, work permits, and self-employed buyers approved in 24 hours.",
+      "Calgary's specialist vehicle financing lead generation platform. Bad credit, newcomers, work permits, and self-employed buyers approved in 24 hours through AMVIC-licensed dealer partners.",
     logo: fullUrl("/logo-wordmark.png"),
     knowsAbout: [
       "Vehicle financing",
       "Newcomer car loans",
       "Bad credit auto loans",
       "Consumer proposal car loans",
-      "AMVIC compliance",
     ],
   };
 }

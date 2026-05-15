@@ -57,7 +57,6 @@ All env vars are **optional**. Site builds and renders without any of them, with
 | `NEXT_PUBLIC_BUSINESS_PHONE_HREF` | `tel:` href, e.g. `+14035550123`. |
 | `NEXT_PUBLIC_BUSINESS_ADDRESS_STREET` | Street line for footer + LocalBusiness schema. |
 | `NEXT_PUBLIC_BUSINESS_ADDRESS_POSTAL` | Postal code. |
-| `NEXT_PUBLIC_AMVIC_LICENSE` | AMVIC licence number/text shown in footer. |
 | `NEXT_PUBLIC_HAMMAD_LASTNAME` | Hammad's surname (used on `/about` and Person schema). |
 | `NEXT_PUBLIC_GTM_ID` | Google Tag Manager container, `GTM-XXXX`. |
 | `NEXT_PUBLIC_GA4_ID` | GA4 measurement ID, `G-XXXX`. Used as a fallback if GTM isn't set. |

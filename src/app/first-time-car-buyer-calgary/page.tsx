@@ -91,7 +91,7 @@ export default function Page() {
         Because we don&apos;t make money on upsells. Our income comes from the lender on the
         backend, the same way it works at every major Canadian broker. We don&apos;t need to
         sell you a $4,000 paint protection package or a $2,500 anti-theft etching service to
-        make the deal work. That&apos;s the AMVIC standard, and that&apos;s how we keep
+        make the deal work. That&apos;s the NewWheels standard, and that&apos;s how we keep
         first-time buyers as lifelong customers.
       </p>
     </PageShell>

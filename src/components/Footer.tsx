@@ -42,15 +42,8 @@ export default function Footer() {
             </p>
             <p className="mt-2 text-sm text-white/65">{BUSINESS.hours}</p>
             <p className="mt-5 text-xs text-white/50">
-              Our specialist is AMVIC licensed.{" "}
-              <a
-                href={BUSINESS.amvicRegistryUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-white/80 underline-offset-4 hover:text-brand-accent hover:underline"
-              >
-                {BUSINESS.amvic}
-              </a>
+              NewWheels works exclusively with AMVIC-licensed dealer partners across Calgary
+              and Alberta.
             </p>
           </div>
           <div>
@@ -90,6 +83,10 @@ export default function Footer() {
           <span>
             <Link href="/privacy" className="underline-offset-4 hover:text-brand-accent hover:underline">
               Privacy
+            </Link>
+            <span className="px-2 text-white/40">·</span>
+            <Link href="/terms" className="underline-offset-4 hover:text-brand-accent hover:underline">
+              Terms
             </Link>
             <span className="px-2 text-white/40">·</span>
             <Link
