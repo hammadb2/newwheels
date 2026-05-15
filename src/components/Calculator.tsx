@@ -4,6 +4,28 @@ import { useMemo, useState } from "react";
 
 type Tier = "Excellent" | "Good" | "Fair" | "Poor" | "No Canadian Credit" | "Bankruptcy/Proposal";
 type Mode = "estimate" | "traditional";
+type Freq = "biweekly" | "monthly";
+
+type Scenario = {
+  id: number;
+  price: number;
+  rate: number;
+  term: number;
+  downPayment: number;
+  tradeIn: number;
+  owingOnTrade: number;
+};
+
+type ScenarioResult = Scenario & {
+  gstAmount: number;
+  negativeEquity: number;
+  tradeEquity: number;
+  financed: number;
+  monthly: number;
+  biweekly: number;
+  totalPayments: number;
+  costOfBorrowing: number;
+};
 
 const RATE_RANGES: Record<Tier, [number, number]> = {
   Excellent: [5.99, 7.99],
@@ -24,6 +46,7 @@ const CREDIT_OPTIONS: Tier[] = [
 ];
 
 const TERMS = [24, 36, 48, 60, 72, 84];
+const FREQ_LABEL: Record<Freq, string> = { biweekly: "Bi-weekly", monthly: "Monthly" };
 
 function fmtCAD(n: number) {
   return new Intl.NumberFormat("en-CA", {
@@ -49,6 +72,10 @@ function pmt(principal: number, annualRate: number, months: number): number {
   return (principal * r) / (1 - Math.pow(1 + r, -months));
 }
 
+function monthlyToBiweekly(monthly: number): number {
+  return (monthly * 12) / 26;
+}
+
 function trackUse() {
   type CalcWindow = Window & { dataLayer?: unknown[] };
   const w = window as CalcWindow;
@@ -58,6 +85,45 @@ function trackUse() {
   } catch {
     // Best-effort
   }
+}
+
+function calcScenario(s: Scenario): ScenarioResult {
+  const taxableAmount = Math.max(0, s.price - s.tradeIn);
+  const gstAmount = taxableAmount * 0.05;
+  const negativeEquity = Math.max(0, s.owingOnTrade - s.tradeIn);
+  const tradeEquity = Math.max(0, s.tradeIn - s.owingOnTrade);
+  const financed = Math.max(0, taxableAmount * 1.05 + negativeEquity - s.downPayment);
+  const monthly = pmt(financed, s.rate, s.term);
+  const biweekly = monthlyToBiweekly(monthly);
+  const totalPayments = monthly * s.term;
+  const costOfBorrowing = Math.max(0, totalPayments - financed);
+  return { ...s, gstAmount, negativeEquity, tradeEquity, financed, monthly, biweekly, totalPayments, costOfBorrowing };
+}
+
+function defaultScenario(id: number): Scenario {
+  return { id, price: 28000, rate: 9.99, term: 72, downPayment: 2000, tradeIn: 0, owingOnTrade: 0 };
+}
+
+// ── Frequency toggle pill ─────────────────────────────────────────────
+function FreqToggle({ freq, onChange }: { freq: Freq; onChange: (f: Freq) => void }) {
+  return (
+    <div className="inline-flex rounded-full bg-brand-cream p-0.5 ring-1 ring-brand-line">
+      {(["biweekly", "monthly"] as Freq[]).map(f => (
+        <button
+          key={f}
+          type="button"
+          onClick={() => { onChange(f); trackUse(); }}
+          className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+            f === freq
+              ? "bg-brand-deep text-white shadow-sm"
+              : "text-brand-muted hover:text-brand-ink"
+          }`}
+        >
+          {FREQ_LABEL[f]}
+        </button>
+      ))}
+    </div>
+  );
 }
 
 function NumericInput({
@@ -151,6 +217,7 @@ function EstimateCalculator() {
   const [down, setDown] = useState(2000);
   const [term, setTerm] = useState(72);
   const [credit, setCredit] = useState<Tier>("Fair");
+  const [freq, setFreq] = useState<Freq>("biweekly");
 
   const gst = 0.05;
   const taxed = price * (1 + gst);
@@ -158,6 +225,8 @@ function EstimateCalculator() {
   const [rLow, rHigh] = RATE_RANGES[credit];
   const monthlyLow = pmt(principal, rLow, term);
   const monthlyHigh = pmt(principal, rHigh, term);
+  const biweeklyLow = monthlyToBiweekly(monthlyLow);
+  const biweeklyHigh = monthlyToBiweekly(monthlyHigh);
   const totalLow = monthlyLow * term;
   const totalHigh = monthlyHigh * term;
   const interestLow = Math.max(0, totalLow - principal);
@@ -181,6 +250,9 @@ function EstimateCalculator() {
     () => ((down - downMin) / (downMax - downMin)) * 100,
     [down],
   );
+
+  const payLow = freq === "biweekly" ? biweeklyLow : monthlyLow;
+  const payHigh = freq === "biweekly" ? biweeklyHigh : monthlyHigh;
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_380px]">
@@ -283,10 +355,13 @@ function EstimateCalculator() {
       </div>
 
       <div className="no-cls rounded-3xl bg-brand-deep p-6 text-white md:p-8">
-        <span className="chip-accent">Estimated monthly</span>
+        <div className="flex items-center justify-between gap-3">
+          <span className="chip-accent">Estimated {freq === "biweekly" ? "bi-weekly" : "monthly"}</span>
+          <FreqToggle freq={freq} onChange={setFreq} />
+        </div>
         <p className="mt-3 text-4xl font-extrabold leading-none md:text-[3.25rem]">
-          {fmtCAD(monthlyLow)}
-          <span className="text-lg font-semibold text-white/70"> &ndash; {fmtCAD(monthlyHigh)}</span>
+          {fmtCAD(payLow)}
+          <span className="text-lg font-semibold text-white/70"> &ndash; {fmtCAD(payHigh)}</span>
         </p>
         <p className="mt-2 text-sm text-brand-accent">
           Rate range: {rLow.toFixed(2)}% &ndash; {rHigh.toFixed(2)}%
@@ -333,181 +408,438 @@ function EstimateCalculator() {
   );
 }
 
-// ── Traditional Calculator ────────────────────────────────────────────
-function TraditionalCalculator() {
-  const [price, setPrice] = useState(28000);
-  const [rate, setRate] = useState(9.99);
-  const [term, setTerm] = useState(72);
-  const [downPayment, setDownPayment] = useState(2000);
-  const [tradeIn, setTradeIn] = useState(0);
-  const [owingOnTrade, setOwingOnTrade] = useState(0);
-
-  // Alberta GST (5%) applies on (vehicle price - trade-in value).
-  // Trade-in reduces the taxable amount in Alberta.
-  const taxableAmount = Math.max(0, price - tradeIn);
-  const gstAmount = taxableAmount * 0.05;
-
-  // Negative equity: if you owe more on trade than trade-in is worth
-  const negativeEquity = Math.max(0, owingOnTrade - tradeIn);
-  const tradeEquity = Math.max(0, tradeIn - owingOnTrade);
-
-  // financed = (price - trade-in) × 1.05 + max(0, owing - trade-in) - down
-  const financed = Math.max(0, taxableAmount * 1.05 + negativeEquity - downPayment);
-
-  const monthly = pmt(financed, rate, term);
-  const totalPayments = monthly * term;
-  const costOfBorrowing = Math.max(0, totalPayments - financed);
-  const totalCost = totalPayments + downPayment + tradeEquity;
+// ── Scenario Input Form ───────────────────────────────────────────────
+function ScenarioForm({
+  scenario,
+  onChange,
+  idPrefix,
+}: {
+  scenario: Scenario;
+  onChange: (s: Scenario) => void;
+  idPrefix: string;
+}) {
+  const result = calcScenario(scenario);
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[1fr_380px]">
-      <div className="space-y-5">
+    <div className="space-y-5">
+      <div className="grid gap-4 md:grid-cols-2">
+        <NumericInput
+          id={`${idPrefix}-price`}
+          label="Vehicle price"
+          value={scenario.price}
+          onChange={v => onChange({ ...scenario, price: v })}
+          step={500}
+          min={0}
+          max={200000}
+        />
+        <NumericInput
+          id={`${idPrefix}-rate`}
+          label="Interest rate"
+          value={scenario.rate}
+          onChange={v => onChange({ ...scenario, rate: v })}
+          prefix=""
+          suffix="%"
+          step={0.25}
+          min={0}
+          max={30}
+        />
+      </div>
+
+      <div>
+        <label htmlFor={`${idPrefix}-term`} className="label">Loan term</label>
+        <select
+          id={`${idPrefix}-term`}
+          className="input mt-1"
+          value={scenario.term}
+          onChange={e => {
+            onChange({ ...scenario, term: Number(e.target.value) });
+            trackUse();
+          }}
+        >
+          {TERMS.map(t => (
+            <option key={t} value={t}>{t} months</option>
+          ))}
+        </select>
+      </div>
+
+      <NumericInput
+        id={`${idPrefix}-down`}
+        label="Down payment"
+        value={scenario.downPayment}
+        onChange={v => onChange({ ...scenario, downPayment: v })}
+        step={250}
+        min={0}
+        max={100000}
+      />
+
+      <div className="rounded-2xl bg-brand-cream/60 p-4 ring-1 ring-brand-line">
+        <p className="label mb-3">Trade-in</p>
         <div className="grid gap-4 md:grid-cols-2">
           <NumericInput
-            id="trad-price"
-            label="Vehicle price"
-            value={price}
-            onChange={setPrice}
-            step={500}
+            id={`${idPrefix}-trade`}
+            label="Trade-in value"
+            value={scenario.tradeIn}
+            onChange={v => onChange({ ...scenario, tradeIn: v })}
+            step={250}
             min={0}
-            max={200000}
+            max={100000}
           />
           <NumericInput
-            id="trad-rate"
-            label="Interest rate"
-            value={rate}
-            onChange={setRate}
-            prefix=""
-            suffix="%"
-            step={0.25}
+            id={`${idPrefix}-owing`}
+            label="Amount owing on trade"
+            value={scenario.owingOnTrade}
+            onChange={v => onChange({ ...scenario, owingOnTrade: v })}
+            step={250}
             min={0}
-            max={30}
+            max={100000}
           />
         </div>
-
-        <div>
-          <label htmlFor="trad-term" className="label">Loan term</label>
-          <select
-            id="trad-term"
-            className="input mt-1"
-            value={term}
-            onChange={e => {
-              setTerm(Number(e.target.value));
-              trackUse();
-            }}
-          >
-            {TERMS.map(t => (
-              <option key={t} value={t}>{t} months</option>
-            ))}
-          </select>
-        </div>
-
-        <NumericInput
-          id="trad-down"
-          label="Down payment"
-          value={downPayment}
-          onChange={setDownPayment}
-          step={250}
-          min={0}
-          max={100000}
-        />
-
-        <div className="rounded-2xl bg-brand-cream/60 p-4 ring-1 ring-brand-line">
-          <p className="label mb-3">Trade-in</p>
-          <div className="grid gap-4 md:grid-cols-2">
-            <NumericInput
-              id="trad-trade"
-              label="Trade-in value"
-              value={tradeIn}
-              onChange={setTradeIn}
-              step={250}
-              min={0}
-              max={100000}
-            />
-            <NumericInput
-              id="trad-owing"
-              label="Amount owing on trade"
-              value={owingOnTrade}
-              onChange={setOwingOnTrade}
-              step={250}
-              min={0}
-              max={100000}
-            />
-          </div>
-          {negativeEquity > 0 && (
-            <p className="mt-2 text-xs text-amber-700">
-              You have {fmtCAD(negativeEquity)} in negative equity — this will be added to your loan.
-            </p>
-          )}
-          {tradeEquity > 0 && (
-            <p className="mt-2 text-xs text-emerald-700">
-              Your trade-in equity of {fmtCAD(tradeEquity)} reduces your loan.
-            </p>
-          )}
-        </div>
-
-        <p className="text-xs text-brand-muted">
-          GST (5%) is calculated on the difference between the vehicle price and trade-in value (Alberta).
-        </p>
+        {result.negativeEquity > 0 && (
+          <p className="mt-2 text-xs text-amber-700">
+            You have {fmtCAD(result.negativeEquity)} in negative equity — this will be added to your loan.
+          </p>
+        )}
+        {result.tradeEquity > 0 && (
+          <p className="mt-2 text-xs text-emerald-700">
+            Your trade-in equity of {fmtCAD(result.tradeEquity)} reduces your loan.
+          </p>
+        )}
       </div>
 
-      <div className="no-cls rounded-3xl bg-brand-deep p-6 text-white md:p-8">
-        <span className="chip-accent">Monthly payment</span>
-        <p className="mt-3 text-4xl font-extrabold leading-none md:text-[3.25rem]">
-          {fmtCADCents(monthly)}
-        </p>
-        <p className="mt-2 text-sm text-brand-accent">
-          at {rate.toFixed(2)}% over {term} months
-        </p>
-
-        <dl className="mt-6 space-y-3 border-t border-white/15 pt-5 text-sm">
-          <div className="flex justify-between gap-3">
-            <dt className="text-white/70">Vehicle price</dt>
-            <dd className="font-semibold">{fmtCAD(price)}</dd>
-          </div>
-          <div className="flex justify-between gap-3">
-            <dt className="text-white/70">GST (5%)</dt>
-            <dd className="font-semibold">{fmtCAD(gstAmount)}</dd>
-          </div>
-          {tradeIn > 0 && (
-            <div className="flex justify-between gap-3">
-              <dt className="text-white/70">Trade-in {negativeEquity > 0 ? "(negative equity)" : "equity"}</dt>
-              <dd className="font-semibold">
-                {negativeEquity > 0 ? `+${fmtCAD(negativeEquity)}` : `-${fmtCAD(tradeEquity)}`}
-              </dd>
-            </div>
-          )}
-          {downPayment > 0 && (
-            <div className="flex justify-between gap-3">
-              <dt className="text-white/70">Down payment</dt>
-              <dd className="font-semibold">-{fmtCAD(downPayment)}</dd>
-            </div>
-          )}
-          <div className="flex justify-between gap-3 border-t border-white/15 pt-3">
-            <dt className="text-white/70">Amount financed</dt>
-            <dd className="font-semibold">{fmtCAD(financed)}</dd>
-          </div>
-          <div className="flex justify-between gap-3">
-            <dt className="text-white/70">Cost of borrowing</dt>
-            <dd className="font-semibold text-brand-accent">{fmtCAD(costOfBorrowing)}</dd>
-          </div>
-          <div className="flex justify-between gap-3">
-            <dt className="text-white/70">Total of {term} payments</dt>
-            <dd className="font-semibold">{fmtCAD(totalPayments)}</dd>
-          </div>
-        </dl>
-
-        <p className="mt-4 text-xs text-white/55">
-          Estimates only. Actual terms depend on your credit profile and lender.
-        </p>
-        <a
-          href="#apply"
-          className="btn-primary-dark mt-5 w-full text-sm"
-        >
-          Get my real numbers →
-        </a>
-      </div>
+      <p className="text-xs text-brand-muted">
+        GST (5%) is calculated on the difference between the vehicle price and trade-in value (Alberta).
+      </p>
     </div>
+  );
+}
+
+// ── Traditional Calculator (multi-scenario) ───────────────────────────
+function TraditionalCalculator() {
+  const [scenarios, setScenarios] = useState<Scenario[]>([defaultScenario(1)]);
+  const [activeIdx, setActiveIdx] = useState(0);
+  const [freq, setFreq] = useState<Freq>("biweekly");
+  const [emailModal, setEmailModal] = useState(false);
+  const [email, setEmail] = useState("");
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
+  const [sending, setSending] = useState(false);
+  const [sent, setSent] = useState(false);
+
+  const results = scenarios.map(calcScenario);
+  const activeResult = results[activeIdx];
+  let nextId = Math.max(...scenarios.map(s => s.id)) + 1;
+
+  function addScenario() {
+    const newScenario = defaultScenario(nextId++);
+    setScenarios(prev => [...prev, newScenario]);
+    setActiveIdx(scenarios.length);
+    trackUse();
+  }
+
+  function removeScenario(idx: number) {
+    if (scenarios.length <= 1) return;
+    setScenarios(prev => prev.filter((_, i) => i !== idx));
+    setActiveIdx(prev => (prev >= idx && prev > 0 ? prev - 1 : prev));
+  }
+
+  function updateScenario(idx: number, updated: Scenario) {
+    setScenarios(prev => prev.map((s, i) => (i === idx ? updated : s)));
+  }
+
+  function openEmailModal() {
+    if (scenarios.length === 1) {
+      setSelectedIds(new Set([scenarios[0].id]));
+    } else {
+      setSelectedIds(new Set(scenarios.map(s => s.id)));
+    }
+    setSent(false);
+    setEmailModal(true);
+  }
+
+  function toggleScenarioSelection(id: number) {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  }
+
+  async function sendEmail() {
+    if (!email.trim() || selectedIds.size === 0) return;
+    setSending(true);
+    try {
+      const selectedResults = results.filter(r => selectedIds.has(r.id));
+      const res = await fetch("/api/calculator-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim(), scenarios: selectedResults, freq }),
+      });
+      if (!res.ok) throw new Error("Failed");
+      setSent(true);
+    } catch {
+      alert("Something went wrong. Please try again.");
+    } finally {
+      setSending(false);
+    }
+  }
+
+  return (
+    <>
+      <div className="grid gap-6 lg:grid-cols-[1fr_380px]">
+        <div>
+          {scenarios.length > 1 && (
+            <div className="mb-5 flex flex-wrap gap-2">
+              {scenarios.map((s, i) => (
+                <button
+                  key={s.id}
+                  type="button"
+                  onClick={() => setActiveIdx(i)}
+                  className={`relative inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-colors ${
+                    i === activeIdx
+                      ? "bg-brand-deep text-white"
+                      : "bg-brand-cream text-brand-ink ring-1 ring-brand-line hover:bg-brand-line"
+                  }`}
+                >
+                  Scenario {i + 1}
+                  {scenarios.length > 1 && (
+                    <span
+                      role="button"
+                      tabIndex={0}
+                      onClick={e => {
+                        e.stopPropagation();
+                        removeScenario(i);
+                      }}
+                      onKeyDown={e => {
+                        if (e.key === "Enter") {
+                          e.stopPropagation();
+                          removeScenario(i);
+                        }
+                      }}
+                      className={`ml-0.5 inline-flex size-4 items-center justify-center rounded-full text-[10px] leading-none ${
+                        i === activeIdx ? "text-white/60 hover:text-white" : "text-brand-muted hover:text-brand-ink"
+                      }`}
+                      aria-label={`Remove scenario ${i + 1}`}
+                    >
+                      ×
+                    </span>
+                  )}
+                </button>
+              ))}
+            </div>
+          )}
+
+          <ScenarioForm
+            scenario={scenarios[activeIdx]}
+            onChange={s => updateScenario(activeIdx, s)}
+            idPrefix={`s${scenarios[activeIdx].id}`}
+          />
+
+          <div className="mt-5 flex flex-wrap gap-3">
+            <button
+              type="button"
+              onClick={addScenario}
+              className="inline-flex items-center gap-1.5 rounded-full border border-brand-line bg-brand-cream px-4 py-2 text-xs font-medium text-brand-ink transition-colors hover:bg-brand-line"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="size-3.5">
+                <path d="M8 2a.75.75 0 0 1 .75.75v4.5h4.5a.75.75 0 0 1 0 1.5h-4.5v4.5a.75.75 0 0 1-1.5 0v-4.5h-4.5a.75.75 0 0 1 0-1.5h4.5v-4.5A.75.75 0 0 1 8 2Z" />
+              </svg>
+              Add another scenario
+            </button>
+            <button
+              type="button"
+              onClick={openEmailModal}
+              className="inline-flex items-center gap-1.5 rounded-full bg-brand-deep px-4 py-2 text-xs font-medium text-brand-accent transition-colors hover:bg-brand-forest"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="size-3.5">
+                <path d="M2.5 3A1.5 1.5 0 0 0 1 4.5v.793c.026.009.051.02.076.032L7.674 8.51c.206.1.446.1.652 0l6.598-3.185A.755.755 0 0 1 15 5.293V4.5A1.5 1.5 0 0 0 13.5 3h-11Z" />
+                <path d="M15 6.954 8.978 9.86a2.25 2.25 0 0 1-1.956 0L1 6.954V11.5A1.5 1.5 0 0 0 2.5 13h11a1.5 1.5 0 0 0 1.5-1.5V6.954Z" />
+              </svg>
+              Send me the numbers
+            </button>
+          </div>
+        </div>
+
+        <div className="no-cls rounded-3xl bg-brand-deep p-6 text-white md:p-8">
+          <div className="flex items-center justify-between gap-3">
+            <span className="chip-accent">{freq === "biweekly" ? "Bi-weekly" : "Monthly"} payment</span>
+            <FreqToggle freq={freq} onChange={setFreq} />
+          </div>
+          {activeResult && (
+            <>
+              <p className="mt-3 text-4xl font-extrabold leading-none md:text-[3.25rem]">
+                {fmtCADCents(freq === "biweekly" ? activeResult.biweekly : activeResult.monthly)}
+              </p>
+              <p className="mt-2 text-sm text-brand-accent">
+                at {activeResult.rate.toFixed(2)}% over {activeResult.term} months
+              </p>
+
+              <dl className="mt-6 space-y-3 border-t border-white/15 pt-5 text-sm">
+                <div className="flex justify-between gap-3">
+                  <dt className="text-white/70">Vehicle price</dt>
+                  <dd className="font-semibold">{fmtCAD(activeResult.price)}</dd>
+                </div>
+                <div className="flex justify-between gap-3">
+                  <dt className="text-white/70">GST (5%)</dt>
+                  <dd className="font-semibold">{fmtCAD(activeResult.gstAmount)}</dd>
+                </div>
+                {activeResult.tradeIn > 0 && (
+                  <div className="flex justify-between gap-3">
+                    <dt className="text-white/70">Trade-in {activeResult.negativeEquity > 0 ? "(negative equity)" : "equity"}</dt>
+                    <dd className="font-semibold">
+                      {activeResult.negativeEquity > 0 ? `+${fmtCAD(activeResult.negativeEquity)}` : `-${fmtCAD(activeResult.tradeEquity)}`}
+                    </dd>
+                  </div>
+                )}
+                {activeResult.downPayment > 0 && (
+                  <div className="flex justify-between gap-3">
+                    <dt className="text-white/70">Down payment</dt>
+                    <dd className="font-semibold">-{fmtCAD(activeResult.downPayment)}</dd>
+                  </div>
+                )}
+                <div className="flex justify-between gap-3 border-t border-white/15 pt-3">
+                  <dt className="text-white/70">Amount financed</dt>
+                  <dd className="font-semibold">{fmtCAD(activeResult.financed)}</dd>
+                </div>
+                <div className="flex justify-between gap-3">
+                  <dt className="text-white/70">Cost of borrowing</dt>
+                  <dd className="font-semibold text-brand-accent">{fmtCAD(activeResult.costOfBorrowing)}</dd>
+                </div>
+                <div className="flex justify-between gap-3">
+                  <dt className="text-white/70">Total of {activeResult.term} payments</dt>
+                  <dd className="font-semibold">{fmtCAD(activeResult.totalPayments)}</dd>
+                </div>
+              </dl>
+            </>
+          )}
+
+          <p className="mt-4 text-xs text-white/55">
+            Estimates only. Actual terms depend on your credit profile and lender.
+          </p>
+          <a
+            href="#apply"
+            className="btn-primary-dark mt-5 w-full text-sm"
+          >
+            Get my real numbers →
+          </a>
+        </div>
+      </div>
+
+      {emailModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setEmailModal(false)}>
+          <div
+            className="w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl ring-1 ring-brand-line md:p-8"
+            onClick={e => e.stopPropagation()}
+          >
+            {sent ? (
+              <div className="text-center">
+                <div className="mx-auto mb-3 flex size-12 items-center justify-center rounded-full bg-brand-accent/20">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="size-6 text-brand-forest">
+                    <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-bold text-brand-ink">Sent!</h3>
+                <p className="mt-1 text-sm text-brand-muted">Check your inbox at {email}</p>
+                <button
+                  type="button"
+                  onClick={() => setEmailModal(false)}
+                  className="mt-4 rounded-full bg-brand-deep px-5 py-2 text-sm font-medium text-brand-accent hover:bg-brand-forest"
+                >
+                  Close
+                </button>
+              </div>
+            ) : (
+              <>
+                <h3 className="text-lg font-bold text-brand-ink">Send me the numbers</h3>
+                <p className="mt-1 text-sm text-brand-muted">
+                  We&apos;ll email you {scenarios.length > 1 ? "the selected scenarios" : "these numbers"} — no spam, just the breakdown.
+                </p>
+
+                {scenarios.length > 1 && (
+                  <div className="mt-4">
+                    <p className="label mb-2">Which scenarios?</p>
+                    <div className="space-y-2">
+                      <label className="flex items-center gap-2 text-sm">
+                        <input
+                          type="checkbox"
+                          className="size-4 rounded border-brand-line text-brand-forest accent-brand-forest"
+                          checked={selectedIds.size === scenarios.length}
+                          onChange={() => {
+                            if (selectedIds.size === scenarios.length) {
+                              setSelectedIds(new Set());
+                            } else {
+                              setSelectedIds(new Set(scenarios.map(s => s.id)));
+                            }
+                          }}
+                        />
+                        <span className="font-medium text-brand-ink">All scenarios</span>
+                      </label>
+                      {scenarios.map((s, i) => {
+                        const r = results[i];
+                        const displayPay = freq === "biweekly" ? r.biweekly : r.monthly;
+                        const freqLabel = freq === "biweekly" ? "bi-wk" : "mo";
+                        return (
+                          <label key={s.id} className="flex items-center gap-2 text-sm">
+                            <input
+                              type="checkbox"
+                              className="size-4 rounded border-brand-line text-brand-forest accent-brand-forest"
+                              checked={selectedIds.has(s.id)}
+                              onChange={() => toggleScenarioSelection(s.id)}
+                            />
+                            <span className="text-brand-ink">
+                              Scenario {i + 1}
+                              <span className="ml-1 text-brand-muted">
+                                — {fmtCADCents(displayPay)}/{freqLabel} at {s.rate}%
+                              </span>
+                            </span>
+                          </label>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                <div className="mt-4">
+                  <label htmlFor="email-input" className="label">Email address</label>
+                  <input
+                    id="email-input"
+                    type="email"
+                    className="input mt-1 w-full"
+                    placeholder="you@example.com"
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
+                    onKeyDown={e => {
+                      if (e.key === "Enter") sendEmail();
+                    }}
+                    autoFocus
+                  />
+                </div>
+
+                <div className="mt-5 flex gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setEmailModal(false)}
+                    className="flex-1 rounded-full border border-brand-line px-4 py-2.5 text-sm font-medium text-brand-ink hover:bg-brand-cream"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={sendEmail}
+                    disabled={sending || !email.trim() || selectedIds.size === 0}
+                    className="flex-1 rounded-full bg-brand-deep px-4 py-2.5 text-sm font-medium text-brand-accent transition-colors hover:bg-brand-forest disabled:opacity-50"
+                  >
+                    {sending ? "Sending…" : "Send"}
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 
