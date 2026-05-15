@@ -46,6 +46,38 @@ async function sendResend(opts: {
   return { skipped: false as const, ok: true as const };
 }
 
+const QUO_SENDER = process.env.QUO_SENDER_NUMBER || "+15879006051";
+const QUO_TEAM = process.env.QUO_TEAM_NUMBER || "+15879567479";
+
+function toE164(phone: string): string {
+  const digits = phone.replace(/[^\d]/g, "");
+  if (digits.startsWith("1") && digits.length === 11) return `+${digits}`;
+  if (digits.length === 10) return `+1${digits}`;
+  return `+${digits}`;
+}
+
+async function sendQuoSms(to: string, content: string) {
+  const key = process.env.QUO_API_KEY;
+  if (!key) return { skipped: true as const, reason: "no QUO_API_KEY" };
+  const res = await fetch("https://api.openphone.com/v1/messages", {
+    method: "POST",
+    headers: {
+      Authorization: key,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      content,
+      from: toE164(QUO_SENDER),
+      to: [toE164(to)],
+    }),
+  });
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    return { skipped: false as const, ok: false as const, status: res.status, error: text };
+  }
+  return { skipped: false as const, ok: true as const };
+}
+
 async function postToSheet(payload: LeadPayload, timestamp: string) {
   const url = process.env.GOOGLE_SHEETS_WEBHOOK_URL;
   if (!url) return { skipped: true as const };
@@ -86,7 +118,7 @@ export async function POST(req: Request) {
   };
   const fullName = `${safe.firstName} ${safe.lastName}`.trim();
 
-  // Fire all three integrations in parallel for sub-60s SLA.
+  // Fire all integrations in parallel for sub-60s SLA.
   const from = process.env.LEAD_FROM_EMAIL || `${SITE_NAME} <${BUSINESS.email}>`;
   const notifyTo = process.env.LEAD_NOTIFY_TO || BUSINESS.email;
 
@@ -105,7 +137,11 @@ export async function POST(req: Request) {
 
   const autoReplyHtml = autoReplyEmail(safe.firstName);
 
-  const [notifyResult, autoReplyResult, sheetResult] = await Promise.all([
+  const applicantSms = `Hi ${safe.firstName}, thanks for applying with NewWheels! A specialist will call you within 1 hour during business hours (${BUSINESS.hours}). Questions? Call us: ${BUSINESS.phone}`;
+
+  const teamSms = `New lead: ${fullName}\nPhone: ${safe.phone}\nCredit: ${safe.credit}\nEmployment: ${safe.employment}\nTimeframe: ${safe.timeframe}\nSource: ${safe.sourcePage}`;
+
+  const [notifyResult, autoReplyResult, sheetResult, smsApplicantResult, smsTeamResult] = await Promise.all([
     sendResend({
       to: notifyTo,
       from,
@@ -120,6 +156,8 @@ export async function POST(req: Request) {
       html: autoReplyHtml,
     }),
     postToSheet(safe, timestamp),
+    sendQuoSms(safe.phone, applicantSms),
+    sendQuoSms(QUO_TEAM, teamSms),
   ]);
 
   return NextResponse.json({
@@ -128,6 +166,8 @@ export async function POST(req: Request) {
       notify: notifyResult,
       autoReply: autoReplyResult,
       sheet: sheetResult,
+      smsApplicant: smsApplicantResult,
+      smsTeam: smsTeamResult,
     },
   });
 }
