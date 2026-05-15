@@ -20,5 +20,14 @@ export function GET() {
       changefreq: "weekly",
       priority: p.priority ?? 0.8,
     }));
+  // Language landing pages (hreflang alternates that resolve to a real 200).
+  for (const code of ["tl", "pa", "ar", "es"]) {
+    entries.push({
+      loc: toUrl(`/${code}`),
+      lastmod,
+      changefreq: "monthly",
+      priority: 0.72,
+    });
+  }
   return xmlResponse(renderUrlset(entries));
 }

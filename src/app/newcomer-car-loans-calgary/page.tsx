@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import PageShell from "@/components/PageShell";
+import HubSpokes from "@/components/HubSpokes";
 import { buildMetadata } from "@/lib/seo";
+import { newcomerSpokes } from "@/lib/hub-spokes";
 
 const SLUG = "/newcomer-car-loans-calgary";
 
@@ -120,6 +122,23 @@ export default function Page() {
         sign anything you don&apos;t understand. AMVIC mandates plain-language disclosure in
         Alberta and we hold ourselves to it.
       </p>
+
+      <HubSpokes
+        title="Newcomer financing across Calgary"
+        intro="Pick the page that matches your neighbourhood, your make preference, or your visa pathway."
+        groups={[
+          {
+            heading: "By Calgary neighbourhood",
+            blurb: "Saddle Ridge, Martindale, and Falconridge see the heaviest newcomer volume.",
+            spokes: newcomerSpokes().byLocation,
+          },
+          {
+            heading: "By vehicle make",
+            blurb: "Toyota and Honda dominate newcomer demand for resale and parts availability.",
+            spokes: newcomerSpokes().byMake,
+          },
+        ]}
+      />
     </PageShell>
   );
 }

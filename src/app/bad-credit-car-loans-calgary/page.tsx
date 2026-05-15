@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import PageShell from "@/components/PageShell";
+import HubSpokes from "@/components/HubSpokes";
 import { buildMetadata } from "@/lib/seo";
+import { badCreditSpokes } from "@/lib/hub-spokes";
 
 const SLUG = "/bad-credit-car-loans-calgary";
 
@@ -124,6 +126,23 @@ export default function Page() {
         loan. That&apos;s the AMVIC standard, that&apos;s the NewWheels standard, and
         that&apos;s what we built NewWheels on.
       </p>
+
+      <HubSpokes
+        title="Bad credit financing across Calgary"
+        intro="Every neighbourhood and every make has different subprime lender economics. Jump straight to the page that fits your situation."
+        groups={[
+          {
+            heading: "By Calgary location",
+            blurb: "Same subprime program, neighbourhood-specific lender notes.",
+            spokes: badCreditSpokes().byLocation,
+          },
+          {
+            heading: "By vehicle make",
+            blurb: "Subprime financing structured around the make-specific rate floor.",
+            spokes: badCreditSpokes().byMake,
+          },
+        ]}
+      />
     </PageShell>
   );
 }

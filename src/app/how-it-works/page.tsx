@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import PageShell from "@/components/PageShell";
+import HubSpokes from "@/components/HubSpokes";
 import { buildMetadata } from "@/lib/seo";
 import { howToSchema } from "@/lib/schema";
+import { homepageHubSpokes } from "@/lib/hub-spokes";
 
 const SLUG = "/how-it-works";
 
@@ -144,6 +146,29 @@ export default function Page() {
         fee, a documentation fee, or a placement fee. If anyone in Calgary asks you for an
         upfront fee, walk away.
       </p>
+
+      <HubSpokes
+        title="Pick the page that matches your situation"
+        intro="The 3-step process is the same for everyone. The lender we send your file to is not. Jump to the page closest to your situation, neighbourhood, or vehicle."
+        groups={[
+          {
+            heading: "By situation",
+            spokes: homepageHubSpokes().audiences,
+          },
+          {
+            heading: "By Calgary area",
+            spokes: homepageHubSpokes().locations,
+          },
+          {
+            heading: "By vehicle",
+            spokes: homepageHubSpokes().vehicles,
+          },
+          {
+            heading: "Tools and reading",
+            spokes: homepageHubSpokes().tools,
+          },
+        ]}
+      />
     </PageShell>
   );
 }

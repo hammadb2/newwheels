@@ -1,0 +1,7 @@
+# Generated content drafts (JSON, one per file) live here.
+#
+# When the /admin/content pipeline produces a draft via Claude, the JSON is
+# written into this directory. Drafts are committed forward to the repo
+# (versioned in git) so the operator has a permanent audit trail of every
+# Claude-generated draft. Publishing converts a draft into a TSX file under
+# src/content/resources/generated/.
