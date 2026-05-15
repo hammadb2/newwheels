@@ -13,7 +13,7 @@ const BRAND = {
   white: "#FFFFFF",
 } as const;
 
-const LOGO_URL = `${SITE_URL}/logo-horizontal.png`;
+const LOGO_URL = `${SITE_URL}/logo-email.png`;
 
 // ── Shared layout wrapper ─────────────────────────────────────────────
 function emailWrapper(body: string): string {
