@@ -100,7 +100,7 @@ export default function CalculatorPage() {
             </h1>
             <p className="mt-5 text-lg text-white/85">
               Move the sliders. Pick your credit situation. The estimate updates instantly. When
-              you&apos;re ready, apply free and Hammad gets you the real numbers within 24 hours.
+              you&apos;re ready, apply free and a specialist gets you the real numbers within 24 hours.
             </p>
           </div>
         </div>

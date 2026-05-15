@@ -7,7 +7,7 @@ const SLUG = "/how-it-works";
 export const metadata: Metadata = buildMetadata({
   title: "How It Works | NewWheels Calgary Car Loan Approval Process",
   description:
-    "How NewWheels approves Calgary car loans in 24 hours. The 3-step process, what Hammad does on your behalf, what you sign, and how 6-months-covered works.",
+    "How NewWheels approves Calgary car loans in 24 hours. The 3-step process, what our specialist does on your behalf, what you sign, and how 6-months-covered works.",
   path: SLUG,
 });
 
@@ -15,7 +15,7 @@ const FAQ = [
   {
     question: "How does the NewWheels car loan approval process work in Calgary?",
     answer:
-      "Three steps: apply free (90 seconds), Hammad calls within 1 hour, you drive the vehicle in 24-72 hours. We handle every lender submission, document collection, and dealership negotiation for you.",
+      "Three steps: apply free (90 seconds), a specialist calls within 1 hour, you drive the vehicle in 24-72 hours. We handle every lender submission, document collection, and dealership negotiation for you.",
   },
   {
     question: "What happens after I submit the application?",
@@ -50,12 +50,12 @@ export default function Page() {
       slug={SLUG}
       title="How NewWheels approves a Calgary car loan in 24 hours"
       tagline="The process"
-      intro="No mystery, no boiler-room sales. Three steps from application to keys, and Hammad personally walks every customer through them. Here's exactly what happens after you click 'apply'."
+      intro="No mystery, no boiler-room sales. Three steps from application to keys, and a specialist personally walks every customer through them. Here's exactly what happens after you click 'apply'."
       breadcrumb={[{ name: "How it works", path: SLUG }]}
       faq={FAQ}
       ctaHeading="Ready to start? Apply free."
       internalLinks={[
-        { href: "/about", label: "About NewWheels and Hammad" },
+        { href: "/about", label: "About NewWheels" },
         { href: "/calculator", label: "Estimate your payment first" },
         { href: "/privacy", label: "Our privacy policy" },
         { href: "/", label: "Back to homepage" },
@@ -70,12 +70,12 @@ export default function Page() {
       </p>
       <h3>What happens behind the scenes</h3>
       <ul>
-        <li>The application emails Hammad and lands in our CRM within 60 seconds.</li>
+        <li>The application reaches our team and lands in our CRM within 60 seconds.</li>
         <li>You receive an automated confirmation email at the address you provided.</li>
         <li>Your application is logged in our secure Google Sheets pipeline. Never sold, never shared.</li>
       </ul>
 
-      <h2>Step 2: Hammad calls you (within 1 hour during business hours)</h2>
+      <h2>Step 2: A specialist calls you (within 1 hour during business hours)</h2>
       <p>
         Real human, real Calgary number. The call takes 10-15 minutes. We confirm your details,
         ask follow-up questions, and tell you the realistic rate range you&apos;ll see, before
@@ -94,7 +94,7 @@ export default function Page() {
       <p>
         We submit your file to the right lender (or two, if it&apos;s a close call). Approval
         comes back within 24 hours. We send you the terms in writing. If you accept, we
-        coordinate vehicle delivery, either at South Trail Nissan if you&apos;re buying new,
+        coordinate vehicle delivery, either at our dealer partners if you&apos;re buying new,
         or at our partner pre-owned lots in Calgary. Final paperwork takes about 30 minutes.
         You drive away.
       </p>
@@ -105,7 +105,7 @@ export default function Page() {
         deal. You don&apos;t pay anything from month 1 to month 6. Then your normal payment
         schedule starts at month 7. The mechanism varies by lender and dealer. Sometimes
         we&apos;re absorbing a portion of the dealer holdback, sometimes a manufacturer
-        program covers it. Hammad explains the exact math during your call.
+        program covers it. Your specialist explains the exact math during your call.
       </p>
       <p>
         Eligibility: qualified deals only. Most newcomers with stable employment qualify. Bad

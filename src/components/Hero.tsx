@@ -65,7 +65,7 @@ export default function Hero() {
             >
               {BUSINESS.phone}
             </a>{" "}
-            — Hammad picks up.
+            — a specialist picks up.
           </p>
         </div>
 

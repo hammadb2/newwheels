@@ -93,7 +93,7 @@ const post: Post = {
         Renew or extend at least 60 days before expiry. Lenders pull your permit status during
         the loan term. Gaps trigger phone calls and can affect your credit bureau. If you&apos;re
         transitioning from PGWP to PR, we can sometimes secure a rate reduction on the existing
-        loan once your PR is confirmed. Email Hammad with your COPR and we&apos;ll request the
+        loan once your PR is confirmed. Email us with your COPR and we&apos;ll request the
         review from the lender.
       </p>
       <h2>The transition from work permit to permanent residency</h2>

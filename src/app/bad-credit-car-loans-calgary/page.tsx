@@ -25,7 +25,7 @@ const FAQ = [
   {
     question: "How does NewWheels cover 6 months of payments?",
     answer:
-      "On qualified deals, NewWheels structures the financing so your first 6 payments are covered. The exact mechanism depends on the deal. Hammad walks you through the math on the call.",
+      "On qualified deals, NewWheels structures the financing so your first 6 payments are covered. The exact mechanism depends on the deal. Your specialist walks you through the math on the call.",
   },
   {
     question: "How long does approval take for bad credit in Calgary?",
@@ -74,7 +74,7 @@ export default function Page() {
       </p>
       <p>
         AutoNova and the algorithm brokers don&apos;t make that distinction. They submit your
-        file blindly. Hammad picks the lender by hand. That&apos;s the difference.
+        file blindly. Our team picks the lender by hand. That&apos;s the difference.
       </p>
 
       <h2>What &quot;bad credit&quot; actually looks like to a Calgary auto lender</h2>
@@ -121,7 +121,7 @@ export default function Page() {
         We&apos;ll tell you when <em>not</em> to buy. If your situation calls for 3 months of
         on-time rent receipts before you apply, we&apos;ll say so. If your debt-to-income is
         too high and a $400 monthly will push you into default, we won&apos;t sell you the
-        loan. That&apos;s the AMVIC standard, that&apos;s the South Trail Nissan standard, and
+        loan. That&apos;s the AMVIC standard, that&apos;s the NewWheels standard, and
         that&apos;s what we built NewWheels on.
       </p>
     </PageShell>

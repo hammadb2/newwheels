@@ -58,7 +58,7 @@ const FAQ = [
   {
     question: "Can I get a new Nissan through NewWheels?",
     answer:
-      "Yes. Hammad works at South Trail Nissan, so brand-new 2026 Nissans (Rogue, Kicks, Sentra, Armada) are available alongside our full pre-owned inventory.",
+      "Yes. Our specialist works directly with dealer partners, so brand-new 2026 Nissans (Rogue, Kicks, Sentra, Armada) are available alongside our full pre-owned inventory.",
   },
 ];
 
@@ -126,7 +126,7 @@ export default function HomePage() {
             </div>
             <p className="text-base text-brand-muted md:text-lg">
               AutoNova and the big online brokers will run your file through an algorithm. We
-              won&apos;t. Hammad reviews every application personally, picks the right lender for
+              won&apos;t. Our team reviews every application personally, picks the right lender for
               your file, and tells you the truth about your rate up front, even if it&apos;s not
               what you wanted to hear.
             </p>
@@ -141,7 +141,7 @@ export default function HomePage() {
               },
               {
                 step: "02",
-                title: "Hammad calls",
+                title: "A specialist calls",
                 body: "Within 1 hour during business hours. We confirm your details and your goals.",
               },
               {
@@ -233,7 +233,7 @@ export default function HomePage() {
               <span className="block text-brand-accent">Drive this week.</span>
             </h2>
             <p className="mt-5 max-w-md text-lg text-white/85">
-              Fill the form and Hammad personally calls you within 1 hour during business hours.
+              Fill the form and a specialist personally calls you within 1 hour during business hours.
               No bots. No call centres. No surprises.
             </p>
             <div className="mt-8">
@@ -245,7 +245,7 @@ export default function HomePage() {
               variant="hero"
               sourcePage="/"
               heading="Get pre-approved for free"
-              subheading="No hard credit check. Hammad personally calls every applicant within 1 hour during business hours."
+              subheading="No hard credit check. A specialist personally calls every applicant within 1 hour during business hours."
             />
           </div>
         </div>
@@ -261,7 +261,7 @@ export default function HomePage() {
                 A page for every situation.
               </h2>
               <p className="mt-4 max-w-sm text-base text-brand-muted">
-                We don&apos;t do generic financing. Each page is written by Hammad with realistic
+                We don&apos;t do generic financing. Each page is written by our team with realistic
                 timelines, document lists, and Calgary-specific context.
               </p>
             </div>
@@ -302,11 +302,11 @@ export default function HomePage() {
               <span className="chip-dark">The Calgary advantage</span>
               <h2 className="display-headline mt-4 text-section font-extrabold uppercase text-white md:text-[clamp(2rem,4vw,3.25rem)]">
                 New <span className="text-brand-accent">2026</span> Nissans,
-                <span className="block">through Hammad.</span>
+                <span className="block">through our dealer partners.</span>
               </h2>
               <p className="mt-4 text-base text-white/80">
-                Most Calgary brokers can&apos;t get you into a brand-new vehicle. We can. Hammad
-                is on the floor at South Trail Nissan and brings every program promotion through
+                Most Calgary brokers can&apos;t get you into a brand-new vehicle. We can. Our
+                specialist works directly with dealer partners and brings every program promotion through
                 NewWheels first.
               </p>
               <div className="mt-6 flex flex-wrap gap-3">
@@ -333,7 +333,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ===== Hammad bio teaser ===== */}
+      {/* ===== Brand bio teaser ===== */}
       <section className="bg-brand-cream">
         <div className="mx-auto max-w-5xl px-4 py-16 md:py-24">
           <div className="rounded-4xl bg-white p-8 shadow-card ring-1 ring-brand-line md:p-12">

@@ -118,7 +118,7 @@ const post: Post = {
       </p>
       <h2>What happens after approval</h2>
       <p>
-        Once your file is approved, Hammad calls you within 1 hour to walk through the terms.
+        Once your file is approved, a specialist calls you within 1 hour to walk through the terms.
         You see the exact rate, the exact monthly payment, and the total cost of the loan
         before you sign anything. If the terms don&apos;t work for you, walk away. There&apos;s
         no obligation. If they do work, we finalise the paperwork and you&apos;re typically

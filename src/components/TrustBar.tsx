@@ -1,7 +1,7 @@
 const ITEMS = [
   { label: "100% free", sub: "No obligation" },
   { label: "No hard credit check", sub: "Doesn't ding your score" },
-  { label: "24-hour approval", sub: "Hammad calls in 1 hour" },
+  { label: "24-hour approval", sub: "A specialist calls in 1 hour" },
   { label: "Up to 6 months covered", sub: "On qualified deals" },
   { label: "AMVIC licensed", sub: "Real Calgary specialist" },
 ];

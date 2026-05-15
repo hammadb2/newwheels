@@ -105,10 +105,10 @@ export async function POST(req: Request) {
 
   const autoReplyHtml = `
     <p>Hi ${safe.firstName},</p>
-    <p>Thanks for applying with NewWheels. We received your application and Hammad will reach out within 1 hour during business hours (${BUSINESS.hours}).</p>
+    <p>Thanks for applying with NewWheels. We received your application and a specialist will reach out within 1 hour during business hours (${BUSINESS.hours}).</p>
     <p>If your situation is urgent, call us directly at <a href="tel:${BUSINESS.phoneHref}">${BUSINESS.phone}</a>.</p>
     <p><strong>What happens next</strong><br/>
-    1. Hammad calls you to confirm your details.<br/>
+    1. A specialist calls you to confirm your details.<br/>
     2. We submit your file to our lender network. No hard credit check at this stage.<br/>
     3. You get approval terms within 24 hours.</p>
     <p>Talk soon,<br/>NewWheels · Calgary</p>

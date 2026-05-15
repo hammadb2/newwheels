@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { BUSINESS, SITE_NAME } from "@/lib/site";
 
 type Props = {
@@ -7,7 +6,6 @@ type Props = {
 };
 
 export default function AuthorBio({ compact = false, dark = false }: Props) {
-  const name = `Hammad${BUSINESS.hammadLastName ? " " + BUSINESS.hammadLastName : ""}`;
   const headingColor = dark ? "text-white" : "text-brand-ink";
   const bodyColor = dark ? "text-white/75" : "text-brand-muted";
   const mutedColor = dark ? "text-white/55" : "text-brand-muted/70";
@@ -17,22 +15,15 @@ export default function AuthorBio({ compact = false, dark = false }: Props) {
 
   return (
     <div className={`flex ${compact ? "items-start" : "items-center"} gap-5`}>
-      <Image
-        src="/hammad.jpg"
-        alt={name}
-        width={72}
-        height={72}
-        className="h-16 w-16 shrink-0 rounded-pill object-cover ring-2 ring-brand-accent md:h-[72px] md:w-[72px]"
-      />
       <div className="text-sm">
         <p className={`font-bold ${headingColor}`}>
-          {name} · Automotive Finance Specialist
+          {SITE_NAME} · Calgary Vehicle Financing
         </p>
         <p className={`mt-1 leading-relaxed ${bodyColor}`}>
-          AMVIC-licensed automotive sales professional in Calgary, Alberta. Specializes in
-          financing solutions for newcomers, buyers rebuilding credit, and self-employed
-          Calgarians. Personally helped hundreds of Calgary families get into a vehicle
-          regardless of credit situation. Author of every page on {SITE_NAME}.
+          {SITE_NAME} is Calgary&apos;s specialist vehicle financing platform. Bad credit,
+          newcomers, work permits, and self-employed buyers approved in 24 hours. Our
+          AMVIC-licensed specialist has helped hundreds of Calgary families get into a vehicle
+          regardless of credit situation.
         </p>
         <p className={`mt-1 text-xs ${mutedColor}`}>
           AMVIC licence:{" "}

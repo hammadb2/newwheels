@@ -12,7 +12,7 @@ const SLUG = "/blog";
 export const metadata: Metadata = buildMetadata({
   title: "NewWheels Blog | Calgary Car Loan Guides & Newcomer Tips",
   description:
-    "Honest Calgary car-loan guides. Newcomer documentation, post-bankruptcy timelines, work-permit financing, and the 6-months-covered offer explained by Hammad.",
+    "Honest Calgary car-loan guides. Newcomer documentation, post-bankruptcy timelines, work-permit financing, and the 6-months-covered offer explained by the NewWheels team.",
   path: SLUG,
 });
 
@@ -67,7 +67,7 @@ export default function BlogHubPage() {
             <span className="chip-accent">NewWheels blog</span>
             <h1 className="display-headline mt-4 text-hero font-extrabold uppercase text-white">
               Calgary car-loan guides,
-              <span className="block text-brand-accent">written by Hammad.</span>
+              <span className="block text-brand-accent">written by the NewWheels team.</span>
             </h1>
             <p className="mt-5 text-lg text-white/85">
               Plain-English guides covering newcomer documentation, post-bankruptcy timelines,

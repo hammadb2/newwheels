@@ -75,7 +75,7 @@ export default function HeroIllustration() {
               <p className="text-[10px] font-medium tracking-[0.18em] text-white/60">
                 SPECIALIST
               </p>
-              <p className="mt-0.5 text-sm font-semibold">Hammad B.</p>
+              <p className="mt-0.5 text-sm font-semibold">NewWheels</p>
             </div>
           </div>
         </div>

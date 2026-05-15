@@ -1,6 +1,5 @@
 import Link from "next/link";
-import { BUSINESS, PAGES, SITE_NAME } from "@/lib/site";
-import AuthorBio from "./AuthorBio";
+import { BUSINESS, PAGES, SITE_NAME, FOOTER_NAV_EXTRA } from "@/lib/site";
 import Logo from "./Logo";
 
 export default function Footer() {
@@ -14,8 +13,8 @@ export default function Footer() {
               <Logo className="h-10 w-auto md:h-12" dark />
             </Link>
             <p className="mt-4 max-w-md text-sm leading-relaxed text-white/75">
-              Calgary vehicle financing for bad credit, newcomers, work-permit holders, and
-              self-employed buyers. Up to 6 months of payments covered on qualified deals.
+              {SITE_NAME} is Calgary&apos;s specialist vehicle financing platform. Bad credit,
+              newcomers, work permits, and self-employed buyers approved in 24 hours.
             </p>
             <p className="mt-5 text-sm text-white/75">
               <span className="block font-semibold text-white">{BUSINESS.address.street}</span>
@@ -43,7 +42,7 @@ export default function Footer() {
             </p>
             <p className="mt-2 text-sm text-white/65">{BUSINESS.hours}</p>
             <p className="mt-5 text-xs text-white/50">
-              AMVIC licensed.{" "}
+              Our specialist is AMVIC licensed.{" "}
               <a
                 href={BUSINESS.amvicRegistryUrl}
                 target="_blank"
@@ -66,6 +65,13 @@ export default function Footer() {
                   </Link>
                 </li>
               ))}
+              {FOOTER_NAV_EXTRA.filter(p => !PAGES.some(pp => pp.slug === p.slug)).map(p => (
+                <li key={p.slug}>
+                  <Link href={p.slug} className="text-white/80 hover:text-brand-accent">
+                    {p.shortTitle}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
           <div>
@@ -78,9 +84,6 @@ export default function Footer() {
               ))}
             </ul>
           </div>
-        </div>
-        <div className="mt-12 rounded-3xl bg-brand-forest/40 p-6 ring-1 ring-white/10">
-          <AuthorBio compact dark />
         </div>
         <div className="mt-10 flex flex-col gap-2 border-t border-white/15 pt-6 text-xs text-white/55 md:flex-row md:items-center md:justify-between">
           <span>&copy; {year} {SITE_NAME}. All rights reserved.</span>

@@ -33,7 +33,7 @@ const TIMEFRAME_OPTIONS = ["This week", "This month", "Within 60 days", "Just ex
 export default function LeadForm({
   variant = "inline",
   sourcePage,
-  heading = "Apply free. Hammad calls you in 1 hour",
+  heading = "Apply free. A specialist calls you in 1 hour",
   subheading = "100% free, no obligation, no hard credit check. We work with every major Canadian lender.",
 }: Props) {
   const [status, setStatus] = useState<Status>("idle");
@@ -90,7 +90,7 @@ export default function LeadForm({
           Application received.
         </h2>
         <p className="mt-2 text-brand-ink/80">
-          Hammad will call you within 1 hour during business hours. Watch for a Calgary number
+          A specialist will call you within 1 hour during business hours. Watch for a Calgary number
           and an email from <strong>hello@newwheels.ca</strong> confirming your application.
         </p>
         <p className="mt-4 text-sm text-brand-ink/80">

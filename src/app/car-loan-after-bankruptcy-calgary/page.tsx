@@ -40,7 +40,7 @@ const FAQ = [
   {
     question: "Can I get a Nissan after bankruptcy in Calgary?",
     answer:
-      "Yes. South Trail Nissan has approved discharged bankruptcies on new Sentras and pre-owned Rogues. The vehicle type matters less than the loan structure.",
+      "Yes. Our dealer partners have approved discharged bankruptcies on new Sentras and pre-owned Rogues. The vehicle type matters less than the loan structure.",
   },
 ];
 

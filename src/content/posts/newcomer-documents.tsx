@@ -109,7 +109,7 @@ const post: Post = {
         We pre-screen your documentation before submission. Missing the wrong document at the
         lender stage causes a 3-5 day delay. We catch it during the initial phone call so
         your file moves clean through to approval. That&apos;s why our newcomer approvals
-        consistently hit the 24-hour target. Hammad reviews every document personally and
+        consistently hit the 24-hour target. Our specialist reviews every document personally and
         tells you exactly what&apos;s missing or needs updating before the file goes to the
         lender. No surprises, no delays, no back-and-forth emails with a faceless broker.
       </p>

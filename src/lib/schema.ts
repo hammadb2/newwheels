@@ -36,7 +36,7 @@ export function localBusinessSchema() {
     sameAs: Object.values(BUSINESS.socials),
     employee: {
       "@type": "Person",
-      name: `Hammad${BUSINESS.hammadLastName ? " " + BUSINESS.hammadLastName : ""}`,
+      name: "NewWheels Specialist",
       jobTitle: "Automotive Finance Specialist",
       description: "AMVIC-licensed automotive sales professional in Calgary, Alberta.",
     },
@@ -127,10 +127,9 @@ export function articleSchema(opts: {
     inLanguage: "en-CA",
     image: [fullUrl("/og.png")],
     author: {
-      "@type": "Person",
-      name: opts.authorName || `Hammad${BUSINESS.hammadLastName ? " " + BUSINESS.hammadLastName : ""}`,
-      jobTitle: "Automotive Finance Specialist",
-      worksFor: { "@type": "Organization", name: SITE_NAME },
+      "@type": "Organization",
+      name: opts.authorName || "NewWheels Finance Team",
+      url: SITE_URL,
     },
     publisher: {
       "@type": "Organization",
@@ -140,17 +139,15 @@ export function articleSchema(opts: {
   };
 }
 
-export function personSchema() {
+export function teamSchema() {
   return {
     "@context": "https://schema.org",
-    "@type": "Person",
-    name: `Hammad${BUSINESS.hammadLastName ? " " + BUSINESS.hammadLastName : ""}`,
-    jobTitle: "Automotive Finance Specialist",
-    worksFor: { "@type": "Organization", name: SITE_NAME },
+    "@type": "Organization",
+    name: SITE_NAME,
+    url: SITE_URL,
     description:
-      "AMVIC-licensed automotive sales professional in Calgary who specializes in financing solutions for newcomers, credit rebuilds, and self-employed buyers.",
-    image: fullUrl("/hammad.jpg"),
-    url: fullUrl("/about"),
+      "Calgary's specialist vehicle financing platform. AMVIC-licensed. Bad credit, newcomers, work permits, and self-employed buyers approved in 24 hours.",
+    logo: fullUrl("/logo-wordmark.png"),
     knowsAbout: [
       "Vehicle financing",
       "Newcomer car loans",
