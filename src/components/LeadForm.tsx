@@ -80,22 +80,22 @@ export default function LeadForm({
   if (status === "success") {
     return (
       <div
-        className={`rounded-4xl bg-brand-accent p-7 text-brand-ink shadow-card ${
+        className={`rounded-4xl bg-brand-deep p-7 text-white shadow-card ${
           variant === "compact" ? "" : "md:p-9"
         }`}
         role="status"
       >
-        <span className="chip">You&rsquo;re in</span>
-        <h2 className="mt-3 text-3xl font-extrabold leading-tight text-brand-ink">
+        <span className="chip-accent">You&rsquo;re in</span>
+        <h2 className="mt-3 text-3xl font-extrabold leading-tight text-brand-accent">
           Application received.
         </h2>
-        <p className="mt-2 text-brand-ink/80">
-          A specialist will call you within 1 hour during business hours. Watch for a Calgary number
-          and an email from <strong>hello@newwheels.ca</strong> confirming your application.
+        <p className="mt-2 text-white/85">
+          A specialist will call you within 1 hour during business hours. Watch for a Calgary number,
+          a confirmation email, and a text from us.
         </p>
-        <p className="mt-4 text-sm text-brand-ink/80">
+        <p className="mt-4 text-sm text-white/70">
           Can&apos;t wait? Call us directly at{" "}
-          <a href="tel:+15879006051" className="font-semibold text-brand-ink underline-offset-4 underline">
+          <a href="tel:+15879006051" className="font-semibold text-brand-accent underline-offset-4 underline">
             (587) 900-6051
           </a>
           .
