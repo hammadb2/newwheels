@@ -243,6 +243,8 @@ function buildScenarioBlock(s: EmailScenario, index: number, diffFields: Set<str
   const displayPayment = freq === "biweekly" ? s.biweekly : s.monthly;
   const freqLabel = freq === "biweekly" ? "bi-weekly" : "/month";
   const diffField = freq === "biweekly" ? "biweekly" : "monthly";
+  const numPayments = freq === "biweekly" ? Math.round((s.term * 26) / 12) : s.term;
+  const totalPaid = freq === "biweekly" ? s.biweekly * numPayments : s.totalPayments;
 
   let tradeRow = "";
   if (s.tradeIn > 0) {
@@ -290,8 +292,8 @@ function buildScenarioBlock(s: EmailScenario, index: number, diffFields: Set<str
                   ${downRow}
                   <tr><td colspan="2" style="border-top:1px solid rgba(255,255,255,0.12);padding-top:8px;"></td></tr>
                   ${scenarioDetailRow("Amount financed", fmtCADEmail(s.financed), isDiff("financed"))}
-                  ${scenarioDetailRow("Cost of borrowing", fmtCADEmail(s.costOfBorrowing), isDiff("costOfBorrowing"))}
-                  ${scenarioDetailRow("Total of " + s.term + " payments", fmtCADEmail(s.totalPayments), isDiff("totalPayments"))}
+                  ${scenarioDetailRow("Cost of borrowing", fmtCADEmail(Math.max(0, totalPaid - s.financed)), isDiff("costOfBorrowing"))}
+                  ${scenarioDetailRow("Total of " + numPayments + " payments", fmtCADEmail(totalPaid), isDiff("totalPayments"))}
                 </table>
               </td>
             </tr>
