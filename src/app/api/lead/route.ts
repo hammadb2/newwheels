@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { BUSINESS, SITE_NAME, SITE_URL } from "@/lib/site";
+import { autoReplyEmail, notifyEmail } from "@/lib/email-templates";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -89,30 +90,20 @@ export async function POST(req: Request) {
   const from = process.env.LEAD_FROM_EMAIL || `${SITE_NAME} <${BUSINESS.email}>`;
   const notifyTo = process.env.LEAD_NOTIFY_TO || BUSINESS.email;
 
-  const notifyHtml = `
-    <h2>New NewWheels lead</h2>
-    <p><strong>Name:</strong> ${fullName}</p>
-    <p><strong>Phone:</strong> ${safe.phone}</p>
-    <p><strong>Email:</strong> ${safe.email}</p>
-    <p><strong>Credit:</strong> ${safe.credit}</p>
-    <p><strong>Employment:</strong> ${safe.employment}</p>
-    <p><strong>Status in Canada:</strong> ${safe.visa || "N/A"}</p>
-    <p><strong>Timeframe:</strong> ${safe.timeframe}</p>
-    <p><strong>Source page:</strong> ${safe.sourcePage}</p>
-    <p><strong>Notes:</strong><br/>${safe.notes.replace(/\n/g, "<br/>") || "N/A"}</p>
-    <p style="color:#666;font-size:12px;margin-top:24px;">Submitted ${timestamp}</p>
-  `;
+  const notifyHtml = notifyEmail({
+    fullName,
+    phone: safe.phone,
+    email: safe.email,
+    credit: safe.credit,
+    employment: safe.employment,
+    visa: safe.visa,
+    timeframe: safe.timeframe,
+    sourcePage: safe.sourcePage,
+    notes: safe.notes,
+    timestamp,
+  });
 
-  const autoReplyHtml = `
-    <p>Hi ${safe.firstName},</p>
-    <p>Thanks for applying with NewWheels. We received your application and a specialist will reach out within 1 hour during business hours (${BUSINESS.hours}).</p>
-    <p>If your situation is urgent, call us directly at <a href="tel:${BUSINESS.phoneHref}">${BUSINESS.phone}</a>.</p>
-    <p><strong>What happens next</strong><br/>
-    1. A specialist calls you to confirm your details.<br/>
-    2. We submit your file to our lender network. No hard credit check at this stage.<br/>
-    3. You get approval terms within 24 hours.</p>
-    <p>Talk soon,<br/>NewWheels · Calgary</p>
-  `;
+  const autoReplyHtml = autoReplyEmail(safe.firstName);
 
   const [notifyResult, autoReplyResult, sheetResult] = await Promise.all([
     sendResend({
