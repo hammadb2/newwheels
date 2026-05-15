@@ -76,6 +76,10 @@ function monthlyToBiweekly(monthly: number): number {
   return (monthly * 12) / 26;
 }
 
+function biweeklyCount(termMonths: number): number {
+  return Math.round((termMonths * 26) / 12);
+}
+
 function trackUse() {
   type CalcWindow = Window & { dataLayer?: unknown[] };
   const w = window as CalcWindow;
@@ -379,9 +383,11 @@ function EstimateCalculator() {
             </dd>
           </div>
           <div className="flex justify-between gap-3">
-            <dt className="text-white/70">Total cost over {term} months</dt>
+            <dt className="text-white/70">Total of {freq === "biweekly" ? biweeklyCount(term) : term} payments</dt>
             <dd className="font-semibold">
-              {fmtCAD(totalLow + down)} &ndash; {fmtCAD(totalHigh + down)}
+              {freq === "biweekly"
+                ? <>{fmtCAD(biweeklyLow * biweeklyCount(term) + down)} &ndash; {fmtCAD(biweeklyHigh * biweeklyCount(term) + down)}</>
+                : <>{fmtCAD(totalLow + down)} &ndash; {fmtCAD(totalHigh + down)}</>}
             </dd>
           </div>
         </dl>
@@ -703,14 +709,25 @@ function TraditionalCalculator() {
                   <dt className="text-white/70">Amount financed</dt>
                   <dd className="font-semibold">{fmtCAD(activeResult.financed)}</dd>
                 </div>
-                <div className="flex justify-between gap-3">
-                  <dt className="text-white/70">Cost of borrowing</dt>
-                  <dd className="font-semibold text-brand-accent">{fmtCAD(activeResult.costOfBorrowing)}</dd>
-                </div>
-                <div className="flex justify-between gap-3">
-                  <dt className="text-white/70">Total of {activeResult.term} payments</dt>
-                  <dd className="font-semibold">{fmtCAD(activeResult.totalPayments)}</dd>
-                </div>
+                {(() => {
+                  const totalPaid = freq === "biweekly"
+                    ? activeResult.biweekly * biweeklyCount(activeResult.term)
+                    : activeResult.totalPayments;
+                  const borrowCost = Math.max(0, totalPaid - activeResult.financed);
+                  const numPay = freq === "biweekly" ? biweeklyCount(activeResult.term) : activeResult.term;
+                  return (
+                    <>
+                      <div className="flex justify-between gap-3">
+                        <dt className="text-white/70">Cost of borrowing</dt>
+                        <dd className="font-semibold text-brand-accent">{fmtCAD(borrowCost)}</dd>
+                      </div>
+                      <div className="flex justify-between gap-3">
+                        <dt className="text-white/70">Total of {numPay} payments</dt>
+                        <dd className="font-semibold">{fmtCAD(totalPaid)}</dd>
+                      </div>
+                    </>
+                  );
+                })()}
               </dl>
             </>
           )}
