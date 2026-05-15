@@ -45,7 +45,7 @@ const CREDIT_OPTIONS: Tier[] = [
   "Bankruptcy/Proposal",
 ];
 
-const TERMS = [24, 36, 48, 60, 72, 84];
+const TERMS = [24, 36, 48, 60, 72, 84, 96];
 const FREQ_LABEL: Record<Freq, string> = { biweekly: "Bi-weekly", monthly: "Monthly" };
 
 function fmtCAD(n: number) {
@@ -175,7 +175,7 @@ function NumericInput({
           id={id}
           type="text"
           inputMode="decimal"
-          className={`input w-full ${prefix ? "pl-7" : ""} ${suffix ? "pr-8" : ""}`}
+          className={`input w-full ${prefix ? "pl-8" : ""} ${suffix ? "pr-8" : ""}`}
           value={focused ? raw : value.toLocaleString("en-CA")}
           onFocus={() => {
             setFocused(true);
