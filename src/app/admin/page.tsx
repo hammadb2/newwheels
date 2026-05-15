@@ -8,6 +8,8 @@ import {
 } from "@/lib/admin-auth";
 import { anthropicConfigStatus } from "@/lib/anthropic";
 import { googleAuthStatus } from "@/lib/google/auth";
+import { adminRuntime } from "@/lib/admin-paths";
+import { RuntimeBanner } from "@/components/admin/RuntimeBanner";
 
 export const dynamic = "force-dynamic";
 
@@ -56,6 +58,10 @@ export default async function AdminHome() {
       <p className="mt-2 text-sm text-brand-ink/70">
         Internal panel. Robots disallowed. Not linked from any public page.
       </p>
+
+      <div className="mt-6">
+        <RuntimeBanner runtime={adminRuntime()} />
+      </div>
 
       {!adminStatus.configured && (
         <div className="mt-6 rounded-3xl border border-amber-200 bg-amber-50 p-5 text-sm text-amber-900">

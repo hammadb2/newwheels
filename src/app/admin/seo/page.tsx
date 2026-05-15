@@ -7,6 +7,8 @@
 import { requireAdmin } from "@/lib/admin-auth";
 import { gscConfigStatus, gscReport, type GscRow } from "@/lib/google/search-console";
 import { ga4ConfigStatus, ga4Report, type GaRow } from "@/lib/google/ga4";
+import { adminRuntime } from "@/lib/admin-paths";
+import { RuntimeBanner } from "@/components/admin/RuntimeBanner";
 
 export const dynamic = "force-dynamic";
 
@@ -47,6 +49,8 @@ export default async function SeoDashboard() {
           ({range.startDate} → {range.endDate}).
         </p>
       </header>
+
+      <RuntimeBanner runtime={adminRuntime()} />
 
       <section className="rounded-3xl bg-white p-6 shadow-card ring-1 ring-brand-line">
         <h2 className="text-base font-bold uppercase">Search Console — top queries</h2>

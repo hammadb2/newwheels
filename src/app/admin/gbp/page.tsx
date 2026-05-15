@@ -13,6 +13,8 @@ import {
   refreshGbpCache,
   type GbpCache,
 } from "@/lib/google/gbp";
+import { adminRuntime } from "@/lib/admin-paths";
+import { RuntimeBanner } from "@/components/admin/RuntimeBanner";
 
 export const dynamic = "force-dynamic";
 
@@ -41,6 +43,8 @@ export default async function GbpAdmin() {
           <code>Review</code> and <code>AggregateRating</code> schema.
         </p>
       </header>
+
+      <RuntimeBanner runtime={adminRuntime()} />
 
       {!status.configured && (
         <div className="rounded-3xl border border-amber-200 bg-amber-50 p-5 text-sm text-amber-900">
