@@ -91,7 +91,13 @@ export default function PageShell({
               <h1 className="display-headline mt-4 text-hero font-extrabold uppercase text-white">
                 {title}
               </h1>
-              <p className="mt-5 max-w-xl text-lg text-white/85">{intro}</p>
+              <p
+                data-intro
+                data-speakable
+                className="mt-5 max-w-xl text-lg text-white/85"
+              >
+                {intro}
+              </p>
               <div className="mt-7 flex flex-wrap gap-3">
                 <Link href="#apply" className="btn-primary-dark text-sm">
                   Apply free

@@ -1,8 +1,32 @@
 import type { Metadata } from "next";
 import PageShell from "@/components/PageShell";
 import { buildMetadata } from "@/lib/seo";
+import { howToSchema } from "@/lib/schema";
 
 const SLUG = "/how-it-works";
+
+const HOW_TO = howToSchema({
+  name: "How to get approved for a car loan in Calgary",
+  description:
+    "Three-step process from free application to driving the vehicle. NewWheels handles the lender match, paperwork, and dealership coordination for you.",
+  steps: [
+    {
+      name: "Apply free (90 seconds)",
+      text:
+        "Fill out the application with eight pieces of information: name, phone, email, credit situation, employment, immigration status, timeframe, and notes. No SIN required and only a soft credit pull.",
+    },
+    {
+      name: "A specialist calls you within 1 hour",
+      text:
+        "A real Calgary number, 10-15 minute call. We confirm your details, ask follow-ups, and tell you the realistic rate range before submitting your file anywhere.",
+    },
+    {
+      name: "Drive in 24-72 hours",
+      text:
+        "We submit to the right lender, return approval terms in writing, coordinate delivery at our dealer partners, and complete paperwork. You drive the vehicle off the lot.",
+    },
+  ],
+});
 
 export const metadata: Metadata = buildMetadata({
   title: "How It Works | NewWheels Calgary Car Loan Approval Process",
@@ -53,6 +77,7 @@ export default function Page() {
       intro="No mystery, no boiler-room sales. Three steps from application to keys, and a specialist personally walks every customer through them. Here's exactly what happens after you click 'apply'."
       breadcrumb={[{ name: "How it works", path: SLUG }]}
       faq={FAQ}
+      extraSchema={[HOW_TO]}
       ctaHeading="Ready to start? Apply free."
       internalLinks={[
         { href: "/about", label: "About NewWheels" },

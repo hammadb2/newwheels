@@ -35,12 +35,35 @@ export const BUSINESS = {
     "Chestermere",
     "Strathmore",
     "High River",
+    "Crossfield",
+    "Carstairs",
   ],
   socials: {
     facebook: "https://facebook.com/newwheelsca",
     instagram: "https://instagram.com/newwheels.ca",
     linkedin: "https://www.linkedin.com/company/newwheels",
   },
+  // Entity-graph sameAs directory. Used by Organization + LocalBusiness schema.
+  // Each URL listed below is a directory or profile we either control or plan
+  // to claim. The Wikidata entry is the entity-graph keystone; the rest stack
+  // sameAs signal for Knowledge Panel emergence.
+  sameAs: [
+    "https://facebook.com/newwheelsca",
+    "https://instagram.com/newwheels.ca",
+    "https://www.linkedin.com/company/newwheels",
+    // Directory listings — to be claimed / verified once the Phase 5 entity push runs.
+    "https://www.google.com/maps/place/?q=place_id:NEW_WHEELS_CALGARY",
+    "https://www.yelp.ca/biz/newwheels-calgary",
+    "https://www.bbb.org/ca/ab/calgary/profile/auto-financing/newwheels",
+    "https://www.bing.com/maps?q=newwheels+calgary",
+    "https://maps.apple.com/place?q=newwheels+calgary",
+    "https://www.yellowpages.ca/bus/Alberta/Calgary/NewWheels",
+    "https://www.canada411.ca/search/si/1/newwheels/Calgary+AB/",
+    "https://foursquare.com/v/newwheels-calgary",
+    "https://www.alignable.com/calgary-ab/newwheels",
+    // AMVIC registry — the public registration page is the strongest single trust signal.
+    "https://amvic.ca.thentiacloud.net/webs/amvic/register/#/profile/Hammad%20Bhatti/0/10/604bba19195c4e1d90c5990b",
+  ],
 };
 
 export const TRACKING = {
@@ -78,12 +101,13 @@ export const PAGES: SitePage[] = [
   { slug: "/calculator", title: "Car Loan Calculator Calgary", shortTitle: "Calculator", group: "core" },
   { slug: "/nissan-financing-calgary", title: "Nissan Financing Calgary", shortTitle: "Nissan Financing", group: "vehicle" },
   { slug: "/blog", title: "NewWheels Blog", shortTitle: "Blog", group: "blog" },
+  { slug: "/resources", title: "Calgary Car Buying Resources", shortTitle: "Resources", group: "info" },
   { slug: "/privacy", title: "Privacy Policy", shortTitle: "Privacy", group: "info" },
   { slug: "/team", title: "The NewWheels Team", shortTitle: "Team", group: "info" },
 ];
 
 export const PRIMARY_NAV: SitePage[] = PAGES.filter(p =>
-  ["/", "/how-it-works", "/calculator", "/nissan-financing-calgary", "/about", "/blog"].includes(p.slug),
+  ["/", "/how-it-works", "/calculator", "/resources", "/about", "/blog"].includes(p.slug),
 );
 
 export const FOOTER_NAV_EXTRA: SitePage[] = PAGES.filter(p =>
@@ -91,3 +115,28 @@ export const FOOTER_NAV_EXTRA: SitePage[] = PAGES.filter(p =>
 );
 
 export const SITUATION_NAV: SitePage[] = PAGES.filter(p => p.group === "situation");
+
+// Hreflang scaffolding. Each language path is reserved now even though the
+// translated content lands in a follow-up PR — declaring the alternates early
+// is the cheapest way to claim the namespace for Calgary's multilingual SEO
+// (no competitor in the market has multilingual auto-financing content).
+export const LANGUAGE_HREFLANG: Record<string, string> = {
+  // Map of (hreflang code) -> (path prefix).
+  "en-CA": "",
+  "tl-CA": "/tl",
+  "pa-CA": "/pa",
+  "ar-CA": "/ar",
+  "es-CA": "/es",
+  "x-default": "",
+};
+
+// Lightweight typed view onto the programmatic page registry. Routes that
+// enumerate every URL (llms.txt, sitemap) import this shape and call
+// `getProgrammaticPageSummaries()` themselves. We keep the type here so
+// consumers don't reach across the lib boundary.
+export type ProgrammaticPageSummary = {
+  slug: string;
+  title: string;
+  category: string;
+};
+
