@@ -18,6 +18,7 @@ type ScenarioPayload = {
   tradeEquity: number;
   financed: number;
   monthly: number;
+  biweekly: number;
   totalPayments: number;
   costOfBorrowing: number;
 };
@@ -32,7 +33,7 @@ function isValidScenario(s: unknown): s is ScenarioPayload {
   const numFields = [
     "id", "price", "rate", "term", "downPayment", "tradeIn",
     "owingOnTrade", "gstAmount", "negativeEquity", "tradeEquity",
-    "financed", "monthly", "totalPayments", "costOfBorrowing",
+    "financed", "monthly", "biweekly", "totalPayments", "costOfBorrowing",
   ];
   return numFields.every(f => typeof o[f] === "number" && isFinite(o[f] as number));
 }
@@ -40,7 +41,8 @@ function isValidScenario(s: unknown): s is ScenarioPayload {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { email, scenarios } = body as { email?: string; scenarios?: unknown[] };
+    const { email, scenarios, freq } = body as { email?: string; scenarios?: unknown[]; freq?: string };
+    const validFreq = freq === "monthly" ? "monthly" as const : "biweekly" as const;
 
     if (!email || !isValidEmail(email)) {
       return NextResponse.json({ error: "Valid email required" }, { status: 400 });
@@ -64,7 +66,7 @@ export async function POST(req: Request) {
         ? `Your ${SITE_NAME} loan estimate`
         : `Your ${scenarios.length} ${SITE_NAME} loan scenarios`;
 
-    const html = scenarioEmail(scenarios);
+    const html = scenarioEmail(scenarios, validFreq);
 
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",

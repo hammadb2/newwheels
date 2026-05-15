@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 
 type Tier = "Excellent" | "Good" | "Fair" | "Poor" | "No Canadian Credit" | "Bankruptcy/Proposal";
 type Mode = "estimate" | "traditional";
+type Freq = "biweekly" | "monthly";
 
 type Scenario = {
   id: number;
@@ -21,6 +22,7 @@ type ScenarioResult = Scenario & {
   tradeEquity: number;
   financed: number;
   monthly: number;
+  biweekly: number;
   totalPayments: number;
   costOfBorrowing: number;
 };
@@ -44,6 +46,7 @@ const CREDIT_OPTIONS: Tier[] = [
 ];
 
 const TERMS = [24, 36, 48, 60, 72, 84];
+const FREQ_LABEL: Record<Freq, string> = { biweekly: "Bi-weekly", monthly: "Monthly" };
 
 function fmtCAD(n: number) {
   return new Intl.NumberFormat("en-CA", {
@@ -69,6 +72,10 @@ function pmt(principal: number, annualRate: number, months: number): number {
   return (principal * r) / (1 - Math.pow(1 + r, -months));
 }
 
+function monthlyToBiweekly(monthly: number): number {
+  return (monthly * 12) / 26;
+}
+
 function trackUse() {
   type CalcWindow = Window & { dataLayer?: unknown[] };
   const w = window as CalcWindow;
@@ -87,13 +94,36 @@ function calcScenario(s: Scenario): ScenarioResult {
   const tradeEquity = Math.max(0, s.tradeIn - s.owingOnTrade);
   const financed = Math.max(0, taxableAmount * 1.05 + negativeEquity - s.downPayment);
   const monthly = pmt(financed, s.rate, s.term);
+  const biweekly = monthlyToBiweekly(monthly);
   const totalPayments = monthly * s.term;
   const costOfBorrowing = Math.max(0, totalPayments - financed);
-  return { ...s, gstAmount, negativeEquity, tradeEquity, financed, monthly, totalPayments, costOfBorrowing };
+  return { ...s, gstAmount, negativeEquity, tradeEquity, financed, monthly, biweekly, totalPayments, costOfBorrowing };
 }
 
 function defaultScenario(id: number): Scenario {
   return { id, price: 28000, rate: 9.99, term: 72, downPayment: 2000, tradeIn: 0, owingOnTrade: 0 };
+}
+
+// ── Frequency toggle pill ─────────────────────────────────────────────
+function FreqToggle({ freq, onChange }: { freq: Freq; onChange: (f: Freq) => void }) {
+  return (
+    <div className="inline-flex rounded-full bg-brand-cream p-0.5 ring-1 ring-brand-line">
+      {(["biweekly", "monthly"] as Freq[]).map(f => (
+        <button
+          key={f}
+          type="button"
+          onClick={() => { onChange(f); trackUse(); }}
+          className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+            f === freq
+              ? "bg-brand-deep text-white shadow-sm"
+              : "text-brand-muted hover:text-brand-ink"
+          }`}
+        >
+          {FREQ_LABEL[f]}
+        </button>
+      ))}
+    </div>
+  );
 }
 
 function NumericInput({
@@ -187,6 +217,7 @@ function EstimateCalculator() {
   const [down, setDown] = useState(2000);
   const [term, setTerm] = useState(72);
   const [credit, setCredit] = useState<Tier>("Fair");
+  const [freq, setFreq] = useState<Freq>("biweekly");
 
   const gst = 0.05;
   const taxed = price * (1 + gst);
@@ -194,6 +225,8 @@ function EstimateCalculator() {
   const [rLow, rHigh] = RATE_RANGES[credit];
   const monthlyLow = pmt(principal, rLow, term);
   const monthlyHigh = pmt(principal, rHigh, term);
+  const biweeklyLow = monthlyToBiweekly(monthlyLow);
+  const biweeklyHigh = monthlyToBiweekly(monthlyHigh);
   const totalLow = monthlyLow * term;
   const totalHigh = monthlyHigh * term;
   const interestLow = Math.max(0, totalLow - principal);
@@ -217,6 +250,9 @@ function EstimateCalculator() {
     () => ((down - downMin) / (downMax - downMin)) * 100,
     [down],
   );
+
+  const payLow = freq === "biweekly" ? biweeklyLow : monthlyLow;
+  const payHigh = freq === "biweekly" ? biweeklyHigh : monthlyHigh;
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_380px]">
@@ -319,10 +355,13 @@ function EstimateCalculator() {
       </div>
 
       <div className="no-cls rounded-3xl bg-brand-deep p-6 text-white md:p-8">
-        <span className="chip-accent">Estimated monthly</span>
+        <div className="flex items-center justify-between gap-3">
+          <span className="chip-accent">Estimated {freq === "biweekly" ? "bi-weekly" : "monthly"}</span>
+          <FreqToggle freq={freq} onChange={setFreq} />
+        </div>
         <p className="mt-3 text-4xl font-extrabold leading-none md:text-[3.25rem]">
-          {fmtCAD(monthlyLow)}
-          <span className="text-lg font-semibold text-white/70"> &ndash; {fmtCAD(monthlyHigh)}</span>
+          {fmtCAD(payLow)}
+          <span className="text-lg font-semibold text-white/70"> &ndash; {fmtCAD(payHigh)}</span>
         </p>
         <p className="mt-2 text-sm text-brand-accent">
           Rate range: {rLow.toFixed(2)}% &ndash; {rHigh.toFixed(2)}%
@@ -366,58 +405,6 @@ function EstimateCalculator() {
         </a>
       </div>
     </div>
-  );
-}
-
-// ── Scenario Results Panel ────────────────────────────────────────────
-function ScenarioPanel({ result }: { result: ScenarioResult }) {
-  return (
-    <>
-      <span className="chip-accent">Monthly payment</span>
-      <p className="mt-3 text-4xl font-extrabold leading-none md:text-[3.25rem]">
-        {fmtCADCents(result.monthly)}
-      </p>
-      <p className="mt-2 text-sm text-brand-accent">
-        at {result.rate.toFixed(2)}% over {result.term} months
-      </p>
-
-      <dl className="mt-6 space-y-3 border-t border-white/15 pt-5 text-sm">
-        <div className="flex justify-between gap-3">
-          <dt className="text-white/70">Vehicle price</dt>
-          <dd className="font-semibold">{fmtCAD(result.price)}</dd>
-        </div>
-        <div className="flex justify-between gap-3">
-          <dt className="text-white/70">GST (5%)</dt>
-          <dd className="font-semibold">{fmtCAD(result.gstAmount)}</dd>
-        </div>
-        {result.tradeIn > 0 && (
-          <div className="flex justify-between gap-3">
-            <dt className="text-white/70">Trade-in {result.negativeEquity > 0 ? "(negative equity)" : "equity"}</dt>
-            <dd className="font-semibold">
-              {result.negativeEquity > 0 ? `+${fmtCAD(result.negativeEquity)}` : `-${fmtCAD(result.tradeEquity)}`}
-            </dd>
-          </div>
-        )}
-        {result.downPayment > 0 && (
-          <div className="flex justify-between gap-3">
-            <dt className="text-white/70">Down payment</dt>
-            <dd className="font-semibold">-{fmtCAD(result.downPayment)}</dd>
-          </div>
-        )}
-        <div className="flex justify-between gap-3 border-t border-white/15 pt-3">
-          <dt className="text-white/70">Amount financed</dt>
-          <dd className="font-semibold">{fmtCAD(result.financed)}</dd>
-        </div>
-        <div className="flex justify-between gap-3">
-          <dt className="text-white/70">Cost of borrowing</dt>
-          <dd className="font-semibold text-brand-accent">{fmtCAD(result.costOfBorrowing)}</dd>
-        </div>
-        <div className="flex justify-between gap-3">
-          <dt className="text-white/70">Total of {result.term} payments</dt>
-          <dd className="font-semibold">{fmtCAD(result.totalPayments)}</dd>
-        </div>
-      </dl>
-    </>
   );
 }
 
@@ -530,6 +517,7 @@ function ScenarioForm({
 function TraditionalCalculator() {
   const [scenarios, setScenarios] = useState<Scenario[]>([defaultScenario(1)]);
   const [activeIdx, setActiveIdx] = useState(0);
+  const [freq, setFreq] = useState<Freq>("biweekly");
   const [emailModal, setEmailModal] = useState(false);
   const [email, setEmail] = useState("");
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
@@ -587,7 +575,7 @@ function TraditionalCalculator() {
       const res = await fetch("/api/calculator-email", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim(), scenarios: selectedResults }),
+        body: JSON.stringify({ email: email.trim(), scenarios: selectedResults, freq }),
       });
       if (!res.ok) throw new Error("Failed");
       setSent(true);
@@ -675,7 +663,57 @@ function TraditionalCalculator() {
         </div>
 
         <div className="no-cls rounded-3xl bg-brand-deep p-6 text-white md:p-8">
-          {activeResult && <ScenarioPanel result={activeResult} />}
+          <div className="flex items-center justify-between gap-3">
+            <span className="chip-accent">{freq === "biweekly" ? "Bi-weekly" : "Monthly"} payment</span>
+            <FreqToggle freq={freq} onChange={setFreq} />
+          </div>
+          {activeResult && (
+            <>
+              <p className="mt-3 text-4xl font-extrabold leading-none md:text-[3.25rem]">
+                {fmtCADCents(freq === "biweekly" ? activeResult.biweekly : activeResult.monthly)}
+              </p>
+              <p className="mt-2 text-sm text-brand-accent">
+                at {activeResult.rate.toFixed(2)}% over {activeResult.term} months
+              </p>
+
+              <dl className="mt-6 space-y-3 border-t border-white/15 pt-5 text-sm">
+                <div className="flex justify-between gap-3">
+                  <dt className="text-white/70">Vehicle price</dt>
+                  <dd className="font-semibold">{fmtCAD(activeResult.price)}</dd>
+                </div>
+                <div className="flex justify-between gap-3">
+                  <dt className="text-white/70">GST (5%)</dt>
+                  <dd className="font-semibold">{fmtCAD(activeResult.gstAmount)}</dd>
+                </div>
+                {activeResult.tradeIn > 0 && (
+                  <div className="flex justify-between gap-3">
+                    <dt className="text-white/70">Trade-in {activeResult.negativeEquity > 0 ? "(negative equity)" : "equity"}</dt>
+                    <dd className="font-semibold">
+                      {activeResult.negativeEquity > 0 ? `+${fmtCAD(activeResult.negativeEquity)}` : `-${fmtCAD(activeResult.tradeEquity)}`}
+                    </dd>
+                  </div>
+                )}
+                {activeResult.downPayment > 0 && (
+                  <div className="flex justify-between gap-3">
+                    <dt className="text-white/70">Down payment</dt>
+                    <dd className="font-semibold">-{fmtCAD(activeResult.downPayment)}</dd>
+                  </div>
+                )}
+                <div className="flex justify-between gap-3 border-t border-white/15 pt-3">
+                  <dt className="text-white/70">Amount financed</dt>
+                  <dd className="font-semibold">{fmtCAD(activeResult.financed)}</dd>
+                </div>
+                <div className="flex justify-between gap-3">
+                  <dt className="text-white/70">Cost of borrowing</dt>
+                  <dd className="font-semibold text-brand-accent">{fmtCAD(activeResult.costOfBorrowing)}</dd>
+                </div>
+                <div className="flex justify-between gap-3">
+                  <dt className="text-white/70">Total of {activeResult.term} payments</dt>
+                  <dd className="font-semibold">{fmtCAD(activeResult.totalPayments)}</dd>
+                </div>
+              </dl>
+            </>
+          )}
 
           <p className="mt-4 text-xs text-white/55">
             Estimates only. Actual terms depend on your credit profile and lender.
@@ -740,6 +778,8 @@ function TraditionalCalculator() {
                       </label>
                       {scenarios.map((s, i) => {
                         const r = results[i];
+                        const displayPay = freq === "biweekly" ? r.biweekly : r.monthly;
+                        const freqLabel = freq === "biweekly" ? "bi-wk" : "mo";
                         return (
                           <label key={s.id} className="flex items-center gap-2 text-sm">
                             <input
@@ -751,7 +791,7 @@ function TraditionalCalculator() {
                             <span className="text-brand-ink">
                               Scenario {i + 1}
                               <span className="ml-1 text-brand-muted">
-                                — {fmtCADCents(r.monthly)}/mo at {s.rate}%
+                                — {fmtCADCents(displayPay)}/{freqLabel} at {s.rate}%
                               </span>
                             </span>
                           </label>

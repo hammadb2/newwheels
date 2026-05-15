@@ -212,9 +212,12 @@ type EmailScenario = {
   tradeEquity: number;
   financed: number;
   monthly: number;
+  biweekly: number;
   totalPayments: number;
   costOfBorrowing: number;
 };
+
+type EmailFreq = "biweekly" | "monthly";
 
 function fmtCADEmail(n: number): string {
   return new Intl.NumberFormat("en-CA", { style: "currency", currency: "CAD", maximumFractionDigits: 0 })
@@ -235,8 +238,11 @@ function scenarioDetailRow(label: string, value: string, highlight?: boolean): s
   </tr>`;
 }
 
-function buildScenarioBlock(s: EmailScenario, index: number, diffFields: Set<string> | null): string {
+function buildScenarioBlock(s: EmailScenario, index: number, diffFields: Set<string> | null, freq: EmailFreq): string {
   const isDiff = (field: string) => diffFields !== null && diffFields.has(field);
+  const displayPayment = freq === "biweekly" ? s.biweekly : s.monthly;
+  const freqLabel = freq === "biweekly" ? "bi-weekly" : "/month";
+  const diffField = freq === "biweekly" ? "biweekly" : "monthly";
 
   let tradeRow = "";
   if (s.tradeIn > 0) {
@@ -264,8 +270,8 @@ function buildScenarioBlock(s: EmailScenario, index: number, diffFields: Set<str
             </tr>
             <tr>
               <td style="padding-top:12px;">
-                <span style="font-size:32px;font-weight:800;color:${BRAND.white};${isDiff("monthly") ? `background-color:${BRAND.forest};padding:2px 8px;border-radius:6px;` : ""}">${fmtCADCentsEmail(s.monthly)}</span>
-                <span style="font-size:14px;color:rgba(255,255,255,0.6);margin-left:4px;">/month</span>
+                <span style="font-size:32px;font-weight:800;color:${BRAND.white};${isDiff(diffField) ? `background-color:${BRAND.forest};padding:2px 8px;border-radius:6px;` : ""}">${fmtCADCentsEmail(displayPayment)}</span>
+                <span style="font-size:14px;color:rgba(255,255,255,0.6);margin-left:4px;">${freqLabel}</span>
               </td>
             </tr>
             <tr>
@@ -295,9 +301,9 @@ function buildScenarioBlock(s: EmailScenario, index: number, diffFields: Set<str
     </table>`;
 }
 
-export function scenarioEmail(scenarios: EmailScenario[]): string {
+export function scenarioEmail(scenarios: EmailScenario[], freq: EmailFreq = "biweekly"): string {
   const compareFields = ["price", "rate", "term", "downPayment", "tradeIn", "owingOnTrade"] as const;
-  const resultFields = ["monthly", "gstAmount", "financed", "costOfBorrowing", "totalPayments"] as const;
+  const resultFields = ["monthly", "biweekly", "gstAmount", "financed", "costOfBorrowing", "totalPayments"] as const;
   const allFields = [...compareFields, ...resultFields];
 
   let diffFields: Set<string> | null = null;
@@ -313,7 +319,7 @@ export function scenarioEmail(scenarios: EmailScenario[]): string {
     if (diffFields.size >= allFields.length - 1) diffFields = null;
   }
 
-  const scenarioBlocks = scenarios.map((s, i) => buildScenarioBlock(s, i, diffFields)).join("");
+  const scenarioBlocks = scenarios.map((s, i) => buildScenarioBlock(s, i, diffFields, freq)).join("");
 
   const body = `
     <h1 style="margin:0 0 8px;font-size:24px;font-weight:800;color:${BRAND.ink};text-transform:uppercase;letter-spacing:-0.02em;">
