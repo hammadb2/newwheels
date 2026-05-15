@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 
 type Status = "idle" | "submitting" | "success" | "error";
 
@@ -38,9 +39,17 @@ export default function LeadForm({
 }: Props) {
   const [status, setStatus] = useState<Status>("idle");
   const [errorMsg, setErrorMsg] = useState<string>("");
+  const [consent, setConsent] = useState<boolean>(false);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (!consent) {
+      setStatus("error");
+      setErrorMsg(
+        "Please tick the consent checkbox so we can submit your application.",
+      );
+      return;
+    }
     setStatus("submitting");
     setErrorMsg("");
     const form = e.currentTarget;
@@ -57,6 +66,7 @@ export default function LeadForm({
       }
       setStatus("success");
       form.reset();
+      setConsent(false);
       type LeadWindow = Window & {
         dataLayer?: unknown[];
         fbq?: (action: string, name: string, params?: Record<string, unknown>) => void;
@@ -210,15 +220,41 @@ export default function LeadForm({
         />
       </div>
 
-      <p className="mt-5 text-xs text-brand-muted">
-        By submitting you consent to be contacted by NewWheels. We never sell your information.
-        Read our <a href="/privacy" className="underline underline-offset-2 hover:text-brand-ink">privacy policy</a>.
-      </p>
+      <div className="mt-5">
+        <label
+          htmlFor="consent"
+          className="flex items-start gap-3 rounded-2xl bg-brand-cream/60 p-4 text-sm text-brand-ink ring-1 ring-brand-line"
+        >
+          <input
+            id="consent"
+            name="consent"
+            type="checkbox"
+            required
+            checked={consent}
+            onChange={e => setConsent(e.target.checked)}
+            className="mt-1 h-5 w-5 flex-shrink-0 cursor-pointer accent-brand-forest"
+            aria-describedby="consent-description"
+          />
+          <span id="consent-description" className="leading-relaxed">
+            By submitting this form I consent to NewWheels collecting, using, and sharing my
+            personal information with dealer and lender partners to facilitate my vehicle
+            financing application, in accordance with the NewWheels{" "}
+            <Link
+              href="/privacy"
+              className="font-semibold underline underline-offset-2 hover:text-brand-forest"
+            >
+              Privacy Policy
+            </Link>
+            .
+          </span>
+        </label>
+      </div>
 
       <button
         type="submit"
         className="btn-primary mt-5 min-h-[60px] w-full text-base font-extrabold"
-        disabled={status === "submitting"}
+        disabled={status === "submitting" || !consent}
+        aria-disabled={status === "submitting" || !consent}
       >
         {status === "submitting" ? "Submitting..." : "Get my approval \u2014 free"}
       </button>

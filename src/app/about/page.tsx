@@ -7,9 +7,9 @@ import { BUSINESS } from "@/lib/site";
 const SLUG = "/about";
 
 export const metadata: Metadata = buildMetadata({
-  title: "About NewWheels Calgary | AMVIC Licensed Vehicle Financing",
+  title: "About NewWheels Calgary | Vehicle Financing Lead Generation Platform",
   description:
-    "NewWheels was founded by a Calgary automotive finance specialist to fix how newcomers and bad-credit buyers get financed. One application, one matched lender, one call from a real person.",
+    "NewWheels was founded to fix how newcomers and bad-credit buyers get financed. One application, matched to AMVIC-licensed dealer partners across Calgary and Alberta, one call from a real person.",
   path: SLUG,
 });
 
@@ -17,17 +17,17 @@ const FAQ = [
   {
     question: "Who runs NewWheels Calgary?",
     answer:
-      "NewWheels is run by an AMVIC-licensed Calgary automotive finance specialist with years of experience in subprime and newcomer financing.",
+      "NewWheels is run by a Calgary automotive finance team with years of experience in subprime and newcomer financing.",
   },
   {
     question: "Is NewWheels a real Calgary business?",
     answer:
-      "Yes. We have a Calgary address (listed in the footer), an Alberta-registered phone number, and an active AMVIC licence linked from every page. We're not a national broker pretending to be local.",
+      "Yes. We have a Calgary address (listed in the footer) and an Alberta-registered phone number. NewWheels is a lead generation platform that connects Calgary buyers with AMVIC-licensed dealer partners. We're not a national broker pretending to be local.",
   },
   {
-    question: "What's an AMVIC licence and why does it matter?",
+    question: "What's AMVIC and how does it apply to NewWheels?",
     answer:
-      "AMVIC (Alberta Motor Vehicle Industry Council) licenses every legal vehicle salesperson and dealership in Alberta. It's a consumer-protection requirement. Unlicensed sellers can't legally advertise vehicle financing in Alberta. If a Calgary lender doesn't display a licence number, that's a red flag.",
+      "AMVIC (Alberta Motor Vehicle Industry Council) licenses every legal vehicle salesperson and dealership in Alberta. NewWheels is a lead generation platform, not a dealership or licensed automotive retailer, so an AMVIC licence is not required for what we do. NewWheels works exclusively with AMVIC-licensed dealer partners across Calgary and Alberta.",
   },
   {
     question: "How is NewWheels different from AutoNova or Canada Drives?",
@@ -37,12 +37,12 @@ const FAQ = [
   {
     question: "Who handles my application?",
     answer:
-      "A licensed specialist reviews every application personally and calls you within 1 hour.",
+      "A specialist reviews every application personally and calls you within 1 hour, then refers your file to an AMVIC-licensed dealer partner that best matches your situation.",
   },
   {
-    question: "Where can I verify your AMVIC licence?",
+    question: "Which dealers do you work with?",
     answer:
-      "On the official AMVIC public registry. We link to it from every page footer. You can search by licence number or by name.",
+      "NewWheels works exclusively with AMVIC-licensed dealer partners across Calgary and Alberta. After your application is reviewed, your file is referred to the partner most likely to approve you at the best rate.",
   },
 ];
 
@@ -67,12 +67,13 @@ export default function Page() {
     >
       <h2>Who NewWheels is</h2>
       <p>
-        NewWheels is a Calgary-only AMVIC-licensed vehicle financing specialist. The
+        NewWheels is a Calgary-only vehicle financing lead generation platform. The
         company was founded by a Calgary automotive finance specialist with years of
         subprime, newcomer, and visa-pathway financing experience. NewWheels operates
         from Calgary, Alberta and serves buyers across the Calgary metro area plus the
         surrounding cities (Airdrie, Cochrane, Okotoks, Chestermere, Strathmore, High
-        River, Crossfield, Carstairs).
+        River, Crossfield, Carstairs). NewWheels works exclusively with AMVIC-licensed
+        dealer partners across Calgary and Alberta.
       </p>
 
       <h2>What NewWheels does</h2>
@@ -149,19 +150,12 @@ export default function Page() {
         bring them to NewWheels customers first.
       </p>
       <p>
-        Our specialist is AMVIC licensed. It isn&apos;t just a piece of paper. It&apos;s a
-        commitment to a standard of conduct that gets audited regularly. Every Calgary buyer
-        deserves a sales professional who&apos;s actually licensed and accountable.
-      </p>
-      <p className="mt-2 text-sm">
-        <a
-          href={BUSINESS.amvicRegistryUrl}
-          className="font-semibold underline underline-offset-4 hover:text-brand-ink"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {BUSINESS.amvic} &mdash; verify on AMVIC public registry
-        </a>
+        NewWheels works exclusively with AMVIC-licensed dealer partners across Calgary and
+        Alberta. The Alberta Motor Vehicle Industry Council (AMVIC) licenses every legal
+        vehicle salesperson and dealership in Alberta as a consumer-protection requirement.
+        Every Calgary buyer deserves to deal with a sales professional who is actually
+        licensed and accountable, which is why we only refer applicants to AMVIC-licensed
+        partners.
       </p>
 
       <h2>The 6 months covered story</h2>
@@ -178,7 +172,8 @@ export default function Page() {
         Plain English. Calgary specifics. No buzzwords. If something on this site is wrong,
         outdated, or unclear, email us directly at{" "}
         <a href={`mailto:${BUSINESS.email}`} className="underline">{BUSINESS.email}</a>. We
-        update the pages whenever lender programs or AMVIC rules change.
+        update the pages whenever lender programs or Alberta consumer-protection rules
+        change.
       </p>
     </PageShell>
   );

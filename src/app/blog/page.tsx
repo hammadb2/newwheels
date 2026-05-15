@@ -72,8 +72,8 @@ export default function BlogHubPage() {
             <p className="mt-5 text-lg text-white/85">
               Plain-English guides covering newcomer documentation, post-bankruptcy timelines,
               work-permit financing, the 6-months-covered offer, and Calgary-specific rate
-              patterns. Every post is reviewed for accuracy when lender programs or AMVIC rules
-              change.
+              patterns. Every post is reviewed for accuracy when lender programs or Alberta
+              consumer-protection rules change.
             </p>
           </div>
         </div>

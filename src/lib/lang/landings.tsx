@@ -67,7 +67,7 @@ export const LANG_CONTENT: Record<LangCode, LangContent> = {
       "Tulong sa pautang ng sasakyan para sa mga Pilipinong nasa Calgary, kahit walang Canadian credit, may PGWP, o caregiver pathway. Soft credit pull lang ang aplikasyon, libre, at may tumatawag na espesyalista sa loob ng isang oras tuwing araw ng trabaho.",
     body: [
       "Marami sa mga Pilipinong customer namin ay caregiver, PGWP, o bagong PR na nasa Falconridge, Saddle Ridge, Martindale, at Forest Lawn. Tinutulungan namin kayo na makakuha ng pautang gamit ang lender na alam ang sitwasyon ng newcomer at caregiver — hindi yung pangkalahatang bangko na laging hindi pumapayag.",
-      "Kahit walang Canadian credit history, may mga partner kaming lender na pumapayag base sa employment at down payment. Ang NewWheels ay AMVIC-licensed sa Alberta at sineserve ang buong Calgary metro, kasama ang Airdrie, Cochrane, Okotoks, at Chestermere.",
+      "Kahit walang Canadian credit history, may mga partner kaming lender na pumapayag base sa employment at down payment. Ang NewWheels ay nakikipagtulungan lamang sa mga AMVIC-licensed na dealer partner sa buong Alberta at sineserve ang buong Calgary metro, kasama ang Airdrie, Cochrane, Okotoks, at Chestermere.",
     ],
     applyCta: "Mag-apply nang libre",
     callCta: "Tumawag sa NewWheels",
@@ -103,7 +103,7 @@ export const LANG_CONTENT: Record<LangCode, LangContent> = {
       "ਕੈਲਗਰੀ ਵਿੱਚ ਪੰਜਾਬੀ ਪਰਿਵਾਰਾਂ ਲਈ ਕਾਰ ਫਾਇਨੈਂਸਿੰਗ। ਨਵੇਂ ਆਏ ਪੀ.ਆਰ., ਵਰਕ ਪਰਮਿਟ, ਮਾੜੇ ਕ੍ਰੈਡਿਟ ਜਾਂ ਟਰੱਕ ਡਰਾਈਵਰ NOA — ਸਾਡੇ ਕੋਲ ਹਰ ਫ਼ਾਈਲ ਲਈ ਸਹੀ ਲੈਂਡਰ ਹੈ। ਅਰਜ਼ੀ ਮੁਫ਼ਤ ਹੈ, ਸਿਰਫ਼ ਸੌਫ਼ਟ ਪੁਲ, ਅਤੇ ਇੱਕ ਘੰਟੇ ਅੰਦਰ ਫ਼ੋਨ।",
     body: [
       "ਸਾਡੇ ਪੰਜਾਬੀ ਗਾਹਕ ਜ਼ਿਆਦਾਤਰ Saddle Ridge, Martindale, Skyview, Cornerstone, ਅਤੇ Genesis (Airdrie) ਵਿੱਚ ਰਹਿੰਦੇ ਹਨ। ਅਸੀਂ ਫ਼ੈਮਿਲੀ-ਕੋ-ਸਾਈਨਰ ਫ਼ਾਈਲਾਂ, ਲੌਂਗ-ਹੌਲ ਟਰੱਕ ਡਰਾਈਵਰ NOA ਅਤੇ ਨਵੀਂਆਂ PR ਫ਼ਾਈਲਾਂ ਨੂੰ ਸਪੈਸ਼ਲਾਈਜ਼ ਕਰਦੇ ਹਾਂ।",
-      "NewWheels ਅਲਬਰਟਾ ਵਿੱਚ AMVIC-licensed ਹੈ ਅਤੇ ਪੂਰਾ ਕੈਲਗਰੀ ਮੈਟਰੋ, Airdrie, Cochrane, Okotoks ਅਤੇ Chestermere ਨੂੰ ਸਰਵ ਕਰਦਾ ਹੈ। ਅਰਜ਼ੀ ਮੁਫ਼ਤ ਹੈ, ਕੋਈ ਜ਼ਿੰਮੇਵਾਰੀ ਨਹੀਂ।",
+      "NewWheels ਸਿਰਫ਼ ਅਲਬਰਟਾ ਦੇ AMVIC-licensed ਡੀਲਰ ਪਾਰਟਨਰਾਂ ਨਾਲ ਕੰਮ ਕਰਦਾ ਹੈ ਅਤੇ ਪੂਰਾ ਕੈਲਗਰੀ ਮੈਟਰੋ, Airdrie, Cochrane, Okotoks ਅਤੇ Chestermere ਨੂੰ ਸਰਵ ਕਰਦਾ ਹੈ। ਅਰਜ਼ੀ ਮੁਫ਼ਤ ਹੈ, ਕੋਈ ਜ਼ਿੰਮੇਵਾਰੀ ਨਹੀਂ।",
     ],
     applyCta: "ਮੁਫ਼ਤ ਅਪਲਾਈ ਕਰੋ",
     callCta: "NewWheels ਨੂੰ ਫ਼ੋਨ ਕਰੋ",
@@ -139,7 +139,7 @@ export const LANG_CONTENT: Record<LangCode, LangContent> = {
       "تمويل السيارات للأسر الناطقة بالعربية في كالغاري. الوافدون الجدد، تصاريح العمل، اللاجئون، الائتمان الضعيف، والعاملون لحسابهم الخاص — كلهم مقبولون. الطلب مجاني بسحب ائتماني ناعم فقط، ويتصل بك أخصائي خلال ساعة واحدة في أيام العمل.",
     body: [
       "نخدم بشكل أساسي العملاء الناطقين بالعربية في Forest Lawn و Marlborough و Saddle Ridge و Martindale و Pineridge. لدينا شركاء مقرضون يقبلون ملفات اللاجئين والوافدين الجدد بدون تاريخ ائتماني كندي، ويعتمدون على استقرار التوظيف والدفعة المقدمة.",
-      "NewWheels مرخصة من AMVIC في ألبرتا وتخدم منطقة كالغاري الكبرى بالكامل، بما في ذلك Airdrie و Cochrane و Okotoks و Chestermere. الطلب مجاني بدون أي التزام.",
+      "تعمل NewWheels حصرياً مع شركاء تجار مرخصين من AMVIC في ألبرتا وتخدم منطقة كالغاري الكبرى بالكامل، بما في ذلك Airdrie و Cochrane و Okotoks و Chestermere. الطلب مجاني بدون أي التزام.",
     ],
     applyCta: "قدّم طلبك مجاناً",
     callCta: "اتصل بـ NewWheels",
@@ -175,7 +175,7 @@ export const LANG_CONTENT: Record<LangCode, LangContent> = {
       "Financiamiento de autos para familias hispanohablantes en Calgary. Recién llegados a Canadá, refugiados, permisos de trabajo, mal crédito y trabajadores independientes — todos son aprobados a través del prestamista correcto. La solicitud es gratuita, sólo verificación suave de crédito, y un especialista llama dentro de una hora en días hábiles.",
     body: [
       "Atendemos principalmente a clientes hispanohablantes en Forest Lawn, Marlborough, Falconridge, Marlborough Park y Pineridge. Tenemos prestamistas socios que aprueban a recién llegados sin historial crediticio canadiense, basándose en empleo estable y enganche.",
-      "NewWheels tiene licencia AMVIC en Alberta y sirve a toda el área metropolitana de Calgary, incluyendo Airdrie, Cochrane, Okotoks y Chestermere. La solicitud es gratuita y sin compromiso.",
+      "NewWheels trabaja exclusivamente con concesionarios asociados con licencia AMVIC en Alberta y sirve a toda el área metropolitana de Calgary, incluyendo Airdrie, Cochrane, Okotoks y Chestermere. La solicitud es gratuita y sin compromiso.",
     ],
     applyCta: "Aplica gratis",
     callCta: "Llama a NewWheels",

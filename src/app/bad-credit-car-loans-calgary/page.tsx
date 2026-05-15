@@ -123,8 +123,7 @@ export default function Page() {
         We&apos;ll tell you when <em>not</em> to buy. If your situation calls for 3 months of
         on-time rent receipts before you apply, we&apos;ll say so. If your debt-to-income is
         too high and a $400 monthly will push you into default, we won&apos;t sell you the
-        loan. That&apos;s the AMVIC standard, that&apos;s the NewWheels standard, and
-        that&apos;s what we built NewWheels on.
+        loan. That&apos;s the NewWheels standard, and that&apos;s what we built NewWheels on.
       </p>
 
       <HubSpokes

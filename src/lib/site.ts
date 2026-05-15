@@ -25,8 +25,6 @@ export const BUSINESS = {
     postal: process.env.NEXT_PUBLIC_BUSINESS_ADDRESS_POSTAL || "",
     country: "CA",
   },
-  amvic: process.env.NEXT_PUBLIC_AMVIC_LICENSE || "AMVIC licence on file",
-  amvicRegistryUrl: "https://amvic.ca.thentiacloud.net/webs/amvic/register/#/profile/Hammad%20Bhatti/0/10/604bba19195c4e1d90c5990b",
   serviceAreas: [
     "Calgary",
     "Airdrie",
@@ -61,8 +59,6 @@ export const BUSINESS = {
     "https://www.canada411.ca/search/si/1/newwheels/Calgary+AB/",
     "https://foursquare.com/v/newwheels-calgary",
     "https://www.alignable.com/calgary-ab/newwheels",
-    // AMVIC registry — the public registration page is the strongest single trust signal.
-    "https://amvic.ca.thentiacloud.net/webs/amvic/register/#/profile/Hammad%20Bhatti/0/10/604bba19195c4e1d90c5990b",
   ],
 };
 
@@ -103,6 +99,7 @@ export const PAGES: SitePage[] = [
   { slug: "/blog", title: "NewWheels Blog", shortTitle: "Blog", group: "blog" },
   { slug: "/resources", title: "Calgary Car Buying Resources", shortTitle: "Resources", group: "info" },
   { slug: "/privacy", title: "Privacy Policy", shortTitle: "Privacy", group: "info" },
+  { slug: "/terms", title: "Website Terms of Use", shortTitle: "Terms", group: "info" },
   { slug: "/team", title: "The NewWheels Team", shortTitle: "Team", group: "info" },
 ];
 

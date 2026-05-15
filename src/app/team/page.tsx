@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { buildMetadata } from "@/lib/seo";
-import { BUSINESS } from "@/lib/site";
 import JsonLd from "@/components/JsonLd";
 import { breadcrumbSchema, localBusinessSchema, teamSchema } from "@/lib/schema";
 import LeadForm from "@/components/LeadForm";
@@ -12,7 +11,7 @@ const SLUG = "/team";
 export const metadata: Metadata = buildMetadata({
   title: "The NewWheels Team | Calgary Vehicle Financing Specialists",
   description:
-    "Meet the NewWheels team. AMVIC-licensed Calgary automotive finance specialists who handle every application personally. Newcomer, bad credit, and subprime experts.",
+    "Meet the NewWheels team. Calgary vehicle financing specialists who handle every application personally and match you with AMVIC-licensed dealer partners. Newcomer, bad credit, and subprime experts.",
   path: SLUG,
 });
 
@@ -78,9 +77,6 @@ export default function TeamPage() {
                 <h2 className="mt-4 text-2xl font-extrabold text-brand-ink">
                   Calgary Finance Specialist
                 </h2>
-                <p className="mt-1 text-sm font-semibold text-brand-forest">
-                  AMVIC Licensed
-                </p>
                 <p className="mt-4 text-base leading-relaxed text-brand-muted">
                   Specializes in newcomer, bad credit, and subprime financing across Calgary
                   and area. Years of experience on the dealer floor and in alternative-prime
@@ -93,15 +89,9 @@ export default function TeamPage() {
                     proposals, self-employed &amp; contractor financing
                   </li>
                   <li>
-                    <strong className="text-brand-ink">Licence:</strong>{" "}
-                    <a
-                      href={BUSINESS.amvicRegistryUrl}
-                      className="text-brand-forest underline underline-offset-4"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {BUSINESS.amvic} &mdash; verify on AMVIC registry
-                    </a>
+                    <strong className="text-brand-ink">Dealer partners:</strong> NewWheels
+                    works exclusively with AMVIC-licensed dealer partners across Calgary and
+                    Alberta.
                   </li>
                   <li>
                     <strong className="text-brand-ink">Location:</strong> Calgary, Alberta
