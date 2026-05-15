@@ -15,8 +15,9 @@ import {
 } from "@/components/Illustrations";
 import {
   faqSchema,
-  localBusinessSchema,
+  localBusinessWithRatingSchema,
   organizationSchema,
+  reviewListSchema,
   websiteSchema,
 } from "@/lib/schema";
 import { buildMetadata } from "@/lib/seo";
@@ -107,7 +108,13 @@ export default function HomePage() {
   return (
     <>
       <JsonLd
-        data={[localBusinessSchema(), websiteSchema(), organizationSchema(), faqSchema(FAQ)]}
+        data={[
+          localBusinessWithRatingSchema(),
+          websiteSchema(),
+          organizationSchema(),
+          faqSchema(FAQ),
+          ...reviewListSchema(),
+        ]}
       />
 
       <Hero />

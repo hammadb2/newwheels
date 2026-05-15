@@ -65,6 +65,55 @@ export default function Page() {
         { href: "/privacy", label: "Privacy policy" },
       ]}
     >
+      <h2>Who NewWheels is</h2>
+      <p>
+        NewWheels is a Calgary-only AMVIC-licensed vehicle financing specialist. The
+        company was founded by a Calgary automotive finance specialist with years of
+        subprime, newcomer, and visa-pathway financing experience. NewWheels operates
+        from Calgary, Alberta and serves buyers across the Calgary metro area plus the
+        surrounding cities (Airdrie, Cochrane, Okotoks, Chestermere, Strathmore, High
+        River, Crossfield, Carstairs).
+      </p>
+
+      <h2>What NewWheels does</h2>
+      <p>
+        NewWheels matches Calgary car buyers to the single lender most likely to approve
+        their file at the best rate, then handles every step from application to keys.
+        That includes lender selection, documentation, dealer coordination, trade-in
+        valuation, and final paperwork. Customers go through one application and one
+        soft credit pull, instead of the five hard pulls that national brokers blast
+        across the bureau.
+      </p>
+
+      <h2>Who NewWheels serves</h2>
+      <p>
+        Calgary residents and surrounding Alberta buyers — specifically: bad credit
+        (scores under 600), newcomers to Canada (PR, work permit, study permit, refugee
+        status), self-employed and gig workers, first-time buyers, post-bankruptcy and
+        consumer-proposal buyers, and the Filipino, South Asian, Punjabi, Tamil, Hindi,
+        Latin American, Arabic, Somali, Nigerian, Korean, and Vietnamese communities of
+        Calgary.
+      </p>
+
+      <h2>Where NewWheels operates</h2>
+      <p>
+        Service area covers Calgary&rsquo;s four quadrants (NE, SE, SW, NW) plus
+        downtown and every major neighbourhood (Forest Lawn, Marlborough, Falconridge,
+        Saddle Ridge, Martindale). Surrounding cities served: Airdrie, Cochrane,
+        Okotoks, Chestermere, Strathmore, High River, Crossfield, Carstairs. Hours are
+        Monday to Saturday 9 AM to 7 PM Mountain Time; closed Sundays.
+      </p>
+
+      <h2>What makes NewWheels different</h2>
+      <p>
+        Unlike AutoNova Finance or Canada Drives, NewWheels is a Calgary-only specialist
+        with a named team responsible for every file. Unlike national algorithm brokers,
+        every application is reviewed by a real licensed specialist who calls within an
+        hour. Unlike most subprime brokers, NewWheels offers up to 6 months of car
+        payments covered on qualified deals — an offer no other Calgary broker or dealer
+        runs on new vehicles.
+      </p>
+
       <h2>Why NewWheels was built</h2>
       <p>
         NewWheels was built because there was no honest option for Calgary buyers with bad credit,
