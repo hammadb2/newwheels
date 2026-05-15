@@ -197,3 +197,159 @@ export function notifyEmail(lead: {
   `;
   return emailWrapper(body);
 }
+
+// ── Calculator scenario email ─────────────────────────────────────────
+type EmailScenario = {
+  id: number;
+  price: number;
+  rate: number;
+  term: number;
+  downPayment: number;
+  tradeIn: number;
+  owingOnTrade: number;
+  gstAmount: number;
+  negativeEquity: number;
+  tradeEquity: number;
+  financed: number;
+  monthly: number;
+  totalPayments: number;
+  costOfBorrowing: number;
+};
+
+function fmtCADEmail(n: number): string {
+  return new Intl.NumberFormat("en-CA", { style: "currency", currency: "CAD", maximumFractionDigits: 0 })
+    .format(Math.max(0, Math.round(n)));
+}
+
+function fmtCADCentsEmail(n: number): string {
+  return new Intl.NumberFormat("en-CA", { style: "currency", currency: "CAD", minimumFractionDigits: 2, maximumFractionDigits: 2 })
+    .format(Math.max(0, n));
+}
+
+function scenarioDetailRow(label: string, value: string, highlight?: boolean): string {
+  const valueColor = highlight ? BRAND.accent : BRAND.white;
+  const valueWeight = highlight ? "800" : "600";
+  return `<tr>
+    <td style="padding:5px 0;font-size:13px;color:rgba(255,255,255,0.6);">${label}</td>
+    <td style="padding:5px 0;font-size:13px;color:${valueColor};font-weight:${valueWeight};text-align:right;">${value}</td>
+  </tr>`;
+}
+
+function buildScenarioBlock(s: EmailScenario, index: number, diffFields: Set<string> | null): string {
+  const isDiff = (field: string) => diffFields !== null && diffFields.has(field);
+
+  let tradeRow = "";
+  if (s.tradeIn > 0) {
+    const tradeLabel = s.negativeEquity > 0 ? "Trade-in (negative equity)" : "Trade-in equity";
+    const tradeVal = s.negativeEquity > 0 ? `+${fmtCADEmail(s.negativeEquity)}` : `-${fmtCADEmail(s.tradeEquity)}`;
+    tradeRow = scenarioDetailRow(tradeLabel, tradeVal, isDiff("tradeIn"));
+  }
+
+  let downRow = "";
+  if (s.downPayment > 0) {
+    downRow = scenarioDetailRow("Down payment", `-${fmtCADEmail(s.downPayment)}`, isDiff("downPayment"));
+  }
+
+  return `
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:${BRAND.deep};border-radius:12px;margin-bottom:16px;">
+      <tr>
+        <td style="padding:24px;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+              <td>
+                <span style="display:inline-block;padding:3px 10px;border-radius:99px;background-color:${BRAND.accent};font-size:11px;font-weight:700;color:${BRAND.deep};text-transform:uppercase;letter-spacing:0.08em;">
+                  Scenario ${index + 1}
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding-top:12px;">
+                <span style="font-size:32px;font-weight:800;color:${BRAND.white};${isDiff("monthly") ? `background-color:${BRAND.forest};padding:2px 8px;border-radius:6px;` : ""}">${fmtCADCentsEmail(s.monthly)}</span>
+                <span style="font-size:14px;color:rgba(255,255,255,0.6);margin-left:4px;">/month</span>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding-top:4px;">
+                <span style="font-size:13px;color:${BRAND.accent};">
+                  at ${s.rate.toFixed(2)}% over ${s.term} months
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding-top:16px;">
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid rgba(255,255,255,0.12);padding-top:12px;">
+                  ${scenarioDetailRow("Vehicle price", fmtCADEmail(s.price), isDiff("price"))}
+                  ${scenarioDetailRow("GST (5%)", fmtCADEmail(s.gstAmount), isDiff("gstAmount"))}
+                  ${tradeRow}
+                  ${downRow}
+                  <tr><td colspan="2" style="border-top:1px solid rgba(255,255,255,0.12);padding-top:8px;"></td></tr>
+                  ${scenarioDetailRow("Amount financed", fmtCADEmail(s.financed), isDiff("financed"))}
+                  ${scenarioDetailRow("Cost of borrowing", fmtCADEmail(s.costOfBorrowing), isDiff("costOfBorrowing"))}
+                  ${scenarioDetailRow("Total of " + s.term + " payments", fmtCADEmail(s.totalPayments), isDiff("totalPayments"))}
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>`;
+}
+
+export function scenarioEmail(scenarios: EmailScenario[]): string {
+  const compareFields = ["price", "rate", "term", "downPayment", "tradeIn", "owingOnTrade"] as const;
+  const resultFields = ["monthly", "gstAmount", "financed", "costOfBorrowing", "totalPayments"] as const;
+  const allFields = [...compareFields, ...resultFields];
+
+  let diffFields: Set<string> | null = null;
+
+  if (scenarios.length > 1) {
+    diffFields = new Set<string>();
+    for (const field of allFields) {
+      const values = scenarios.map(s => s[field]);
+      const allSame = values.every(v => Math.abs(v - values[0]) < 0.01);
+      if (!allSame) diffFields.add(field);
+    }
+    // If every single field differs, don't highlight anything — too noisy
+    if (diffFields.size >= allFields.length - 1) diffFields = null;
+  }
+
+  const scenarioBlocks = scenarios.map((s, i) => buildScenarioBlock(s, i, diffFields)).join("");
+
+  const body = `
+    <h1 style="margin:0 0 8px;font-size:24px;font-weight:800;color:${BRAND.ink};text-transform:uppercase;letter-spacing:-0.02em;">
+      Your loan estimates
+    </h1>
+    <p style="margin:0 0 24px;font-size:15px;color:${BRAND.muted};line-height:1.6;">
+      Here ${scenarios.length === 1 ? "is the scenario" : `are the ${scenarios.length} scenarios`} you calculated on ${SITE_NAME}.
+      ${scenarios.length > 1 ? `<span style="color:${BRAND.forest};font-weight:600;">Differences are highlighted.</span>` : ""}
+    </p>
+
+    ${scenarioBlocks}
+
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:${BRAND.creamSoft};border-radius:12px;border:1px solid ${BRAND.line};margin-bottom:24px;">
+      <tr>
+        <td style="padding:16px 20px;">
+          <p style="margin:0;font-size:14px;color:${BRAND.ink};line-height:1.6;">
+            <strong>Ready to get your real numbers?</strong> These are estimates. Apply free and a specialist gets you
+            actual approval terms within 24 hours — no obligation.
+          </p>
+        </td>
+      </tr>
+    </table>
+
+    <table role="presentation" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
+      <tr>
+        <td style="background-color:${BRAND.deep};border-radius:8px;">
+          <a href="${SITE_URL}/#apply" style="display:inline-block;padding:12px 28px;font-size:15px;font-weight:700;color:${BRAND.accent};text-decoration:none;letter-spacing:0.02em;">
+            Apply free →
+          </a>
+        </td>
+      </tr>
+    </table>
+
+    <p style="margin:0;font-size:12px;color:${BRAND.muted};line-height:1.5;">
+      Estimates only. Your real rate depends on your credit profile, income, and the vehicle. All calculations use Alberta&rsquo;s 5% GST (no PST).
+    </p>
+  `;
+  return emailWrapper(body);
+}
