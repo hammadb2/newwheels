@@ -22,6 +22,8 @@ import {
 } from "@/lib/schema";
 import { buildMetadata } from "@/lib/seo";
 import { SITUATION_NAV } from "@/lib/site";
+import HubSpokes from "@/components/HubSpokes";
+import { homepageHubSpokes } from "@/lib/hub-spokes";
 
 export const metadata: Metadata = buildMetadata({
   title: "Car Loans Calgary | No Credit, Bad Credit, Newcomers Welcome",
@@ -350,6 +352,22 @@ export default function HomePage() {
       </section>
 
       <Faq items={FAQ} />
+
+      <section className="bg-brand-creamSoft">
+        <div className="mx-auto max-w-6xl px-4 py-14 md:py-20">
+          <HubSpokes
+            title="Find the page that fits your situation"
+            intro="Every hub below routes to a specialist who handles that file type every week. Pick the one closest to your situation, neighbourhood, or vehicle."
+            groups={[
+              { heading: "By situation", spokes: homepageHubSpokes().audiences },
+              { heading: "By Calgary area", spokes: homepageHubSpokes().locations },
+              { heading: "By vehicle", spokes: homepageHubSpokes().vehicles },
+              { heading: "Tools and reading", spokes: homepageHubSpokes().tools },
+            ]}
+          />
+        </div>
+      </section>
+
       <CtaBlock
         heading="Apply free. Drive this week."
         body="It takes 2 minutes. We do all the lender work for you and we never charge an application fee."

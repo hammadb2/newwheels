@@ -39,6 +39,15 @@ export const RESERVED_SLUGS: ReadonlySet<string> = new Set([
   "llms.txt",
   "thank-you",
   "contact",
+  // Language landing pages (/tl, /pa, /ar, /es) ship as static folders so
+  // hreflang alternates resolve to a real 200.
+  "tl",
+  "pa",
+  "ar",
+  "es",
+  // Internal admin gate. Never indexed, blocked in robots, but listed so the
+  // catchall doesn't try to generate an /admin programmatic page.
+  "admin",
 ]);
 
 let cache: ProgrammaticPage[] | null = null;

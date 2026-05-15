@@ -10,6 +10,8 @@ import {
   websiteSchema,
 } from "@/lib/schema";
 import { RESOURCE_ARTICLES } from "@/content/resources/articles";
+import HubSpokes from "@/components/HubSpokes";
+import { homepageHubSpokes } from "@/lib/hub-spokes";
 
 const SLUG = "/resources";
 
@@ -111,6 +113,17 @@ export default function ResourcesIndex() {
               </ul>
             </div>
           ))}
+
+          <HubSpokes
+            title="Or jump straight to the page that fits your situation"
+            intro="Reading is great. Applying is faster. These hubs route directly to a specialist for your situation."
+            groups={[
+              { heading: "Situation hubs", spokes: homepageHubSpokes().audiences },
+              { heading: "Calgary neighbourhoods", spokes: homepageHubSpokes().locations },
+              { heading: "Vehicle hubs", spokes: homepageHubSpokes().vehicles },
+              { heading: "Calculators & tools", spokes: homepageHubSpokes().tools },
+            ]}
+          />
         </div>
       </section>
     </>

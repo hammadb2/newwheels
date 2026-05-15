@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import PageShell from "@/components/PageShell";
+import HubSpokes from "@/components/HubSpokes";
 import { buildMetadata } from "@/lib/seo";
+import { workPermitSpokes } from "@/lib/hub-spokes";
 
 const SLUG = "/car-loan-work-permit-calgary";
 
@@ -104,6 +106,23 @@ export default function Page() {
         <li>Lease or utility bill showing Calgary address.</li>
         <li>Driver&apos;s licence (Alberta preferred, international acceptable).</li>
       </ol>
+
+      <HubSpokes
+        title="Work-permit financing by pathway and neighbourhood"
+        intro="Lender selection depends on the closest matching pathway and your Calgary neighbourhood. Jump to the page closest to your file."
+        groups={[
+          {
+            heading: "Closest matching pathway",
+            blurb: "Related hubs that share the same lender pool.",
+            spokes: workPermitSpokes().byPathway,
+          },
+          {
+            heading: "Work-permit financing by Calgary neighbourhood",
+            blurb: "Same work-permit program, neighbourhood-specific notes.",
+            spokes: workPermitSpokes().byLocation,
+          },
+        ]}
+      />
     </PageShell>
   );
 }

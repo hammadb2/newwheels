@@ -1,0 +1,2 @@
+# Published, Claude-generated resource articles land here as <slug>.json files.
+# index.ts loads them at build time. Hand-written articles live in articles.tsx.

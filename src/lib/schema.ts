@@ -473,10 +473,12 @@ export type ReviewSeed = {
   datePublished: string; // YYYY-MM-DD
 };
 
-// Curated set seeded from public Google review excerpts. The full sync from
-// the GBP API is wired in a follow-up PR (gated on the GBP service account).
-// AggregateRating is computed off this list at render time so adding a review
-// is a one-line change here.
+// Curated set seeded from public Google review excerpts. The build-time
+// loader below (`loadLiveReviews`) replaces this with the contents of
+// `data/gbp-cache.json` when present, which the /admin/gbp panel populates
+// directly from the Google Business Profile API. Until the cache exists,
+// AggregateRating is computed off this list. Adding a review is a one-line
+// change here.
 export const SEEDED_REVIEWS: ReviewSeed[] = [
   {
     author: "M. Singh",
@@ -510,7 +512,50 @@ export const SEEDED_REVIEWS: ReviewSeed[] = [
   },
 ];
 
-export function aggregateRatingSchema(reviews: ReviewSeed[] = SEEDED_REVIEWS) {
+// Build-time loader that prefers GBP-cached reviews over the hand-curated
+// seed list. Runs synchronously at module load (server-only). Falls back to
+// the seed list when the cache is absent or unparseable.
+function loadLiveReviews(): ReviewSeed[] {
+  // Avoid importing this synchronously into client bundles. This module is
+  // already server-only because it pulls in `node:fs`-style globals only on
+  // the server path.
+  if (typeof process === "undefined" || !process.versions?.node) {
+    return SEEDED_REVIEWS;
+  }
+  try {
+    // Lazy require so the bundler doesn't pull fs into client bundles.
+    const fs = require("node:fs") as typeof import("node:fs");
+    const path = require("node:path") as typeof import("node:path");
+    const cachePath = path.resolve(process.cwd(), "data/gbp-cache.json");
+    if (!fs.existsSync(cachePath)) return SEEDED_REVIEWS;
+    const raw = fs.readFileSync(cachePath, "utf8");
+    const cache = JSON.parse(raw) as {
+      reviews?: {
+        reviewer?: { displayName?: string };
+        starRating?: "ONE" | "TWO" | "THREE" | "FOUR" | "FIVE";
+        comment?: string;
+        createTime?: string;
+        updateTime?: string;
+      }[];
+    };
+    const STAR_TO_NUM: Record<string, number> = { ONE: 1, TWO: 2, THREE: 3, FOUR: 4, FIVE: 5 };
+    const live: ReviewSeed[] = (cache.reviews ?? [])
+      .filter(r => r.comment && r.starRating && r.reviewer?.displayName)
+      .map(r => ({
+        author: r.reviewer!.displayName!,
+        body: r.comment!,
+        rating: STAR_TO_NUM[r.starRating!] ?? 5,
+        datePublished: (r.updateTime ?? r.createTime ?? "").slice(0, 10),
+      }));
+    return live.length > 0 ? live : SEEDED_REVIEWS;
+  } catch {
+    return SEEDED_REVIEWS;
+  }
+}
+
+export const LIVE_REVIEWS: ReviewSeed[] = loadLiveReviews();
+
+export function aggregateRatingSchema(reviews: ReviewSeed[] = LIVE_REVIEWS) {
   const ratingValue = reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
   return {
     "@type": "AggregateRating",
@@ -521,7 +566,7 @@ export function aggregateRatingSchema(reviews: ReviewSeed[] = SEEDED_REVIEWS) {
   };
 }
 
-export function reviewListSchema(reviews: ReviewSeed[] = SEEDED_REVIEWS) {
+export function reviewListSchema(reviews: ReviewSeed[] = LIVE_REVIEWS) {
   return reviews.map(r => ({
     "@context": "https://schema.org",
     "@type": "Review",
@@ -540,7 +585,7 @@ export function reviewListSchema(reviews: ReviewSeed[] = SEEDED_REVIEWS) {
 
 // LocalBusiness extended with AggregateRating. Renderers prefer this over
 // `localBusinessSchema()` whenever rating signal should ship on the page.
-export function localBusinessWithRatingSchema(reviews: ReviewSeed[] = SEEDED_REVIEWS) {
+export function localBusinessWithRatingSchema(reviews: ReviewSeed[] = LIVE_REVIEWS) {
   const lb = localBusinessSchema();
   return {
     ...lb,

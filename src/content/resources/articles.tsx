@@ -5,6 +5,7 @@
 // and bullets so the AI extractors get clean answer chunks.
 
 import type { ResourceArticle } from "../resources";
+import { GENERATED_RESOURCE_ARTICLES } from "./generated";
 
 const newVsUsed: ResourceArticle = {
   slug: "new-vs-used-car-calgary",
@@ -425,7 +426,7 @@ const lostJob: ResourceArticle = {
   ),
 };
 
-export const RESOURCE_ARTICLES: ResourceArticle[] = [
+const HAND_WRITTEN: ResourceArticle[] = [
   newVsUsed,
   leaseVsBuy,
   newcomerCredit,
@@ -434,6 +435,17 @@ export const RESOURCE_ARTICLES: ResourceArticle[] = [
   tradeIn,
   refinancing,
   lostJob,
+];
+
+// Concat hand-written + Claude-generated. Generated articles are loaded
+// from src/content/resources/generated/*.json at build time. Dedupe on
+// slug so a generated article can't accidentally shadow a hand-written one.
+const seenSlugs = new Set(HAND_WRITTEN.map(a => a.slug));
+const UNIQUE_GENERATED = GENERATED_RESOURCE_ARTICLES.filter(a => !seenSlugs.has(a.slug));
+
+export const RESOURCE_ARTICLES: ResourceArticle[] = [
+  ...HAND_WRITTEN,
+  ...UNIQUE_GENERATED,
 ];
 
 export function findResource(slug: string): ResourceArticle | undefined {
