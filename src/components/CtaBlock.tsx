@@ -9,7 +9,7 @@ type Props = {
 
 export default function CtaBlock({
   heading = "Ready to get approved in Calgary?",
-  body = "Apply free in under 2 minutes. Hammad calls you back within 1 hour during business hours.",
+  body = "Apply free in under 2 minutes. A specialist calls you back within 1 hour during business hours.",
   primaryLabel = "Apply free",
 }: Props) {
   return (

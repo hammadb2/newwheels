@@ -147,7 +147,7 @@ export default async function BlogPostPage({ params }: PageProps) {
       </section>
 
       <Faq items={post.faq} />
-      <CtaBlock heading="Got questions Hammad didn't answer here?" />
+      <CtaBlock heading="Got questions we didn't answer here?" />
     </>
   );
 }

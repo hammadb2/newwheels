@@ -30,7 +30,7 @@ const FAQ = [
   {
     question: "Should I buy new or used as a first-time buyer in Calgary?",
     answer:
-      "If you can stretch to new, the manufacturer financing programs often beat used-vehicle rates. The Nissan Sentra at South Trail is a common first-time-buyer pick. Used is fine if you stay under 60,000 km.",
+      "If you can stretch to new, the manufacturer financing programs often beat used-vehicle rates. The Nissan Sentra through our dealer partners is a common first-time-buyer pick. Used is fine if you stay under 60,000 km.",
   },
   {
     question: "What documents do I need as a first-time buyer in Calgary?",

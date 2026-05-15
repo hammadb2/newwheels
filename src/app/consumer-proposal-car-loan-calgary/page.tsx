@@ -40,7 +40,7 @@ const FAQ = [
   {
     question: "Can I buy a Nissan during a consumer proposal in Calgary?",
     answer:
-      "Yes. Pre-owned Nissans through South Trail Nissan are commonly approved during proposals. New vehicles are tougher but possible with a larger down payment.",
+      "Yes. Pre-owned Nissans through our dealer partners are commonly approved during proposals. New vehicles are tougher but possible with a larger down payment.",
   },
 ];
 

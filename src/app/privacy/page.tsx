@@ -36,7 +36,7 @@ const FAQ = [
   },
   {
     question: "Who can I contact about a privacy concern?",
-    answer: `Email ${BUSINESS.email} or call ${BUSINESS.phone}. Hammad is the designated privacy contact for NewWheels.`,
+    answer: `Email ${BUSINESS.email} or call ${BUSINESS.phone}. Our team handles all privacy inquiries for NewWheels.`,
   },
 ];
 

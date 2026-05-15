@@ -27,7 +27,6 @@ export const BUSINESS = {
   },
   amvic: process.env.NEXT_PUBLIC_AMVIC_LICENSE || "AMVIC licence on file",
   amvicRegistryUrl: "https://amvic.ca.thentiacloud.net/webs/amvic/register/#/profile/Hammad%20Bhatti/0/10/604bba19195c4e1d90c5990b",
-  hammadLastName: process.env.NEXT_PUBLIC_HAMMAD_LAST_NAME || "Bhatti",
   serviceAreas: [
     "Calgary",
     "Airdrie",
@@ -80,10 +79,15 @@ export const PAGES: SitePage[] = [
   { slug: "/nissan-financing-calgary", title: "Nissan Financing Calgary", shortTitle: "Nissan Financing", group: "vehicle" },
   { slug: "/blog", title: "NewWheels Blog", shortTitle: "Blog", group: "blog" },
   { slug: "/privacy", title: "Privacy Policy", shortTitle: "Privacy", group: "info" },
+  { slug: "/team", title: "The NewWheels Team", shortTitle: "Team", group: "info" },
 ];
 
 export const PRIMARY_NAV: SitePage[] = PAGES.filter(p =>
   ["/", "/how-it-works", "/calculator", "/nissan-financing-calgary", "/about", "/blog"].includes(p.slug),
+);
+
+export const FOOTER_NAV_EXTRA: SitePage[] = PAGES.filter(p =>
+  ["/team"].includes(p.slug),
 );
 
 export const SITUATION_NAV: SitePage[] = PAGES.filter(p => p.group === "situation");

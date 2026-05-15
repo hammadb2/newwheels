@@ -42,7 +42,7 @@ const post: Post = {
       </p>
       <h2>What you experience as the buyer</h2>
       <p>
-        You sign your loan. You drive off the lot at South Trail Nissan or pick up your
+        You sign your loan. You drive off the lot at our dealer partners or pick up your
         pre-owned vehicle. You don&apos;t pay your monthly payment for 6 months. Month 7 your
         normal payment schedule begins. That&apos;s it from your end. There are no hidden
         fees, no deferred interest, no balloon payment at the end. The 6 payments are simply
@@ -59,8 +59,8 @@ const post: Post = {
         that you don&apos;t pay for 6 months and there are no strings attached to that benefit.
       </p>
       <p>
-        The reason we can do this and other Calgary brokers can&apos;t is that Hammad works
-        on the floor at South Trail Nissan. That gives us access to manufacturer holdback and
+        The reason we can do this and other Calgary brokers can&apos;t is that our specialist
+        works directly with dealer partners. That gives us access to manufacturer holdback and
         promotional programs that independent brokers never see. An independent broker has to
         buy units at wholesale and mark them up; we access the deal structure from inside the
         dealer network, which creates room for the 6-months-covered benefit.
@@ -105,7 +105,7 @@ const post: Post = {
       </p>
       <h2>How to find out if you qualify</h2>
       <p>
-        Apply free. Hammad will tell you on the phone, within 1 hour of submission during
+        Apply free. A specialist will tell you on the phone, within 1 hour of submission during
         business hours, whether your file qualifies for the 6-months-covered offer. We never
         advertise the offer to someone we can&apos;t actually deliver it to. If your file
         doesn&apos;t qualify for the full 6 months, we&apos;ll tell you what it does qualify

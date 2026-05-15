@@ -58,7 +58,7 @@ export default function Page() {
         { href: "/car-loan-work-permit-calgary", label: "Work-permit car loan guide" },
         { href: "/first-time-car-buyer-calgary", label: "First-time buyer in Calgary" },
         { href: "/calculator", label: "Estimate your newcomer payment →" },
-        { href: "/nissan-financing-calgary", label: "Nissan financing through South Trail" },
+        { href: "/nissan-financing-calgary", label: "Nissan financing through our dealer partners" },
       ]}
     >
       <p className="font-semibold italic text-[#6B7280]" lang="tl">
@@ -108,7 +108,7 @@ export default function Page() {
         Filipinos are the largest newcomer community in Calgary. We&apos;ve worked with caregivers,
         nurses, hospitality workers, and PGWP graduates from SAIT and U of C. We respect that
         community. We don&apos;t talk down to applicants, we explain everything in plain
-        English (and Hammad will arrange a Tagalog speaker if it helps), and we don&apos;t
+        English (and we can arrange a Tagalog speaker if it helps), and we don&apos;t
         upsell unnecessary warranties or insurance products you don&apos;t need.
       </p>
 
