@@ -23,13 +23,17 @@ import {
   writeDraft,
   type DraftBase,
 } from "@/lib/content/drafts";
-import { promises as fs } from "node:fs";
 import path from "node:path";
 import type { GeneratedResourceFile } from "@/lib/content/types";
+import {
+  adminRuntime,
+  publishedDir,
+  safeMkdir,
+  safeWriteFile,
+} from "@/lib/admin-paths";
+import { RuntimeBanner } from "@/components/admin/RuntimeBanner";
 
 export const dynamic = "force-dynamic";
-
-const GENERATED_DIR = path.resolve(process.cwd(), "src/content/resources/generated");
 
 type ClaudeResp = {
   slug: string;
@@ -143,7 +147,8 @@ async function publishDraftAction(formData: FormData) {
   const draft = await readDraft(id);
   if (!draft) return;
 
-  await fs.mkdir(GENERATED_DIR, { recursive: true });
+  const outDir = publishedDir();
+  await safeMkdir(outDir);
 
   const file: GeneratedResourceFile = {
     slug: draft.slug,
@@ -157,8 +162,8 @@ async function publishDraftAction(formData: FormData) {
     body: draft.body,
     faq: draft.faq,
   };
-  const out = path.join(GENERATED_DIR, `${draft.slug}.json`);
-  await fs.writeFile(out, JSON.stringify(file, null, 2), "utf8");
+  const out = path.join(outDir, `${draft.slug}.json`);
+  await safeWriteFile(out, JSON.stringify(file, null, 2));
   await deleteDraft(id);
   revalidatePath("/admin/content");
 }
@@ -186,6 +191,8 @@ export default async function ContentPipelinePage() {
           the next time the site builds.
         </p>
       </header>
+
+      <RuntimeBanner runtime={adminRuntime()} />
 
       {!anth.configured && (
         <div className="rounded-3xl border border-amber-200 bg-amber-50 p-5 text-sm text-amber-900">

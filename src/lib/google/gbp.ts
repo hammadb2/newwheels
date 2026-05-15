@@ -19,6 +19,7 @@
 import { googleAuthStatus, googleJwt } from "./auth";
 import { promises as fs } from "node:fs";
 import path from "node:path";
+import { gbpCachePath, safeMkdir, safeWriteFile } from "@/lib/admin-paths";
 
 const SCOPES = ["https://www.googleapis.com/auth/business.manage"];
 const GBP_BASE = "https://mybusiness.googleapis.com/v4";
@@ -51,7 +52,14 @@ export type GbpCache = {
   reviewCount: number;
 };
 
-export const GBP_CACHE_PATH = path.resolve(process.cwd(), "data/gbp-cache.json");
+/**
+ * Path to the GBP cache for the current runtime. Defaults to
+ * `data/gbp-cache.json` locally and `/tmp/newwheels-data/gbp-cache.json` on
+ * Vercel — see `src/lib/admin-paths.ts`.
+ */
+export function gbpCacheFile(): string {
+  return gbpCachePath();
+}
 
 export function gbpConfigStatus(): {
   configured: boolean;
@@ -121,14 +129,15 @@ export async function refreshGbpCache(): Promise<GbpCache> {
     averageRating: Number(avg.toFixed(2)),
     reviewCount: reviews.length,
   };
-  await fs.mkdir(path.dirname(GBP_CACHE_PATH), { recursive: true });
-  await fs.writeFile(GBP_CACHE_PATH, JSON.stringify(cache, null, 2), "utf8");
+  const file = gbpCacheFile();
+  await safeMkdir(path.dirname(file));
+  await safeWriteFile(file, JSON.stringify(cache, null, 2));
   return cache;
 }
 
 export async function readGbpCache(): Promise<GbpCache | null> {
   try {
-    const raw = await fs.readFile(GBP_CACHE_PATH, "utf8");
+    const raw = await fs.readFile(gbpCacheFile(), "utf8");
     return JSON.parse(raw) as GbpCache;
   } catch {
     return null;

@@ -8,14 +8,19 @@
 // /api/admin/publish-resource handler, which writes a TSX article file into
 // `src/content/resources/generated/` and updates the article index).
 //
-// The store lives on the local filesystem (Node fs/promises) — perfect for
-// local dev and the Vercel build phase. In production runtime, the writable
-// path may be ephemeral, so the admin UI also surfaces a "Download all
-// drafts as ZIP" affordance (server action) so the operator can move them
-// into the repo locally.
+// On Vercel's serverless runtime the project filesystem is read-only, so
+// the path resolves to `/tmp/newwheels-data/drafts/` instead. Writes work
+// for the lifetime of the function instance but are lost on cold start.
+// See `src/lib/admin-paths.ts` for the routing.
 
 import { promises as fs } from "node:fs";
 import path from "node:path";
+import {
+  draftsDir,
+  safeMkdir,
+  safeUnlink,
+  safeWriteFile,
+} from "@/lib/admin-paths";
 
 export type DraftKind = "resource" | "blog";
 
@@ -43,24 +48,23 @@ export type DraftBase = {
   prompt: string;
 };
 
-export const DRAFT_DIR = path.resolve(process.cwd(), "data/drafts");
-
-export async function ensureDraftDir(): Promise<void> {
-  await fs.mkdir(DRAFT_DIR, { recursive: true });
-}
-
 function safeFileName(id: string): string {
   return id.replace(/[^a-zA-Z0-9_-]/g, "-");
 }
 
+export async function ensureDraftDir(): Promise<boolean> {
+  return safeMkdir(draftsDir());
+}
+
 export async function listDrafts(): Promise<DraftBase[]> {
   await ensureDraftDir();
-  const files = await fs.readdir(DRAFT_DIR).catch(() => []);
+  const dir = draftsDir();
+  const files = await fs.readdir(dir).catch(() => [] as string[]);
   const drafts: DraftBase[] = [];
   for (const f of files) {
     if (!f.endsWith(".json")) continue;
     try {
-      const raw = await fs.readFile(path.join(DRAFT_DIR, f), "utf8");
+      const raw = await fs.readFile(path.join(dir, f), "utf8");
       drafts.push(JSON.parse(raw) as DraftBase);
     } catch {
       // Skip malformed files.
@@ -72,7 +76,7 @@ export async function listDrafts(): Promise<DraftBase[]> {
 
 export async function readDraft(id: string): Promise<DraftBase | null> {
   await ensureDraftDir();
-  const file = path.join(DRAFT_DIR, `${safeFileName(id)}.json`);
+  const file = path.join(draftsDir(), `${safeFileName(id)}.json`);
   try {
     const raw = await fs.readFile(file, "utf8");
     return JSON.parse(raw) as DraftBase;
@@ -81,16 +85,16 @@ export async function readDraft(id: string): Promise<DraftBase | null> {
   }
 }
 
-export async function writeDraft(draft: DraftBase): Promise<void> {
+export async function writeDraft(draft: DraftBase): Promise<boolean> {
   await ensureDraftDir();
-  const file = path.join(DRAFT_DIR, `${safeFileName(draft.id)}.json`);
-  await fs.writeFile(file, JSON.stringify(draft, null, 2), "utf8");
+  const file = path.join(draftsDir(), `${safeFileName(draft.id)}.json`);
+  return safeWriteFile(file, JSON.stringify(draft, null, 2));
 }
 
 export async function deleteDraft(id: string): Promise<void> {
   await ensureDraftDir();
-  const file = path.join(DRAFT_DIR, `${safeFileName(id)}.json`);
-  await fs.unlink(file).catch(() => {});
+  const file = path.join(draftsDir(), `${safeFileName(id)}.json`);
+  await safeUnlink(file);
 }
 
 /**
