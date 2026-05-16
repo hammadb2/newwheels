@@ -11,10 +11,15 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.96.0",
+    "@supabase/ssr": "^0.5.2",
+    "@supabase/supabase-js": "^2.105.4",
     "googleapis": "^171.4.0",
+    "jose": "^5.10.0",
     "next": "^16.2.6",
     "react": "^19.2.6",
-    "react-dom": "^19.2.6"
+    "react-dom": "^19.2.6",
+    "stripe": "^17.7.0",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@types/node": "^22.9.0",
