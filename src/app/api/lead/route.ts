@@ -141,6 +141,28 @@ export async function POST(req: Request) {
 
   const teamSms = `New lead: ${fullName}\nPhone: ${safe.phone}\nCredit: ${safe.credit}\nEmployment: ${safe.employment}\nTimeframe: ${safe.timeframe}\nSource: ${safe.sourcePage}`;
 
+  // Fan-out: also forward to the CRM lead-intake pipeline so the lead becomes
+  // visible to the Lead Qualifier inside the CRM. This is fire-and-forget — a
+  // failure here must NOT break the marketing-site form response.
+  let crmForwardResult: { ok: true; lead_id?: string } | { ok: false; error: string } = { ok: false, error: "skipped" };
+  try {
+    const { intakeLead } = await import("@/lib/crm/leads/intake");
+    const crm = await intakeLead({
+      first_name: safe.firstName,
+      last_name: safe.lastName,
+      email: safe.email,
+      phone: safe.phone,
+      source_page: safe.sourcePage,
+      source_channel: null,
+      raw_payload: { ...safe, timestamp },
+    });
+    crmForwardResult = crm.ok
+      ? { ok: true, lead_id: crm.lead_id }
+      : { ok: false, error: (crm as { ok: false; error?: string }).error ?? "crm_intake_failed" };
+  } catch (e) {
+    crmForwardResult = { ok: false, error: e instanceof Error ? e.message : "crm_intake_threw" };
+  }
+
   const [notifyResult, autoReplyResult, sheetResult, smsApplicantResult, smsTeamResult] = await Promise.all([
     sendResend({
       to: notifyTo,
@@ -168,6 +190,7 @@ export async function POST(req: Request) {
       sheet: sheetResult,
       smsApplicant: smsApplicantResult,
       smsTeam: smsTeamResult,
+      crm: crmForwardResult,
     },
   });
 }
