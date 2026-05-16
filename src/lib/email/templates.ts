@@ -55,7 +55,16 @@ export function welcomeEmail(opts: { displayName: string; audience: "crm" | "por
 // -----------------------------------------------------------------
 // Applicant: "we received your application"
 // -----------------------------------------------------------------
-export function leadReceivedEmail(opts: { firstName: string }): string {
+export function leadReceivedEmail(opts: {
+  firstName: string;
+  applyUrl?: string;
+}): string {
+  const cta = opts.applyUrl
+    ? `${ctaButton(opts.applyUrl, "Track your application")}
+       <p style="margin:0 0 16px;font-size:13px;color:${B.muted};line-height:1.6;">
+         You can also upload your driver's licence, work permit, and proof of income from your phone using the link above — verified applications get priority.
+       </p>`
+    : "";
   const body = `
     <h1 style="margin:0 0 8px;font-size:22px;font-weight:800;color:${B.ink};">
       We got your application, ${escapeHtml(opts.firstName)}.
@@ -63,6 +72,7 @@ export function leadReceivedEmail(opts: { firstName: string }): string {
     <p style="margin:0 0 16px;font-size:15px;color:${B.ink};line-height:1.6;">
       A specialist will call you within 1 hour during business hours (${BUSINESS.hours}). If you don't hear from us, call <a href="tel:${BUSINESS.phoneHref}" style="color:${B.forest};font-weight:600;">${BUSINESS.phone}</a>.
     </p>
+    ${cta}
     <p style="margin:0;font-size:13px;color:${B.muted};line-height:1.6;">
       Talk soon,<br/>The ${SITE_NAME} Team
     </p>

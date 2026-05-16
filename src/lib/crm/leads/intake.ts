@@ -12,6 +12,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { getServerSupabase } from "@/lib/crm/supabase/server";
 import { sendEmail } from "@/lib/email/resend";
 import { leadAssignedEmail, leadReceivedEmail } from "@/lib/email/templates";
+import { applyPortalUrl } from "@/lib/crm/leads/apply";
 import { SITE_NAME } from "@/lib/site";
 
 export type IntakeInput = {
@@ -73,7 +74,7 @@ export async function intakeLead(input: IntakeInput): Promise<IntakeResult> {
       status: "new",
       duplicate_of: dup ? (dup.id as string) : null,
     })
-    .select("id")
+    .select("id, apply_token")
     .single();
 
   if (insErr || !created) {
@@ -82,6 +83,8 @@ export async function intakeLead(input: IntakeInput): Promise<IntakeResult> {
   }
 
   const leadId = created.id as string;
+  const applyToken = (created.apply_token as string | null) ?? null;
+  const applyUrl = applyToken ? applyPortalUrl(applyToken) : undefined;
 
   // Assign to a Lead Qualifier round-robin (least leads in progress wins).
   const assignedTo = await pickQualifier(supabase);
@@ -111,7 +114,7 @@ export async function intakeLead(input: IntakeInput): Promise<IntakeResult> {
     sendEmail({
       to: email,
       subject: `We received your application — ${SITE_NAME}`,
-      html: leadReceivedEmail({ firstName: input.first_name }),
+      html: leadReceivedEmail({ firstName: input.first_name, applyUrl }),
       tags: [{ name: "type", value: "lead_received" }],
     }),
     assignedTo
