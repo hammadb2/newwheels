@@ -7,6 +7,8 @@ import { requireTeam } from "@/lib/crm/auth/rbac";
 import { getServerSupabase } from "@/lib/crm/supabase/server";
 import { ROLE_LABEL } from "@/lib/crm/types";
 import { QualificationForm } from "@/components/crm/QualificationForm";
+import { LeadNotesThread } from "@/components/crm/LeadNotesThread";
+import { canReadLeadNotes, canWriteLeadNotes, listLeadNotes } from "@/lib/crm/leads/notes";
 import { priceCentsToDisplay } from "@/lib/crm/pricing";
 
 export const dynamic = "force-dynamic";
@@ -31,6 +33,8 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
     .maybeSingle();
 
   const isCeoOrOps = subject.role === "ceo" || subject.role === "platform_ops";
+  const showNotes = canReadLeadNotes(subject.role);
+  const notes = showNotes ? await listLeadNotes(id) : [];
 
   return (
     <div className="space-y-6">
@@ -91,6 +95,16 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
           <QualificationForm leadId={id} />
         </div>
       )}
+
+      {showNotes ? (
+        <div className="crm-card">
+          <LeadNotesThread
+            leadId={id}
+            initialNotes={notes}
+            canWrite={canWriteLeadNotes(subject.role)}
+          />
+        </div>
+      ) : null}
     </div>
   );
 }

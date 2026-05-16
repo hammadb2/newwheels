@@ -29,7 +29,7 @@ export async function submitQualification(opts: {
   // Ensure lead exists and isn't already processed.
   const { data: lead } = await supabase
     .from("leads")
-    .select("id, status, first_name, assigned_qualifier_id, duplicate_of")
+    .select("id, status, first_name, assigned_qualifier_id, duplicate_of, verified")
     .eq("id", opts.lead_id)
     .maybeSingle();
 
@@ -50,10 +50,12 @@ export async function submitQualification(opts: {
     return { ok: false, error: "db_error" };
   }
 
-  // Compute score → tier → starting price.
+  // Compute score → tier → starting price. Verified leads (full doc set
+  // uploaded via apply.newwheels.ca) carry the per-tier premium.
   const result = scoreLead(opts.payload);
   const tier = result.tier;
-  const starting_price_cents = startingPriceCentsForTier(tier);
+  const verified = lead.verified === true;
+  const starting_price_cents = startingPriceCentsForTier(tier, verified);
   const summary = buildSituationSummary(opts.payload);
   const now = new Date();
   const expires = new Date(now.getTime() + LEAD_LIFETIME_HOURS * 60 * 60 * 1000);

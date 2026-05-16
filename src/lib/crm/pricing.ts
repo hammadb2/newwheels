@@ -7,6 +7,7 @@
 // The price schedule for each tier is hard-coded from the spec so that
 // reporting + acquisition documentation can audit it line by line.
 
+import { VERIFIED_PREMIUM_CENTS } from "./scoring";
 import type { LeadTier } from "./types";
 
 // All prices in cents. Order matters: index 0 is the price at 0–6h, index 1
@@ -24,6 +25,9 @@ export const LEAD_LIFETIME_HOURS = 72;
 export type CurrentPriceInput = {
   tier: LeadTier;
   available_at: Date | string;
+  /** Verified leads carry the per-tier premium throughout their lifetime,
+   *  but still decay to PRICE_FLOOR_CENTS at expiry. */
+  verified?: boolean;
   now?: Date;
 };
 
@@ -39,7 +43,7 @@ export type CurrentPriceResult = {
  * Returns the floor price when the lead is past its schedule but still
  * within its 72-hour lifetime. After 72h the lead is `expired`.
  */
-export function currentPriceFor({ tier, available_at, now = new Date() }: CurrentPriceInput): CurrentPriceResult {
+export function currentPriceFor({ tier, available_at, verified = false, now = new Date() }: CurrentPriceInput): CurrentPriceResult {
   const start = typeof available_at === "string" ? new Date(available_at) : available_at;
   const elapsedMs = now.getTime() - start.getTime();
   const elapsedHours = elapsedMs / (1000 * 60 * 60);
@@ -56,7 +60,11 @@ export function currentPriceFor({ tier, available_at, now = new Date() }: Curren
   const schedule = PRICE_SCHEDULE_CENTS[tier];
   const bucketRaw = Math.max(0, Math.floor(elapsedHours / PRICE_BUCKET_HOURS));
   const bucket = Math.min(bucketRaw, schedule.length - 1);
-  const price = Math.max(schedule[bucket], PRICE_FLOOR_CENTS);
+  const baseFromCurve = Math.max(schedule[bucket], PRICE_FLOOR_CENTS);
+  // For verified leads, every step of the curve carries the verified premium
+  // additively. The floor (PRICE_FLOOR_CENTS) still applies — an unverified
+  // lead at 42h+ is $75; a verified lead at 42h+ is $75 + premium.
+  const price = verified ? baseFromCurve + VERIFIED_PREMIUM_CENTS[tier] : baseFromCurve;
 
   return {
     price_cents: price,
