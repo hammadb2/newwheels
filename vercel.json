@@ -1,6 +1,5 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "//": "Hobby plan only allows daily cron jobs. The spec wants sub-daily cadences (pricing every hour, expiry every 10 min, filter matches every 15 min). Once you upgrade to Vercel Pro, change schedules to: pricing-update '0 * * * *', expire-leads '*/10 * * * *', match-filters '*/15 * * * *'. For now everything runs once a day so the preview can deploy on Hobby.",
   "crons": [
     { "path": "/api/cron/pricing-update",   "schedule": "5 0 * * *" },
     { "path": "/api/cron/expire-leads",     "schedule": "15 0 * * *" },
