@@ -4,8 +4,9 @@
 import { NextResponse } from "next/server";
 import { authorizeCron } from "@/lib/crm/cron";
 import { getServerSupabase } from "@/lib/crm/supabase/server";
+import { priceCentsToDisplay } from "@/lib/crm/pricing";
 import { sendEmail } from "@/lib/email/resend";
-import { systemEmailWrapper } from "@/lib/email/wrapper";
+import { lowBudgetAlertEmail } from "@/lib/email/templates";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -35,12 +36,17 @@ export async function GET(req: Request) {
     const master = (Array.isArray(s.master) ? s.master[0] : s.master) as { email?: string; business_name?: string } | null;
     if (!master?.email) continue;
 
+    const portalUrl = (process.env.NW_PORTAL_URL || "https://portal.newwheels.ca").replace(/\/$/, "");
     void sendEmail({
       to: master.email as string,
       subject: `Low budget alert — ${s.name}`,
-      html: systemEmailWrapper(`<p>Hi ${escapeHtml(master.business_name || "team")},</p>
-        <p>Sub-account <strong>${escapeHtml(s.name as string)}</strong> has used over ${Math.round((1 - remaining / allocated) * 100)}% of its monthly budget. Only $${(remaining / 100).toFixed(2)} CAD remains.</p>
-        <p>Adjust the budget any time from your account.</p>`),
+      html: lowBudgetAlertEmail({
+        masterName: master.business_name || "team",
+        subName: s.name as string,
+        remaining: priceCentsToDisplay(remaining),
+        allocated: priceCentsToDisplay(allocated),
+        portalUrl: `${portalUrl}/portal/account/sub-accounts`,
+      }),
       tags: [{ name: "type", value: "low_budget_alert" }],
     });
     await supabase
@@ -55,8 +61,4 @@ export async function GET(req: Request) {
 
 function sameMonth(a: Date, b: Date): boolean {
   return a.getUTCFullYear() === b.getUTCFullYear() && a.getUTCMonth() === b.getUTCMonth();
-}
-
-function escapeHtml(s: string): string {
-  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }

@@ -6,8 +6,9 @@
 import { NextResponse } from "next/server";
 import { authorizeCron } from "@/lib/crm/cron";
 import { getServerSupabase } from "@/lib/crm/supabase/server";
+import { priceCentsToDisplay } from "@/lib/crm/pricing";
 import { sendEmail } from "@/lib/email/resend";
-import { systemEmailWrapper } from "@/lib/email/wrapper";
+import { newLeadAvailableEmail } from "@/lib/email/templates";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -76,13 +77,19 @@ export async function GET(req: Request) {
         .insert({ lead_id: lead.id, saved_filter_id: filter.id, buyer_id: filter.buyer_id });
       if (insErr) continue;
       const portalUrl = (process.env.NW_PORTAL_URL || "https://portal.newwheels.ca").replace(/\/$/, "");
+      const summary = (((lead.raw_payload as Record<string, unknown> | null) ?? {}).situation_summary as string) ?? "";
       void sendEmail({
         to: buyer.email,
         subject: `New lead matches ${filter.name}`,
-        html: systemEmailWrapper(`<p>Hi ${escapeHtml(buyer.name)},</p>
-          <p>A new ${lead.tier} lead just went live in the marketplace and matches your saved filter <strong>${escapeHtml(filter.name)}</strong>.</p>
-          <p><a href="${portalUrl}/portal/marketplace">Open marketplace →</a></p>`),
-        tags: [{ name: "type", value: "filter_match" }],
+        html: newLeadAvailableEmail({
+          buyerName: buyer.name,
+          filterName: filter.name,
+          summary,
+          tier: lead.tier,
+          price: priceCentsToDisplay(lead.current_price_cents),
+          marketplaceUrl: `${portalUrl}/portal/marketplace`,
+        }),
+        tags: [{ name: "type", value: "marketplace_match" }],
       });
       notifications += 1;
     }
@@ -100,8 +107,4 @@ function matchesFilter(lead: LeadSummary, filter: Record<string, string>): boole
   if (filter.down && filter.down !== "all" && filter.down !== (payload.down_payment as string)) return false;
   if (filter.tl && filter.tl !== "all" && filter.tl !== (payload.purchase_timeline as string)) return false;
   return true;
-}
-
-function escapeHtml(s: string): string {
-  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }

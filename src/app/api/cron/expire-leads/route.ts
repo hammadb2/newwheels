@@ -5,8 +5,9 @@
 import { NextResponse } from "next/server";
 import { authorizeCron } from "@/lib/crm/cron";
 import { getServerSupabase } from "@/lib/crm/supabase/server";
+import { priceCentsToDisplay } from "@/lib/crm/pricing";
 import { sendEmail } from "@/lib/email/resend";
-import { systemEmailWrapper } from "@/lib/email/wrapper";
+import { leadExpiredEmail } from "@/lib/email/templates";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -19,7 +20,7 @@ export async function GET(req: Request) {
   const now = new Date().toISOString();
   const { data: toExpire } = await supabase
     .from("leads")
-    .select("id, first_name, last_name, assigned_qualifier_id")
+    .select("id, first_name, last_name, tier, current_price_cents, assigned_qualifier_id")
     .eq("status", "available")
     .lt("expires_at", now);
   if (!toExpire || toExpire.length === 0) return NextResponse.json({ ok: true, expired: 0 });
@@ -30,35 +31,39 @@ export async function GET(req: Request) {
     ids.map((id) => ({ lead_id: id, event: "expired", detail: {} as Record<string, unknown> })),
   );
 
-  // Notify qualifier(s) + platform_ops.
+  // Notify qualifier(s) + platform_ops + CEO. One email per lead per recipient
+  // so each notification carries the branded template + lead context.
   const qualifierIds = Array.from(new Set(toExpire.map((l) => l.assigned_qualifier_id).filter(Boolean) as string[]));
   const { data: opsMembers } = await supabase
     .from("team_members")
-    .select("email, role")
+    .select("email, display_name, role")
     .or("role.eq.platform_ops,role.eq.ceo")
     .eq("active", true);
   const { data: qualifiers } = qualifierIds.length > 0
-    ? await supabase.from("team_members").select("id, email").in("id", qualifierIds)
+    ? await supabase.from("team_members").select("id, email, display_name").in("id", qualifierIds)
     : { data: [] };
 
-  const recipientEmails = Array.from(new Set([
-    ...(qualifiers ?? []).map((q) => q.email as string),
-    ...(opsMembers ?? []).map((o) => o.email as string),
-  ]));
-  if (recipientEmails.length > 0) {
-    const body = `<p>${toExpire.length} lead${toExpire.length === 1 ? "" : "s"} expired without selling. CEO can re-list any of them from the pipeline view.</p>
-      <ul>${toExpire.map((l) => `<li>${escapeHtml(`${l.first_name} ${l.last_name}`)}</li>`).join("")}</ul>`;
-    void sendEmail({
-      to: recipientEmails,
-      subject: `${toExpire.length} lead${toExpire.length === 1 ? "" : "s"} expired unsold`,
-      html: systemEmailWrapper(body),
-      tags: [{ name: "type", value: "lead_expired" }],
-    });
+  const crmUrl = (process.env.NW_CRM_URL || "https://crm.newwheels.ca").replace(/\/$/, "");
+  const recipients = new Map<string, string>();
+  for (const q of qualifiers ?? []) recipients.set(q.email as string, (q.display_name as string) ?? "there");
+  for (const o of opsMembers ?? []) recipients.set(o.email as string, (o.display_name as string) ?? "there");
+
+  for (const lead of toExpire) {
+    for (const [email, name] of recipients) {
+      void sendEmail({
+        to: email,
+        subject: `Lead expired unsold: ${lead.first_name}`,
+        html: leadExpiredEmail({
+          recipientName: name,
+          leadFirstName: lead.first_name as string,
+          tier: lead.tier as string,
+          finalPrice: priceCentsToDisplay(lead.current_price_cents as number),
+          leadUrl: `${crmUrl}/crm/leads/${lead.id}`,
+        }),
+        tags: [{ name: "type", value: "lead_expired" }],
+      });
+    }
   }
 
   return NextResponse.json({ ok: true, expired: ids.length });
-}
-
-function escapeHtml(s: string): string {
-  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }

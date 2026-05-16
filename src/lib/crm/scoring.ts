@@ -146,11 +146,9 @@ export function tierFromScore(score: number): LeadTier {
 }
 
 export function startingPriceCentsForTier(tier: LeadTier, verified = false): number {
-  // Spec: Hot $200, Warm $150, Standard $100.
-  // Verified leads add $100–$200 to the starting price regardless of tier;
-  // we apply the maximum bump on hot ($200) and the minimum on standard ($100)
-  // so verified hot starts at $400 and verified standard at $200, matching
-  // the spec's "Verified leads start at $300 to $400" anchor.
+  // Spec: Hot $200, Warm $150, Standard $100. Verified leads add a flat $150
+  // (VERIFIED_PREMIUM_CENTS) regardless of tier — verified hot $350, verified
+  // warm $300, verified standard $250.
   const base = (() => {
     switch (tier) {
       case "hot":      return 20000;
@@ -161,11 +159,11 @@ export function startingPriceCentsForTier(tier: LeadTier, verified = false): num
   return verified ? base + VERIFIED_PREMIUM_CENTS[tier] : base;
 }
 
-// Verified-lead starting-price premium per tier. Centralised here (rather
-// than baked into pricing.ts) so the scoring/pricing audit in PRs can read
-// a single source of truth.
+// Verified-lead starting-price premium per tier. Spec is a flat +$150 across
+// every tier; centralised here (rather than baked into pricing.ts) so the
+// scoring/pricing audit in PRs can read a single source of truth.
 export const VERIFIED_PREMIUM_CENTS: Record<LeadTier, number> = {
-  hot: 20000,      // +$200 → verified hot starts at $400
-  warm: 15000,    // +$150 → verified warm starts at $300
-  standard: 10000, // +$100 → verified standard starts at $200
+  hot: 15000,      // +$150 → verified hot starts at $350
+  warm: 15000,     // +$150 → verified warm starts at $300
+  standard: 15000, // +$150 → verified standard starts at $250
 };
