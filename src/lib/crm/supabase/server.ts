@@ -22,7 +22,6 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 // the custom `nw` schema, which doesn't match the default `public` schema
 // constraint that `createClient<>` returns. Generating types from the database
 // is overkill for the foundation PR.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyClient = SupabaseClient<any, any, any>;
 
 let cachedServer: AnyClient | null = null;

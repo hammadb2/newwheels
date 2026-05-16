@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 import { authorizeCron } from "@/lib/crm/cron";
 import { getServerSupabase } from "@/lib/crm/supabase/server";
 import { sendEmail } from "@/lib/email/resend";
-import { systemEmailWrapper } from "@/lib/email/wrapper";
+import { reEngagementEmail } from "@/lib/email/templates";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -38,9 +38,10 @@ export async function GET(req: Request) {
     void sendEmail({
       to: b.email as string,
       subject: "New Calgary leads available this week",
-      html: systemEmailWrapper(`<p>Hi ${escapeHtml(name)},</p>
-        <p>Fresh subprime auto leads are live on the marketplace. Browse this week's batch and pick the ones that match your sweet spot.</p>
-        <p><a href="${portalUrl}/portal/marketplace">Open marketplace →</a></p>`),
+      html: reEngagementEmail({
+        contactName: name,
+        marketplaceUrl: `${portalUrl}/portal/marketplace`,
+      }),
       tags: [{ name: "type", value: "re_engagement" }],
     });
     await supabase
@@ -51,8 +52,4 @@ export async function GET(req: Request) {
   }
 
   return NextResponse.json({ ok: true, sent });
-}
-
-function escapeHtml(s: string): string {
-  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
