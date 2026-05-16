@@ -20,14 +20,19 @@ export async function GET(req: Request) {
 
   const { data: rows } = await supabase
     .from("leads")
-    .select("id, tier, available_at, current_price_cents")
+    .select("id, tier, available_at, current_price_cents, verified")
     .eq("status", "available");
 
   const now = new Date();
   let updated = 0;
   for (const r of rows ?? []) {
     const tier = (r.tier as LeadTier) ?? "standard";
-    const price = currentPriceFor({ tier, available_at: new Date(r.available_at as string), now });
+    const price = currentPriceFor({
+      tier,
+      available_at: new Date(r.available_at as string),
+      verified: r.verified === true,
+      now,
+    });
     if (price.expired) continue;
     if (price.price_cents !== r.current_price_cents) {
       await supabase

@@ -7,9 +7,15 @@ import { NextResponse, type NextRequest } from "next/server";
 //   3) Rewrite subdomain hosts to their respective namespaces:
 //        crm.newwheels.ca/foo    → /crm/foo
 //        portal.newwheels.ca/foo → /portal/foo
+//        apply.newwheels.ca/foo  → /apply/foo
+//        team.newwheels.ca/foo   → /inbox/foo   (team is the email subdomain;
+//                                                the apex /team marketing
+//                                                page stays public)
+//        docs.newwheels.ca/foo   → /docs/foo
 //
-//      This keeps the marketing site, CRM, and buyer portal all in one
-//      Next.js app while presenting cleanly separated subdomains.
+//      This keeps the marketing site, CRM, buyer portal, apply portal,
+//      team inbox, and API docs all in one Next.js app while presenting
+//      cleanly separated subdomains.
 //
 //      Local dev convenience: NW_CRM_DEV_PORT and NW_PORTAL_DEV_PORT (e.g.
 //      `localhost:3000/crm` and `/portal`) can be hit directly. The rewrite
@@ -23,6 +29,18 @@ const CRM_HOSTS = new Set([
 const PORTAL_HOSTS = new Set([
   "portal.newwheels.ca",
   process.env.NW_PORTAL_HOST,
+].filter(Boolean) as string[]);
+const APPLY_HOSTS = new Set([
+  "apply.newwheels.ca",
+  process.env.NW_APPLY_HOST,
+].filter(Boolean) as string[]);
+const TEAM_HOSTS = new Set([
+  "team.newwheels.ca",
+  process.env.NW_TEAM_HOST,
+].filter(Boolean) as string[]);
+const DOCS_HOSTS = new Set([
+  "docs.newwheels.ca",
+  process.env.NW_DOCS_HOST,
 ].filter(Boolean) as string[]);
 
 function stripHostPort(host: string): string {
@@ -59,6 +77,9 @@ export function proxy(req: NextRequest) {
   // keeps working from the apex domain.
   const isCrmHost = CRM_HOSTS.has(host);
   const isPortalHost = PORTAL_HOSTS.has(host);
+  const isApplyHost = APPLY_HOSTS.has(host);
+  const isTeamHost = TEAM_HOSTS.has(host);
+  const isDocsHost = DOCS_HOSTS.has(host);
 
   if (isCrmHost) {
     // Reserved cross-subdomain endpoints stay as-is.
@@ -89,9 +110,55 @@ export function proxy(req: NextRequest) {
     return NextResponse.next();
   }
 
+  if (isApplyHost) {
+    // Token-based applicant status portal. The /api/apply/* namespace is
+    // reserved for status + document upload endpoints.
+    if (path.startsWith("/api/apply") || path.startsWith("/api/cron") || path.startsWith("/_next")) {
+      return NextResponse.next();
+    }
+    if (!path.startsWith("/apply")) {
+      url.pathname = `/apply${path === "/" ? "" : path}`;
+      return NextResponse.rewrite(url);
+    }
+    return NextResponse.next();
+  }
+
+  if (isTeamHost) {
+    // Internal team email inbox at team.newwheels.ca rewrites to /inbox/*
+    // (not /team, which is the apex marketing "Meet the team" page).
+    // The /api/inbox/* and /api/email/* namespaces stay direct so the Resend
+    // inbound webhook lands cleanly.
+    if (
+      path.startsWith("/api/inbox") ||
+      path.startsWith("/api/email") ||
+      path.startsWith("/api/cron") ||
+      path.startsWith("/_next")
+    ) {
+      return NextResponse.next();
+    }
+    if (!path.startsWith("/inbox")) {
+      url.pathname = `/inbox${path === "/" ? "" : path}`;
+      return NextResponse.rewrite(url);
+    }
+    return NextResponse.next();
+  }
+
+  if (isDocsHost) {
+    if (path.startsWith("/api/docs") || path.startsWith("/_next")) {
+      return NextResponse.next();
+    }
+    if (!path.startsWith("/docs")) {
+      url.pathname = `/docs${path === "/" ? "" : path}`;
+      return NextResponse.rewrite(url);
+    }
+    return NextResponse.next();
+  }
+
   // Apex (marketing site) — block direct access to internal namespaces so
-  // /crm and /portal aren't crawlable via newwheels.ca.
-  if (path === "/crm" || path.startsWith("/crm/") || path === "/portal" || path.startsWith("/portal/")) {
+  // /crm, /portal, /apply, /inbox, /docs aren't crawlable via newwheels.ca.
+  // /team is intentionally NOT reserved — it's the public marketing page.
+  const reservedRoots = ["/crm", "/portal", "/apply", "/inbox", "/docs"];
+  if (reservedRoots.some((p) => path === p || path.startsWith(`${p}/`))) {
     url.pathname = "/";
     return NextResponse.redirect(url, 302);
   }
