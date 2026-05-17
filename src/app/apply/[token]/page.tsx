@@ -6,7 +6,6 @@
 
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 import type { Metadata } from "next";
 import { getApplicantStatus, isProbablyToken } from "@/lib/crm/leads/apply";
 
@@ -43,7 +42,7 @@ export default async function ApplyTokenPage({ params }: Props) {
       <div className="mx-auto max-w-2xl space-y-8">
         <header className="space-y-2">
           <div className="flex items-center gap-2">
-            <Image src="/logo-icon.png" alt="" width={24} height={24} className="h-6 w-auto" />
+            <img src="https://newwheels.ca/logo-icon.png" alt="" width={24} height={24} className="h-6 w-auto" />
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-forest">
               NewWheels application
             </p>

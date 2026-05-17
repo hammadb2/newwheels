@@ -5,7 +5,6 @@
 // path just shows a helpful "use the link in your email" message.
 
 import Link from "next/link";
-import Image from "next/image";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -21,7 +20,7 @@ export default function ApplyIndexPage() {
     <main className="min-h-screen bg-brand-creamSoft px-6 py-16 text-brand-ink">
       <div className="mx-auto max-w-2xl space-y-6">
         <div className="flex items-center gap-2">
-          <Image src="/logo-icon.png" alt="" width={24} height={24} className="h-6 w-auto" />
+          <img src="https://newwheels.ca/logo-icon.png" alt="" width={24} height={24} className="h-6 w-auto" />
           <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-forest">
             NewWheels application
           </p>

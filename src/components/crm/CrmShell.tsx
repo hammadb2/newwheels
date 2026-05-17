@@ -5,7 +5,6 @@
 // a CRM session is present.
 
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useMemo, useState } from "react";
 import type { TeamRole } from "@/lib/crm/types";
@@ -41,7 +40,7 @@ export function CrmShell({ role, children }: { role: TeamRole; children: React.R
       >
         <div className="flex items-center justify-between px-5 py-4 border-b border-white/10">
           <Link href="/crm/dashboard" className="flex items-center gap-2 font-extrabold tracking-tight text-lg">
-            <Image src="/logo-icon.png" alt="" width={24} height={24} className="h-6 w-auto" />
+            <img src="https://newwheels.ca/logo-icon.png" alt="" width={24} height={24} className="h-6 w-auto" />
             <span className="text-[#D9FF4E]">NW</span>
             <span className="text-white">CRM</span>
           </Link>
