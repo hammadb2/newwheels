@@ -99,11 +99,11 @@ export async function retrievePaymentIntent(id: string): Promise<PaymentIntent> 
   return stripeGet<PaymentIntent>(`/payment_intents/${encodeURIComponent(id)}`);
 }
 
-export type PaymentMethodCard = { brand: string; last4: string };
+export type PaymentMethodCard = { brand: string; last4: string; created: number };
 export async function retrievePaymentMethodCard(id: string): Promise<PaymentMethodCard | null> {
   try {
-    const pm = await stripeGet<{ card?: { brand?: string; last4?: string } }>(`/payment_methods/${encodeURIComponent(id)}`);
-    if (pm.card?.brand && pm.card?.last4) return { brand: pm.card.brand, last4: pm.card.last4 };
+    const pm = await stripeGet<{ card?: { brand?: string; last4?: string }; created?: number }>(`/payment_methods/${encodeURIComponent(id)}`);
+    if (pm.card?.brand && pm.card?.last4) return { brand: pm.card.brand, last4: pm.card.last4, created: pm.created ?? 0 };
     return null;
   } catch { return null; }
 }
