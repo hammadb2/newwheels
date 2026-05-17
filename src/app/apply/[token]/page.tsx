@@ -8,6 +8,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { getApplicantStatus, isProbablyToken } from "@/lib/crm/leads/apply";
+import { SITE_URL } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Your NewWheels application",
@@ -42,10 +43,7 @@ export default async function ApplyTokenPage({ params }: Props) {
       <div className="mx-auto max-w-2xl space-y-8">
         <header className="space-y-2">
           <div className="flex items-center gap-2">
-            <img src="https://newwheels.ca/logo-icon.png" alt="" width={24} height={24} className="h-6 w-auto" />
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-forest">
-              NewWheels application
-            </p>
+            <img src={`${SITE_URL}/logo-horizontal.png`} alt="NewWheels" width={140} height={40} className="h-8 w-auto" />
           </div>
           <h1 className="text-3xl font-extrabold tracking-tight text-brand-ink">
             Hi {status.first_name},

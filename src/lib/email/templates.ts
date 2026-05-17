@@ -69,12 +69,57 @@ export function leadReceivedEmail(opts: {
     <h1 style="margin:0 0 8px;font-size:22px;font-weight:800;color:${B.ink};">
       We got your application, ${escapeHtml(opts.firstName)}.
     </h1>
-    <p style="margin:0 0 16px;font-size:15px;color:${B.ink};line-height:1.6;">
-      A specialist will call you within 1 hour during business hours (${BUSINESS.hours}). If you don't hear from us, call <a href="tel:${BUSINESS.phoneHref}" style="color:${B.forest};font-weight:600;">${BUSINESS.phone}</a>.
+    <p style="margin:0 0 16px;font-size:15px;color:${B.muted};line-height:1.6;">
+      Thanks for choosing ${SITE_NAME}.
     </p>
+
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:${B.creamSoft};border-radius:12px;border:1px solid ${B.line};margin-bottom:24px;">
+      <tr>
+        <td style="padding:20px 24px;">
+          <p style="margin:0 0 4px;font-size:13px;font-weight:700;color:${B.forest};text-transform:uppercase;letter-spacing:0.08em;">
+            What happens next
+          </p>
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:12px;">
+            <tr>
+              <td width="32" valign="top" style="font-size:14px;font-weight:800;color:${B.forest};padding-bottom:8px;">01</td>
+              <td style="font-size:14px;color:${B.ink};padding-bottom:8px;line-height:1.5;">
+                <strong>A specialist calls you</strong> within 1 hour during business hours (${BUSINESS.hours}).
+              </td>
+            </tr>
+            <tr>
+              <td width="32" valign="top" style="font-size:14px;font-weight:800;color:${B.forest};padding-bottom:8px;">02</td>
+              <td style="font-size:14px;color:${B.ink};padding-bottom:8px;line-height:1.5;">
+                <strong>We submit your file</strong> to the right lender. No hard credit check at this stage.
+              </td>
+            </tr>
+            <tr>
+              <td width="32" valign="top" style="font-size:14px;font-weight:800;color:${B.forest};">03</td>
+              <td style="font-size:14px;color:${B.ink};line-height:1.5;">
+                <strong>You get approval terms</strong> within 24 hours. No obligation.
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+
     ${cta}
-    <p style="margin:0;font-size:13px;color:${B.muted};line-height:1.6;">
-      Talk soon,<br/>The ${SITE_NAME} Team
+    <p style="margin:0 0 16px;font-size:14px;color:${B.ink};line-height:1.6;">
+      If your situation is urgent, call us directly:
+    </p>
+    <table role="presentation" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
+      <tr>
+        <td style="background-color:${B.deep};border-radius:8px;">
+          <a href="tel:${BUSINESS.phoneHref}" style="display:inline-block;padding:12px 28px;font-size:15px;font-weight:700;color:${B.accent};text-decoration:none;letter-spacing:0.02em;">
+            Call ${BUSINESS.phone}
+          </a>
+        </td>
+      </tr>
+    </table>
+
+    <p style="margin:0;font-size:14px;color:${B.muted};line-height:1.6;">
+      Talk soon,<br/>
+      <strong style="color:${B.ink};">The ${SITE_NAME} Team</strong>
     </p>
   `;
   return systemEmailWrapper(body);

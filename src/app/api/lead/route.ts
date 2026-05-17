@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { BUSINESS, SITE_NAME, SITE_URL } from "@/lib/site";
-import { autoReplyEmail, notifyEmail } from "@/lib/email-templates";
+import { notifyEmail } from "@/lib/email-templates";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -134,8 +134,6 @@ export async function POST(req: Request) {
     timestamp,
   });
 
-  const autoReplyHtml = autoReplyEmail(safe.firstName);
-
   const applicantSms = `Hi ${safe.firstName}, thanks for applying with NewWheels! A specialist will call you within 1 hour during business hours (${BUSINESS.hours}). Questions? Call us: ${BUSINESS.phone}`;
 
 
@@ -161,19 +159,13 @@ export async function POST(req: Request) {
     crmForwardResult = { ok: false, error: e instanceof Error ? e.message : "crm_intake_threw" };
   }
 
-  const [notifyResult, autoReplyResult, sheetResult, smsApplicantResult] = await Promise.all([
+  const [notifyResult, sheetResult, smsApplicantResult] = await Promise.all([
     sendResend({
       to: notifyTo,
       from,
       subject: `New Lead: ${fullName} - ${safe.phone}`,
       html: notifyHtml,
       reply_to: safe.email,
-    }),
-    sendResend({
-      to: safe.email,
-      from,
-      subject: "We received your application - NewWheels",
-      html: autoReplyHtml,
     }),
     postToSheet(safe, timestamp),
     sendQuoSms(safe.phone, applicantSms),
@@ -183,7 +175,6 @@ export async function POST(req: Request) {
     ok: true,
     integrations: {
       notify: notifyResult,
-      autoReply: autoReplyResult,
       sheet: sheetResult,
       smsApplicant: smsApplicantResult,
       crm: crmForwardResult,

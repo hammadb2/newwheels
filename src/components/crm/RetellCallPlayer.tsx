@@ -19,6 +19,7 @@ type Props = {
   transcriptObject?: TranscriptEntry[] | null;
   callSummary?: string | null;
   userSentiment?: string | null;
+  leadId: string;
 };
 
 function formatDuration(seconds: number): string {
@@ -64,9 +65,11 @@ export function RetellCallPlayer({
   transcriptObject,
   callSummary,
   userSentiment,
+  leadId,
 }: Props) {
   const [expanded, setExpanded] = useState(false);
   const [showTranscript, setShowTranscript] = useState(false);
+  const [syncing, setSyncing] = useState(false);
 
   const sentimentInfo = userSentiment
     ? SENTIMENT_LABEL[userSentiment] ?? { text: userSentiment, color: "text-[#6B7280]" }
@@ -105,6 +108,32 @@ export function RetellCallPlayer({
           </p>
           <p className="text-sm text-[#0A2818]">{callSummary}</p>
         </div>
+      )}
+
+      {/* Sync button — when status is stuck on initiated/in_progress */}
+      {(callStatus === "initiated" || callStatus === "in_progress") && leadId && (
+        <button
+          type="button"
+          disabled={syncing}
+          onClick={async () => {
+            setSyncing(true);
+            try {
+              const res = await fetch(`/api/crm/leads/${leadId}/retell-sync`, {
+                method: "POST",
+              });
+              if (res.ok) {
+                window.location.reload();
+              }
+            } catch {
+              // silently fail
+            } finally {
+              setSyncing(false);
+            }
+          }}
+          className="inline-flex items-center gap-1.5 rounded-lg border border-[#E5E1D8] bg-white px-3 py-1.5 text-xs font-medium text-[#0A2818] hover:bg-[#FAF7F0] disabled:opacity-50"
+        >
+          {syncing ? "Syncing…" : "Sync from Retell"}
+        </button>
       )}
 
       {/* Audio player */}

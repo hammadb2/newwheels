@@ -6,6 +6,7 @@
 
 import Link from "next/link";
 import type { Metadata } from "next";
+import { SITE_URL } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "NewWheels — Application portal",
@@ -20,10 +21,7 @@ export default function ApplyIndexPage() {
     <main className="min-h-screen bg-brand-creamSoft px-6 py-16 text-brand-ink">
       <div className="mx-auto max-w-2xl space-y-6">
         <div className="flex items-center gap-2">
-          <img src="https://newwheels.ca/logo-icon.png" alt="" width={24} height={24} className="h-6 w-auto" />
-          <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-forest">
-            NewWheels application
-          </p>
+          <img src={`${SITE_URL}/logo-horizontal.png`} alt="NewWheels" width={140} height={40} className="h-8 w-auto" />
         </div>
         <h1 className="text-3xl font-extrabold tracking-tight text-brand-ink">
           Use the link in your confirmation email
