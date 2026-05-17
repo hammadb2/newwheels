@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { requireBuyer } from "@/lib/crm/auth/rbac";
 import { getServerSupabase } from "@/lib/crm/supabase/server";
+import { retrievePaymentMethodCard } from "@/lib/payments/stripe";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Account — NewWheels Portal" };
@@ -22,6 +23,9 @@ export default async function AccountPage() {
 
   if (!buyer) return <p className="text-sm text-[#6B7280]">Account not found.</p>;
 
+  const pmId = buyer.default_payment_method_id as string | null;
+  const card = pmId ? await retrievePaymentMethodCard(pmId) : null;
+
   return (
     <div className="space-y-6">
       <h1 className="text-2xl md:text-3xl font-extrabold text-[#0A2818]">Account</h1>
@@ -38,13 +42,19 @@ export default async function AccountPage() {
 
       <div className="rounded-2xl border border-[#E5E7EB] bg-white p-6 space-y-2">
         <h2 className="font-extrabold text-[#0A2818]">Payment</h2>
-        <p className="text-sm text-[#0A2818]">
-          {buyer.default_payment_method_id
-            ? "A card is on file. Stripe handles all charges. You can update it any time."
-            : "No card on file. You need a valid card to unlock lead details and buy leads."}
-        </p>
+        {card ? (
+          <p className="text-sm text-[#0A2818]">
+            Card on file: <span className="font-semibold capitalize">{card.brand}</span> •••• {card.last4}
+          </p>
+        ) : (
+          <p className="text-sm text-[#0A2818]">
+            {pmId
+              ? "A card is on file. Stripe handles all charges. You can update it any time."
+              : "No card on file. You need a valid card to unlock lead details and buy leads."}
+          </p>
+        )}
         <Link href="/portal/account/payment" className="btn-primary inline-flex">
-          {buyer.default_payment_method_id ? "Update card" : "Add card"}
+          {pmId ? "Update card" : "Add card"}
         </Link>
       </div>
     </div>
