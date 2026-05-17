@@ -16,8 +16,14 @@ type BuyerRow = {
   status: string;
   business_name: string | null;
   contact_name: string;
+  first_name: string | null;
+  last_name: string | null;
   email: string;
+  phone: string | null;
   amvic_licence: string | null;
+  dealership_name: string | null;
+  dealership_address: string | null;
+  dealership_phone: string | null;
   verified_at: string | null;
   created_at: string;
 };
@@ -29,7 +35,7 @@ export default async function BuyerPipelinePage() {
   if (supabase) {
     const { data } = await supabase
       .from("buyer_accounts")
-      .select("id, kind, status, business_name, contact_name, email, amvic_licence, verified_at, created_at")
+      .select("id, kind, status, business_name, contact_name, first_name, last_name, email, phone, amvic_licence, dealership_name, dealership_address, dealership_phone, verified_at, created_at")
       .order("created_at", { ascending: false })
       .limit(200);
     buyers = (data ?? []) as BuyerRow[];
@@ -65,11 +71,16 @@ export default async function BuyerPipelinePage() {
                 <li key={b.id} className="p-4 flex items-start justify-between gap-3">
                   <div>
                     <p className="font-semibold text-[#0A2818]">
-                      {b.business_name ? `${b.business_name} — ${b.contact_name}` : b.contact_name}
+                      {b.business_name ? `${b.business_name} — ${b.contact_name}` : (b.first_name && b.last_name ? `${b.first_name} ${b.last_name}` : b.contact_name)}
                     </p>
                     <p className="text-xs text-[#6B7280]">
-                      {b.kind.replace(/_/g, " ")} · {b.email}{b.amvic_licence ? ` · AMVIC ${b.amvic_licence}` : ""}
+                      {b.kind.replace(/_/g, " ")} · {b.email}{b.phone ? ` · ${b.phone}` : ""}{b.amvic_licence ? ` · AMVIC ${b.amvic_licence}` : ""}
                     </p>
+                    {b.dealership_name && (
+                      <p className="text-xs text-[#6B7280]">
+                        Dealership: {b.dealership_name}{b.dealership_address ? ` · ${b.dealership_address}` : ""}{b.dealership_phone ? ` · ${b.dealership_phone}` : ""}
+                      </p>
+                    )}
                     <p className="text-xs text-[#6B7280]">
                       Signed up {new Date(b.created_at).toLocaleDateString("en-CA")}
                       {b.verified_at ? ` · Verified ${new Date(b.verified_at).toLocaleDateString("en-CA")}` : ""}

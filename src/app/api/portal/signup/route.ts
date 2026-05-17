@@ -1,6 +1,8 @@
 // POST /api/portal/signup — buyer signup (dealer master or individual).
 // Multipart form data: kind, email, contact_name, phone, amvic_licence,
-// business_name?, business_address?, amvic_doc (File), gov_id_doc (File).
+// business_name?, business_address?, first_name?, last_name?,
+// dealership_name?, dealership_address?, dealership_phone?,
+// amvic_doc (File), gov_id_doc (File).
 
 import { NextResponse } from "next/server";
 import { getServerSupabase } from "@/lib/crm/supabase/server";
@@ -12,6 +14,21 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const MAX_TEXT = 250;
+
+const BLOCKED_EMAIL_DOMAINS = [
+  "gmail.com", "googlemail.com", "hotmail.com", "hotmail.ca",
+  "outlook.com", "outlook.ca", "live.com", "live.ca",
+  "yahoo.com", "yahoo.ca", "aol.com", "icloud.com",
+  "me.com", "mac.com", "mail.com", "protonmail.com", "proton.me",
+  "zoho.com", "yandex.com", "gmx.com", "gmx.ca",
+  "fastmail.com", "tutanota.com", "tuta.io",
+];
+
+function isValidPhoneNumber(value: string): boolean {
+  const digits = value.replace(/\D/g, "");
+  const d = digits.startsWith("1") ? digits.slice(1) : digits;
+  return d.length === 10;
+}
 
 export async function POST(req: Request) {
   let form: FormData;
@@ -37,10 +54,35 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, error: "invalid_email" }, { status: 400 });
   }
 
+  const emailDomain = email.split("@")[1] || "";
+  if (BLOCKED_EMAIL_DOMAINS.includes(emailDomain)) {
+    return NextResponse.json({ ok: false, error: "Please use your company email address, not a personal email (e.g. Gmail, Hotmail, Outlook)." }, { status: 400 });
+  }
+
+  if (!isValidPhoneNumber(phone)) {
+    return NextResponse.json({ ok: false, error: "Phone number must be a valid 10-digit number." }, { status: 400 });
+  }
+
   const business_name = kind === "dealer_master" ? String(form.get("business_name") ?? "").trim().slice(0, MAX_TEXT) : null;
   const business_address = kind === "dealer_master" ? String(form.get("business_address") ?? "").trim().slice(0, 500) : null;
   if (kind === "dealer_master" && (!business_name || !business_address)) {
     return NextResponse.json({ ok: false, error: "missing_dealer_fields" }, { status: 400 });
+  }
+
+  // Individual buyer fields: first/last name, dealership info.
+  const first_name = kind === "individual" ? String(form.get("first_name") ?? "").trim().slice(0, MAX_TEXT) : null;
+  const last_name = kind === "individual" ? String(form.get("last_name") ?? "").trim().slice(0, MAX_TEXT) : null;
+  const dealership_name = kind === "individual" ? String(form.get("dealership_name") ?? "").trim().slice(0, MAX_TEXT) : null;
+  const dealership_address = kind === "individual" ? String(form.get("dealership_address") ?? "").trim().slice(0, 500) : null;
+  const dealership_phone = kind === "individual" ? String(form.get("dealership_phone") ?? "").trim().slice(0, 40) : null;
+  if (kind === "individual" && (!first_name || !last_name)) {
+    return NextResponse.json({ ok: false, error: "First name and last name are required." }, { status: 400 });
+  }
+  if (kind === "individual" && (!dealership_name || !dealership_address || !dealership_phone)) {
+    return NextResponse.json({ ok: false, error: "Dealership name, address, and phone are required." }, { status: 400 });
+  }
+  if (dealership_phone && !isValidPhoneNumber(dealership_phone)) {
+    return NextResponse.json({ ok: false, error: "Dealership phone must be a valid 10-digit number." }, { status: 400 });
   }
 
   const amvicDoc = form.get("amvic_doc");
@@ -75,6 +117,11 @@ export async function POST(req: Request) {
       amvic_licence,
       business_name,
       business_address,
+      first_name,
+      last_name,
+      dealership_name,
+      dealership_address,
+      dealership_phone,
     })
     .select("id")
     .single();

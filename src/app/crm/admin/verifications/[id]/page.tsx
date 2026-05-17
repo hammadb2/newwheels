@@ -18,7 +18,7 @@ export default async function VerificationDetail({ params }: { params: Promise<{
 
   const { data: buyer } = await supabase
     .from("buyer_accounts")
-    .select("id, kind, status, business_name, contact_name, email, phone, amvic_licence, business_address, created_at, rejection_reason")
+    .select("id, kind, status, business_name, contact_name, first_name, last_name, email, phone, amvic_licence, business_address, dealership_name, dealership_address, dealership_phone, created_at, rejection_reason")
     .eq("id", id)
     .single();
   if (!buyer) return notFound();
@@ -48,10 +48,17 @@ export default async function VerificationDetail({ params }: { params: Promise<{
         <dl className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
           {buyer.business_name ? <Row label="Business name" value={buyer.business_name as string} /> : null}
           {buyer.business_address ? <Row label="Business address" value={buyer.business_address as string} /> : null}
-          <Row label="Contact" value={buyer.contact_name as string} />
+          {(buyer.first_name || buyer.last_name) ? (
+            <Row label="Name" value={`${buyer.first_name ?? ""} ${buyer.last_name ?? ""}`.trim()} />
+          ) : (
+            <Row label="Contact" value={buyer.contact_name as string} />
+          )}
           <Row label="Email" value={buyer.email as string} />
           <Row label="Phone" value={buyer.phone as string} />
           <Row label="AMVIC licence" value={buyer.amvic_licence as string} />
+          {buyer.dealership_name ? <Row label="Dealership" value={buyer.dealership_name as string} /> : null}
+          {buyer.dealership_address ? <Row label="Dealership address" value={buyer.dealership_address as string} /> : null}
+          {buyer.dealership_phone ? <Row label="Dealership phone" value={buyer.dealership_phone as string} /> : null}
           <Row label="Submitted" value={new Date(buyer.created_at as string).toLocaleString("en-CA")} />
         </dl>
       </div>

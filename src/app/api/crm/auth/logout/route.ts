@@ -10,5 +10,5 @@ export const dynamic = "force-dynamic";
 export async function POST() {
   await revokeSession("crm");
   await clearSessionCookie("crm");
-  return NextResponse.json({ ok: true });
+  return NextResponse.redirect(new URL("/crm/login", process.env.NEXT_PUBLIC_SITE_URL || "https://crm.newwheels.ca"), 303);
 }
