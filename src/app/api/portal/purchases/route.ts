@@ -52,7 +52,7 @@ export async function POST(req: Request) {
 
   const { data: lead } = await supabase
     .from("leads")
-    .select("id, tier, available_at, status, current_price_cents, first_name, last_name, email, phone, raw_payload")
+    .select("id, tier, available_at, status, current_price_cents, price_override_cents, first_name, last_name, email, phone, raw_payload")
     .eq("id", parsed.data.lead_id)
     .single();
   if (!lead) return NextResponse.json({ ok: false, error: "lead_not_found" }, { status: 404 });
@@ -61,10 +61,12 @@ export async function POST(req: Request) {
   }
 
   const tier = (lead.tier as LeadTier) ?? "standard";
+  const overrideCents = lead.price_override_cents as number | null;
   const price = currentPriceFor({ tier, available_at: new Date(lead.available_at as string), now: new Date() });
-  if (price.expired) {
+  if (price.expired && overrideCents == null) {
     return NextResponse.json({ ok: false, error: "lead_expired" }, { status: 410 });
   }
+  const effectivePrice = overrideCents ?? price.price_cents;
 
   // Lock the lead optimistically. If another buyer beats us, the UPDATE
   // affects 0 rows.
@@ -73,7 +75,7 @@ export async function POST(req: Request) {
     .update({
       status: "sold",
       sold_at: new Date().toISOString(),
-      current_price_cents: price.price_cents,
+      current_price_cents: effectivePrice,
     })
     .eq("id", lead.id)
     .eq("status", "available")
@@ -86,7 +88,7 @@ export async function POST(req: Request) {
   let payment_intent_id: string | null = null;
   try {
     const pi = await createPaymentIntent({
-      amount_cents: price.price_cents,
+      amount_cents: effectivePrice,
       customer: buyer.stripe_customer_id as string,
       payment_method: buyer.default_payment_method_id as string,
       off_session: true,
@@ -111,7 +113,7 @@ export async function POST(req: Request) {
       lead_id: lead.id,
       buyer_id: buyer.id,
       sub_account_id: null,
-      amount_cents: price.price_cents,
+      amount_cents: effectivePrice,
       tier,
       status: "paid",
       stripe_payment_intent_id: payment_intent_id,
@@ -128,7 +130,7 @@ export async function POST(req: Request) {
     lead_id: lead.id,
     actor_buyer_id: buyer.id,
     event: "sold",
-    detail: { amount_cents: price.price_cents, tier, purchase_id: purchase.id } as Record<string, unknown>,
+    detail: { amount_cents: effectivePrice, tier, purchase_id: purchase.id } as Record<string, unknown>,
   });
 
   const portalUrl = (process.env.NW_PORTAL_URL || "https://portal.newwheels.ca").replace(/\/$/, "");
@@ -138,7 +140,7 @@ export async function POST(req: Request) {
     subject: `Your NewWheels lead — ${lead.first_name}`,
     html: purchaseConfirmationEmail({
       buyerName,
-      amount: priceCentsToDisplay(price.price_cents),
+      amount: priceCentsToDisplay(effectivePrice),
       lead: {
         fullName: `${lead.first_name as string} ${lead.last_name as string}`.trim(),
         phone: lead.phone as string,
