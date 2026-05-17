@@ -97,6 +97,7 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
       {isCeoOrOps && lead.retell_call_id ? (
         <div className="crm-card">
           <RetellCallPlayer
+            leadId={id}
             recordingUrl={(lead.retell_recording_url as string) ?? ""}
             callStatus={(lead.retell_call_status as string) ?? ""}
             durationSeconds={(lead.retell_call_duration_seconds as number) ?? null}
