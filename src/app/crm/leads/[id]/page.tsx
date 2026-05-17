@@ -10,6 +10,7 @@ import { QualificationForm } from "@/components/crm/QualificationForm";
 import { LeadNotesThread } from "@/components/crm/LeadNotesThread";
 import { canReadLeadNotes, canWriteLeadNotes, listLeadNotes } from "@/lib/crm/leads/notes";
 import { priceCentsToDisplay } from "@/lib/crm/pricing";
+import { RetellCallPlayer } from "@/components/crm/RetellCallPlayer";
 
 export const dynamic = "force-dynamic";
 
@@ -21,7 +22,7 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
 
   const { data: lead } = await supabase
     .from("leads")
-    .select("id, first_name, last_name, email, phone, status, source_page, created_at, duplicate_of, tier, score, current_price_cents, available_at")
+    .select("id, first_name, last_name, email, phone, status, source_page, created_at, duplicate_of, tier, score, current_price_cents, available_at, retell_call_id, retell_call_status, retell_recording_url, retell_call_duration_seconds")
     .eq("id", id)
     .single();
   if (!lead) return notFound();
@@ -61,6 +62,18 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
           </div>
         ) : null}
       </div>
+
+      {/* Retell call recording — CEO / Ops only. */}
+      {isCeoOrOps && lead.retell_call_id ? (
+        <div className="crm-card">
+          <RetellCallPlayer
+            recordingUrl={(lead.retell_recording_url as string) ?? ""}
+            callStatus={(lead.retell_call_status as string) ?? ""}
+            durationSeconds={(lead.retell_call_duration_seconds as number) ?? null}
+            callId={lead.retell_call_id as string}
+          />
+        </div>
+      ) : null}
 
       {/* Score + price block — CEO / Ops only. Qualifier never sees this. */}
       {isCeoOrOps && lead.status === "available" ? (
