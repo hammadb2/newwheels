@@ -126,9 +126,9 @@ export function DocumentUploadForm({ token, initialDocuments }: Props) {
 
   return (
     <div className="space-y-4">
-      <div className="rounded-xl bg-black/30 px-4 py-3 text-sm">
-        <span className="font-semibold">{completedCount} of {SLOTS.length}</span>
-        <span className="text-white/70"> documents received</span>
+      <div className="rounded-xl bg-brand-cream px-4 py-3 text-sm ring-1 ring-brand-line">
+        <span className="font-semibold text-brand-ink">{completedCount} of {SLOTS.length}</span>
+        <span className="text-brand-muted"> documents received</span>
       </div>
 
       {SLOTS.map((slot) => {
@@ -138,12 +138,12 @@ export function DocumentUploadForm({ token, initialDocuments }: Props) {
         return (
           <div
             key={slot.key}
-            className="rounded-2xl border border-white/10 bg-white/5 p-5 space-y-3"
+            className="rounded-2xl bg-white p-5 shadow-card ring-1 ring-brand-line space-y-3"
           >
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
                 <h3 className="text-base font-semibold">{slot.label}</h3>
-                <p className="mt-1 text-xs text-white/65">{slot.helper}</p>
+                <p className="mt-1 text-xs text-brand-muted">{slot.helper}</p>
               </div>
               <Badge state={s} />
             </div>
@@ -152,10 +152,10 @@ export function DocumentUploadForm({ token, initialDocuments }: Props) {
                 htmlFor={inputId}
                 className={`inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold transition ${
                   s.uploading
-                    ? "bg-white/20 text-white/60"
+                    ? "bg-brand-cream text-brand-muted"
                     : s.uploaded
-                    ? "border border-[#D9FF4E] bg-transparent text-[#D9FF4E] hover:bg-[#D9FF4E]/10"
-                    : "bg-[#D9FF4E] text-[#0E3D24] hover:opacity-90"
+                    ? "border border-brand-forest bg-transparent text-brand-forest hover:bg-brand-cream"
+                    : "bg-brand-accent text-brand-ink hover:bg-brand-accentSoft"
                 }`}
                 aria-disabled={s.uploading || undefined}
               >
@@ -181,7 +181,7 @@ export function DocumentUploadForm({ token, initialDocuments }: Props) {
               />
             </div>
             {s.error ? (
-              <p className="text-xs text-red-200" role="alert">
+              <p className="text-xs text-red-600" role="alert">
                 {s.error}
               </p>
             ) : null}
@@ -195,20 +195,20 @@ export function DocumentUploadForm({ token, initialDocuments }: Props) {
 function Badge({ state }: { state: SlotState }) {
   if (state.uploading) {
     return (
-      <span className="shrink-0 rounded-full border border-white/30 px-2 py-0.5 text-xs text-white/70">
+      <span className="shrink-0 rounded-full border border-brand-line px-2 py-0.5 text-xs text-brand-muted">
         Uploading…
       </span>
     );
   }
   if (state.uploaded) {
     return (
-      <span className="shrink-0 rounded-full bg-[#D9FF4E] px-2 py-0.5 text-xs font-bold text-[#0E3D24]">
+      <span className="shrink-0 rounded-full bg-brand-accent px-2 py-0.5 text-xs font-bold text-brand-ink">
         Received
       </span>
     );
   }
   return (
-    <span className="shrink-0 rounded-full border border-white/30 px-2 py-0.5 text-xs text-white/65">
+    <span className="shrink-0 rounded-full border border-brand-line px-2 py-0.5 text-xs text-brand-muted">
       Needed
     </span>
   );
