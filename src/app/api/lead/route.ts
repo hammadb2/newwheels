@@ -47,7 +47,6 @@ async function sendResend(opts: {
 }
 
 const QUO_SENDER = process.env.QUO_SENDER_NUMBER || "+15879006051";
-const QUO_TEAM = process.env.QUO_TEAM_NUMBER || "+15879567479";
 
 function toE164(phone: string): string {
   const digits = phone.replace(/[^\d]/g, "");
@@ -139,7 +138,6 @@ export async function POST(req: Request) {
 
   const applicantSms = `Hi ${safe.firstName}, thanks for applying with NewWheels! A specialist will call you within 1 hour during business hours (${BUSINESS.hours}). Questions? Call us: ${BUSINESS.phone}`;
 
-  const teamSms = `New lead: ${fullName}\nPhone: ${safe.phone}\nCredit: ${safe.credit}\nEmployment: ${safe.employment}\nTimeframe: ${safe.timeframe}\nSource: ${safe.sourcePage}`;
 
   // Fan-out: also forward to the CRM lead-intake pipeline so the lead becomes
   // visible to the Lead Qualifier inside the CRM. This is fire-and-forget — a
@@ -163,7 +161,7 @@ export async function POST(req: Request) {
     crmForwardResult = { ok: false, error: e instanceof Error ? e.message : "crm_intake_threw" };
   }
 
-  const [notifyResult, autoReplyResult, sheetResult, smsApplicantResult, smsTeamResult] = await Promise.all([
+  const [notifyResult, autoReplyResult, sheetResult, smsApplicantResult] = await Promise.all([
     sendResend({
       to: notifyTo,
       from,
@@ -179,7 +177,6 @@ export async function POST(req: Request) {
     }),
     postToSheet(safe, timestamp),
     sendQuoSms(safe.phone, applicantSms),
-    sendQuoSms(QUO_TEAM, teamSms),
   ]);
 
   return NextResponse.json({
@@ -189,7 +186,6 @@ export async function POST(req: Request) {
       autoReply: autoReplyResult,
       sheet: sheetResult,
       smsApplicant: smsApplicantResult,
-      smsTeam: smsTeamResult,
       crm: crmForwardResult,
     },
   });
