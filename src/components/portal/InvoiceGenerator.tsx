@@ -55,7 +55,7 @@ export function InvoiceGenerator() {
     <div className="rounded-2xl border border-[#E5E7EB] bg-white p-6">
       <h2 className="text-lg font-extrabold text-[#0A2818] mb-1">Generate invoice</h2>
       <p className="text-sm text-[#6B7280] mb-4">
-        Select a date range and we&apos;ll email you a branded PDF invoice with your purchase history.
+        Select a date range and we&apos;ll email you a PDF invoice with your purchase history.
       </p>
 
       <form onSubmit={handleSubmit} className="flex flex-wrap items-end gap-3">
