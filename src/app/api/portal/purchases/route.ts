@@ -14,7 +14,7 @@ import { z } from "zod";
 import { requireBuyer } from "@/lib/crm/auth/rbac";
 import { getServerSupabase } from "@/lib/crm/supabase/server";
 import { currentPriceFor, priceCentsToDisplay } from "@/lib/crm/pricing";
-import { createPaymentIntent, isStripeConfigured } from "@/lib/payments/stripe";
+import { createPaymentIntent, createRefund, isStripeConfigured } from "@/lib/payments/stripe";
 import { sendEmail } from "@/lib/email/resend";
 import { purchaseConfirmationEmail } from "@/lib/email/templates";
 import type { LeadTier } from "@/lib/crm/types";
@@ -122,7 +122,9 @@ export async function POST(req: Request) {
     .select("id")
     .single();
   if (pErr || !purchase) {
-    console.error("purchases insert failed", pErr);
+    console.error("purchases insert failed — refunding charge and releasing lead", pErr);
+    try { await createRefund({ payment_intent: payment_intent_id as string, reason: "duplicate" }); } catch (re) { console.error("refund after insert failure also failed", re); }
+    await supabase.from("leads").update({ status: "available", sold_at: null }).eq("id", lead.id);
     return NextResponse.json({ ok: false, error: "db_error" }, { status: 500 });
   }
 

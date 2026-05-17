@@ -99,6 +99,13 @@ export async function retrievePaymentIntent(id: string): Promise<PaymentIntent> 
   return stripeGet<PaymentIntent>(`/payment_intents/${encodeURIComponent(id)}`);
 }
 
+export type Refund = { id: string; status: string };
+export async function createRefund(opts: { payment_intent: string; reason?: string }): Promise<Refund> {
+  const body: Record<string, string> = { payment_intent: opts.payment_intent };
+  if (opts.reason) body.reason = opts.reason;
+  return stripePost<Refund>("/refunds", body);
+}
+
 export type StripeEvent = {
   id: string;
   type: string;
