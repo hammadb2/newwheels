@@ -6,6 +6,7 @@
 
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import type { Metadata } from "next";
 import { getApplicantStatus, isProbablyToken } from "@/lib/crm/leads/apply";
 import { DocumentUploadForm } from "@/components/apply/DocumentUploadForm";
@@ -64,9 +65,12 @@ export default async function ApplyDocumentsPage({ params }: Props) {
         </Link>
 
         <header className="space-y-2">
-          <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-forest">
-            NewWheels application · documents
-          </p>
+          <div className="flex items-center gap-2">
+            <Image src="/logo-icon.png" alt="" width={24} height={24} className="h-6 w-auto" />
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-forest">
+              NewWheels application · documents
+            </p>
+          </div>
           <h1 className="text-3xl font-extrabold tracking-tight text-brand-ink">
             Upload your documents
           </h1>
