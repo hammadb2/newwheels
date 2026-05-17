@@ -2,6 +2,7 @@
 
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { readSession } from "@/lib/crm/auth/session";
 import { getServerSupabase } from "@/lib/crm/supabase/server";
 import "./portal.css";
@@ -36,6 +37,7 @@ export default async function PortalLayout({ children }: { children: React.React
           <header className="border-b border-[#E5E7EB] bg-white sticky top-0 z-30">
             <div className="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between gap-3">
               <Link href="/portal" className="flex items-center gap-2 font-extrabold text-[#0A2818]">
+                <Image src="/logo-icon.png" alt="" width={28} height={28} className="h-7 w-auto" />
                 <span>NewWheels</span>
                 <span className="bg-[#0A2818] text-[#D9FF4E] rounded px-2 py-0.5 text-xs">Portal</span>
               </Link>
