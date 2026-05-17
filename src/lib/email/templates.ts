@@ -319,6 +319,42 @@ export function reEngagementEmail(opts: { contactName: string; marketplaceUrl: s
 }
 
 // -----------------------------------------------------------------
+// Team: new buyer application submitted
+// -----------------------------------------------------------------
+export function buyerApplicationEmail(opts: {
+  name: string;
+  email: string;
+  kind: "dealer_master" | "individual";
+  phone: string;
+  amvicLicence: string;
+  reviewUrl: string;
+}): string {
+  const kindLabel = opts.kind === "dealer_master" ? "Dealer master account" : "Individual buyer";
+  const body = `
+    <h1 style="margin:0 0 8px;font-size:22px;font-weight:800;color:${B.ink};">
+      New buyer application
+    </h1>
+    <p style="margin:0 0 16px;font-size:15px;color:${B.ink};line-height:1.6;">
+      <strong>${escapeHtml(opts.name)}</strong> just submitted a ${kindLabel.toLowerCase()} application and is waiting for verification.
+    </p>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:${B.creamSoft};border-radius:12px;border:1px solid ${B.line};margin-bottom:16px;">
+      <tr><td style="padding:16px;">
+        <p style="margin:0 0 4px;font-size:13px;color:${B.muted};">Type</p>
+        <p style="margin:0 0 12px;font-size:15px;color:${B.ink};font-weight:600;">${escapeHtml(kindLabel)}</p>
+        <p style="margin:0 0 4px;font-size:13px;color:${B.muted};">Email</p>
+        <p style="margin:0 0 12px;font-size:15px;color:${B.ink};">${escapeHtml(opts.email)}</p>
+        <p style="margin:0 0 4px;font-size:13px;color:${B.muted};">Phone</p>
+        <p style="margin:0 0 12px;font-size:15px;color:${B.ink};">${escapeHtml(opts.phone)}</p>
+        <p style="margin:0 0 4px;font-size:13px;color:${B.muted};">AMVIC licence</p>
+        <p style="margin:0;font-size:15px;color:${B.ink};font-weight:600;">${escapeHtml(opts.amvicLicence)}</p>
+      </td></tr>
+    </table>
+    ${ctaButton(opts.reviewUrl, "Review in CRM")}
+  `;
+  return systemEmailWrapper(body);
+}
+
+// -----------------------------------------------------------------
 // Helpers
 // -----------------------------------------------------------------
 function escapeHtml(s: string): string {

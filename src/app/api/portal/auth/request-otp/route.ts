@@ -58,13 +58,17 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, error: "db_error" }, { status: 500 });
   }
 
-  void sendEmail({
+  const result = await sendEmail({
     to: email,
     subject: "Your NewWheels login code",
     html: otpEmail({ code, audience: "portal" }),
     text: `Your NewWheels portal login code: ${code}\nThis code expires in 10 minutes.`,
     tags: [{ name: "type", value: "otp_portal" }],
   });
+
+  if (!("skipped" in result) || (!result.skipped && !result.ok)) {
+    console.warn("Portal OTP send failed", result);
+  }
 
   return NextResponse.json({ ok: true });
 }

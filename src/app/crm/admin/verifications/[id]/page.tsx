@@ -25,9 +25,9 @@ export default async function VerificationDetail({ params }: { params: Promise<{
 
   const { data: docs } = await supabase
     .from("buyer_verification_docs")
-    .select("id, doc_kind, original_filename, storage_path, mime_type, size_bytes, created_at")
+    .select("id, doc_kind, original_filename, storage_path, mime_type, size_bytes, uploaded_at")
     .eq("buyer_id", id)
-    .order("created_at", { ascending: true });
+    .order("uploaded_at", { ascending: true });
 
   const docsWithUrls = await Promise.all(
     (docs ?? []).map(async (d) => ({
