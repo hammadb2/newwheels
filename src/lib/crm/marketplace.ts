@@ -38,7 +38,7 @@ export async function loadMarketplace(filters: MarketplaceFilters = {}): Promise
 
   const { data, error } = await supabase
     .from("leads")
-    .select("id, first_name, score, tier, current_price_cents, starting_price_cents, available_at, raw_payload, status, fraud_risk, duplicate_of")
+    .select("id, first_name, score, tier, current_price_cents, starting_price_cents, available_at, raw_payload, status, fraud_risk, duplicate_of, price_override_cents")
     .eq("status", "available")
     .order("score", { ascending: false })
     .order("available_at", { ascending: false })
@@ -79,20 +79,23 @@ export async function loadMarketplace(filters: MarketplaceFilters = {}): Promise
 
     const summary = (payload.situation_summary as string) || (await rebuildSummary(supabase, lead.id as string));
 
+    const overrideCents = lead.price_override_cents as number | null;
     const price = currentPriceFor({
       tier,
       available_at: new Date(lead.available_at as string),
       now: new Date(),
     });
-    if (price.expired) continue;
+    if (price.expired && overrideCents == null) continue;
+
+    const effectivePrice = overrideCents ?? price.price_cents;
 
     cards.push({
       id: lead.id as string,
       first_name: lead.first_name as string,
       tier,
       credit_bracket,
-      current_price_cents: price.price_cents,
-      current_price_display: priceCentsToDisplay(price.price_cents),
+      current_price_cents: effectivePrice,
+      current_price_display: priceCentsToDisplay(effectivePrice),
       situation_summary: summary,
       _score: Number(lead.score) || 0,
     });
