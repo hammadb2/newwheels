@@ -11,6 +11,9 @@ import { LeadNotesThread } from "@/components/crm/LeadNotesThread";
 import { canReadLeadNotes, canWriteLeadNotes, listLeadNotes } from "@/lib/crm/leads/notes";
 import { priceCentsToDisplay } from "@/lib/crm/pricing";
 import { RetellCallPlayer } from "@/components/crm/RetellCallPlayer";
+import { SinRevealButton } from "@/components/crm/SinRevealButton";
+import { maskSin, decryptSin } from "@/lib/crm/security/sin";
+import { matchLenders } from "@/lib/crm/lender-match";
 
 export const dynamic = "force-dynamic";
 
@@ -22,7 +25,7 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
 
   const { data: lead } = await supabase
     .from("leads")
-    .select("id, first_name, last_name, email, phone, status, source_page, created_at, duplicate_of, tier, score, current_price_cents, available_at, retell_call_id, retell_call_status, retell_recording_url, retell_call_duration_seconds")
+    .select("id, first_name, last_name, email, phone, status, source_page, created_at, duplicate_of, tier, score, current_price_cents, available_at, retell_call_id, retell_call_status, retell_recording_url, retell_call_duration_seconds, sin_encrypted, fraud_risk, fraud_flags, credit_bracket")
     .eq("id", id)
     .single();
   if (!lead) return notFound();
@@ -36,6 +39,32 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
   const isCeoOrOps = subject.role === "ceo" || subject.role === "platform_ops";
   const showNotes = canReadLeadNotes(subject.role);
   const notes = showNotes ? await listLeadNotes(id) : [];
+
+  // SIN masked display for CEO
+  let sinMasked: string | null = null;
+  if (subject.role === "ceo" && lead.sin_encrypted) {
+    try {
+      const plain = decryptSin(lead.sin_encrypted as string);
+      sinMasked = maskSin(plain);
+    } catch {
+      sinMasked = "*** *** ***";
+    }
+  }
+
+  // Lender match for CEO / Ops
+  let lenderMatches: { lender: string; reason: string }[] = [];
+  if (isCeoOrOps && existingQual) {
+    const { data: qualData } = await supabase
+      .from("lead_qualifications")
+      .select("*")
+      .eq("lead_id", id)
+      .maybeSingle();
+    if (qualData) {
+      try {
+        lenderMatches = matchLenders(qualData as Parameters<typeof matchLenders>[0]);
+      } catch { /* scoring data may be incomplete */ }
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -92,6 +121,49 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
               <p className="text-xs uppercase tracking-wider text-[#6B7280]">Current price</p>
               <p className="font-bold">{lead.current_price_cents ? priceCentsToDisplay(lead.current_price_cents) : "—"}</p>
             </div>
+          </div>
+        </div>
+      ) : null}
+
+      {/* SIN reveal — CEO only */}
+      {subject.role === "ceo" && lead.sin_encrypted ? (
+        <div className="crm-card">
+          <h2>Social Insurance Number</h2>
+          <SinRevealButton leadId={id} masked={sinMasked ?? "*** *** ***"} />
+        </div>
+      ) : null}
+
+      {/* Fraud risk banner */}
+      {isCeoOrOps && lead.fraud_risk ? (
+        <div className="rounded-2xl border border-red-300 bg-red-50 p-4">
+          <h2 className="font-extrabold text-red-800 mb-1">Fraud risk flagged</h2>
+          <p className="text-sm text-red-700">
+            {Array.isArray(lead.fraud_flags) ? (lead.fraud_flags as string[]).join(", ") : "Suspicious activity detected"}
+          </p>
+        </div>
+      ) : null}
+
+      {/* Credit bracket from Equifax */}
+      {isCeoOrOps && lead.credit_bracket ? (
+        <div className="crm-card">
+          <h2>Credit bracket</h2>
+          <p className="text-lg font-bold capitalize text-[#0A2818]">{lead.credit_bracket as string}</p>
+          <p className="text-xs text-[#6B7280]">Equifax soft pull — does not affect applicant&apos;s credit score</p>
+        </div>
+      ) : null}
+
+      {/* Lender match — CEO / Ops only */}
+      {isCeoOrOps && lenderMatches.length > 0 ? (
+        <div className="crm-card">
+          <h2>Suggested lender match</h2>
+          <p className="text-xs text-[#6B7280] mb-3 italic">This is a recommendation, not a guarantee</p>
+          <div className="space-y-2">
+            {lenderMatches.map((m) => (
+              <div key={m.lender} className="flex items-start gap-3 rounded-lg border border-[#E5E1D8] bg-[#FAF7F0] px-4 py-3">
+                <span className="text-sm font-bold text-[#0A2818]">{m.lender}</span>
+                <span className="text-xs text-[#6B7280]">{m.reason}</span>
+              </div>
+            ))}
           </div>
         </div>
       ) : null}

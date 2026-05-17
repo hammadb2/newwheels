@@ -5,6 +5,9 @@ import Link from "next/link";
 import { requireBuyer } from "@/lib/crm/auth/rbac";
 import { getServerSupabase } from "@/lib/crm/supabase/server";
 import { priceCentsToDisplay } from "@/lib/crm/pricing";
+import { maskSin, decryptSin } from "@/lib/crm/security/sin";
+import { BuyerSinRevealButton } from "@/components/portal/SinRevealButton";
+import { matchLenders } from "@/lib/crm/lender-match";
 
 export const dynamic = "force-dynamic";
 
@@ -23,7 +26,7 @@ export default async function PurchaseDetailPage({ params }: { params: Promise<{
 
   const { data: lead } = await supabase
     .from("leads")
-    .select("first_name, last_name, email, phone, raw_payload")
+    .select("first_name, last_name, email, phone, raw_payload, sin_encrypted")
     .eq("id", purchase.lead_id)
     .single();
   if (!lead) return notFound();
@@ -35,6 +38,34 @@ export default async function PurchaseDetailPage({ params }: { params: Promise<{
     .maybeSingle();
 
   const payload = (lead.raw_payload as Record<string, unknown> | null) ?? {};
+
+  // SIN reveal - check if buyer signed agreement
+  const { data: buyerAccount } = await supabase
+    .from("buyer_accounts")
+    .select("id, sin_reveal_agreement_at")
+    .eq("id", subject.buyer_account_id)
+    .single();
+  const agreementSigned = Boolean(buyerAccount?.sin_reveal_agreement_at);
+
+  // Masked SIN for display
+  let sinMasked: string | null = null;
+  const hasSin = Boolean(lead.sin_encrypted);
+  if (hasSin) {
+    try {
+      const plain = decryptSin(lead.sin_encrypted as string);
+      sinMasked = maskSin(plain);
+    } catch {
+      sinMasked = "*** *** ***";
+    }
+  }
+
+  // Lender match recommendations
+  let lenderMatches: { lender: string; reason: string }[] = [];
+  if (qual) {
+    try {
+      lenderMatches = matchLenders(qual as Parameters<typeof matchLenders>[0]);
+    } catch { /* qualification data may be incomplete */ }
+  }
 
   return (
     <div className="space-y-6">
@@ -99,6 +130,33 @@ export default async function PurchaseDetailPage({ params }: { params: Promise<{
           </div>
         ) : null}
       </div>
+
+      {/* SIN reveal — only if lead has SIN and buyer signed agreement */}
+      {hasSin && sinMasked ? (
+        <div className="rounded-2xl border border-[#E5E7EB] bg-white p-6">
+          <h2 className="font-extrabold text-[#0A2818] mb-2">Social Insurance Number</h2>
+          <BuyerSinRevealButton purchaseId={purchase.id as string} masked={sinMasked} agreementSigned={agreementSigned} />
+          {!agreementSigned && (
+            <p className="mt-2 text-xs text-[#6B7280]">You must sign the data sharing agreement in your account settings before viewing the SIN.</p>
+          )}
+        </div>
+      ) : null}
+
+      {/* Lender match recommendations */}
+      {lenderMatches.length > 0 ? (
+        <div className="rounded-2xl border border-[#E5E7EB] bg-white p-6">
+          <h2 className="font-extrabold text-[#0A2818] mb-1">Suggested lender match</h2>
+          <p className="text-xs text-[#6B7280] mb-3 italic">This is a recommendation, not a guarantee</p>
+          <div className="space-y-2">
+            {lenderMatches.map((m) => (
+              <div key={m.lender} className="flex items-start gap-3 rounded-lg border border-[#E5E1D8] bg-[#FAF7F0] px-4 py-3">
+                <span className="text-sm font-bold text-[#0A2818]">{m.lender}</span>
+                <span className="text-xs text-[#6B7280]">{m.reason}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : null}
 
       <div className="rounded-2xl border border-[#E5E7EB] bg-[#F5F7F4] p-6">
         <h2 className="font-extrabold text-[#0A2818] mb-2">Wrong number or disconnected?</h2>
