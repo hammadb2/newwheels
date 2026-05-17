@@ -5,8 +5,8 @@
 import { NextResponse } from "next/server";
 import { getServerSupabase } from "@/lib/crm/supabase/server";
 import { uploadVerificationDoc } from "@/lib/crm/storage";
-import { sendEmail } from "@/lib/email/resend";
-import { SYSTEM_FROM } from "@/lib/email/resend";
+import { sendEmail, SYSTEM_FROM } from "@/lib/email/resend";
+import { buyerApplicationEmail } from "@/lib/email/templates";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -128,21 +128,17 @@ export async function POST(req: Request) {
       from: SYSTEM_FROM,
       to: recipients,
       subject: `New buyer application: ${business_name || contact_name}`,
-      html: `<p>New buyer application pending verification.</p>
-             <p><strong>${escapeHtml(business_name || contact_name)}</strong> (${escapeHtml(email)})</p>
-             <p>Type: ${kind === "dealer_master" ? "Dealer master account" : "Individual buyer"}</p>
-             <p><a href="${crmUrl}/crm/admin/verifications/${buyer_id}">Review in CRM →</a></p>`,
+      html: buyerApplicationEmail({
+        name: (business_name || contact_name) as string,
+        email,
+        kind: kind as "dealer_master" | "individual",
+        phone,
+        amvicLicence: amvic_licence,
+        reviewUrl: `${crmUrl}/crm/admin/verifications/${buyer_id}`,
+      }),
       tags: [{ name: "type", value: "verification_submitted" }],
     });
   }
 
   return NextResponse.json({ ok: true, buyer_id });
-}
-
-function escapeHtml(s: string): string {
-  return s
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
 }
