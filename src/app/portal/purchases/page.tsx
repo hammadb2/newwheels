@@ -1,9 +1,10 @@
-// /portal/purchases — list of leads the buyer has purchased.
+// /portal/purchases — list of leads the buyer has purchased + invoice generator.
 
 import Link from "next/link";
 import { requireBuyer } from "@/lib/crm/auth/rbac";
 import { getServerSupabase } from "@/lib/crm/supabase/server";
 import { priceCentsToDisplay } from "@/lib/crm/pricing";
+import { InvoiceGenerator } from "@/components/portal/InvoiceGenerator";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "My leads — NewWheels Portal" };
@@ -33,6 +34,8 @@ export default async function PurchasesPage() {
   return (
     <div className="space-y-6">
       <h1 className="text-2xl md:text-3xl font-extrabold text-[#0A2818]">My leads</h1>
+
+      <InvoiceGenerator />
       {rows.length === 0 ? (
         <div className="rounded-2xl border border-[#E5E7EB] bg-white p-8 text-center text-[#6B7280]">
           You haven&apos;t purchased any leads yet. Browse the <Link className="underline font-semibold" href="/portal/marketplace">marketplace</Link>.
