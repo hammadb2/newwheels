@@ -14,7 +14,7 @@ const BRAND = {
   line: "#E5E1D8",
 };
 
-const LOGO_URL = `${SITE_URL}/logo-email.png`;
+const LOGO_URL = `${SITE_URL}/logo-horizontal.png`;
 
 function escapeHtml(text: string): string {
   return text
@@ -129,6 +129,7 @@ export function buildInvoiceHtml(data: InvoiceData): string {
     }
     @media print {
       body { padding: 0; background: ${BRAND.white}; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .no-print { display: none !important; }
     }
     @media screen {
       body { max-width: 800px; margin: 0 auto; }
@@ -136,6 +137,11 @@ export function buildInvoiceHtml(data: InvoiceData): string {
   </style>
 </head>
 <body>
+  <!-- Download button (screen only) -->
+  <div class="no-print" style="text-align:right;margin-bottom:16px;">
+    <button onclick="window.print()" style="background:${BRAND.deep};color:${BRAND.accent};border:none;border-radius:8px;padding:10px 24px;font-size:14px;font-weight:700;cursor:pointer;">Download PDF</button>
+  </div>
+
   <!-- Header -->
   <table width="100%" cellpadding="0" cellspacing="0" style="border-bottom:3px solid ${BRAND.deep};padding-bottom:24px;margin-bottom:32px;">
     <tr>

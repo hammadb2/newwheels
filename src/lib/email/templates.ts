@@ -365,6 +365,7 @@ export function invoiceEmail(opts: {
   endDate: string;
   totalDisplay: string;
   purchaseCount: number;
+  portalUrl?: string;
 }): string {
   const body = `
     <h1 style="margin:0 0 8px;font-size:22px;font-weight:800;color:${B.ink};">
@@ -381,6 +382,7 @@ export function invoiceEmail(opts: {
         <p style="margin:0;font-size:22px;color:${B.ink};font-weight:800;">${escapeHtml(opts.totalDisplay)}</p>
       </td></tr>
     </table>
+    ${opts.portalUrl ? ctaButton(opts.portalUrl, "Download invoice") : ""}
     <p style="margin:0;font-size:13px;color:${B.muted};line-height:1.6;">
       You can generate another invoice any time from your buyer portal under <strong>My Leads</strong>. All amounts are in Canadian dollars (CAD).
     </p>

@@ -109,6 +109,7 @@ export async function POST(req: Request) {
       endDate: parsed.data.end_date,
       totalDisplay: priceCentsToDisplay(totalCents),
       purchaseCount: rows.length,
+      portalUrl: `${(process.env.NW_PORTAL_URL || "https://portal.newwheels.ca").replace(/\/$/, "")}/portal/purchases`,
     }),
     headers: {
       "X-Invoice-Html": "attached-inline",
