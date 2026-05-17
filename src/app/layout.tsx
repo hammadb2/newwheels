@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CallClickTracker from "@/components/CallClickTracker";
 import ApplyAnchorScroll from "@/components/ApplyAnchorScroll";
+import MarketingChrome from "@/components/MarketingChrome";
 import { TrackingBody, TrackingHead } from "@/components/Tracking";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, TRACKING } from "@/lib/site";
 
@@ -48,11 +49,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="bg-brand-creamSoft font-sans text-brand-ink">
         <a className="skip-link" href="#main">Skip to content</a>
         <TrackingBody />
-        <Header />
-        <CallClickTracker />
-        <ApplyAnchorScroll />
+        <MarketingChrome>
+          <Header />
+          <CallClickTracker />
+          <ApplyAnchorScroll />
+        </MarketingChrome>
         <main id="main">{children}</main>
-        <Footer />
+        <MarketingChrome>
+          <Footer />
+        </MarketingChrome>
       </body>
     </html>
   );

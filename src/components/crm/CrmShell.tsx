@@ -35,8 +35,7 @@ export function CrmShell({ role, children }: { role: TeamRole; children: React.R
   return (
     <div className="flex min-h-screen flex-col md:flex-row">
       <aside
-        className={`bg-[#0A2818] text-white md:w-64 md:flex md:flex-col md:fixed md:inset-y-0 ${open ? "block" : "hidden md:block"}`}
-        style={{ width: "100%" }}
+        className={`bg-[#0A2818] text-white w-full md:w-64 md:flex md:flex-col md:fixed md:inset-y-0 ${open ? "block" : "hidden md:block"}`}
       >
         <div className="flex items-center justify-between px-5 py-4 border-b border-white/10">
           <Link href="/crm/dashboard" className="flex items-center gap-2 font-extrabold tracking-tight text-lg">
