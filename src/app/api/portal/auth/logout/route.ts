@@ -8,5 +8,5 @@ export const dynamic = "force-dynamic";
 export async function POST() {
   await revokeSession("portal");
   await clearSessionCookie("portal");
-  return NextResponse.json({ ok: true });
+  return NextResponse.redirect(new URL("/portal/login", process.env.NEXT_PUBLIC_SITE_URL || "https://portal.newwheels.ca"), 303);
 }

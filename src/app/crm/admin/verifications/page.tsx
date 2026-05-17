@@ -13,7 +13,7 @@ export default async function VerificationsPage() {
   const pending = supabase
     ? (await supabase
         .from("buyer_accounts")
-        .select("id, kind, business_name, contact_name, email, phone, amvic_licence, created_at")
+        .select("id, kind, business_name, contact_name, first_name, last_name, email, phone, amvic_licence, dealership_name, dealership_phone, created_at")
         .eq("status", "pending_verification")
         .order("created_at", { ascending: true })).data ?? []
     : [];
@@ -35,8 +35,8 @@ export default async function VerificationsPage() {
               pending.map((b) => (
                 <tr key={b.id as string}>
                   <td>
-                    <div className="font-semibold text-[#0A2818]">{(b.business_name as string) || (b.contact_name as string)}</div>
-                    <div className="text-xs text-[#6B7280]">{b.email} · {b.phone} · AMVIC {b.amvic_licence}</div>
+                    <div className="font-semibold text-[#0A2818]">{(b.business_name as string) || (b.first_name && b.last_name ? `${b.first_name} ${b.last_name}` : (b.contact_name as string))}</div>
+                    <div className="text-xs text-[#6B7280]">{b.email} · {b.phone}{b.amvic_licence ? ` · AMVIC ${b.amvic_licence}` : ""}{b.dealership_name ? ` · ${b.dealership_name}` : ""}{b.dealership_phone ? ` · ${b.dealership_phone}` : ""}</div>
                   </td>
                   <td className="text-sm">{b.kind === "dealer_master" ? "Dealer master" : "Individual"}</td>
                   <td className="text-xs text-[#6B7280]">{new Date(b.created_at as string).toLocaleString("en-CA")}</td>
