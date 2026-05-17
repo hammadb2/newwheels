@@ -24,7 +24,7 @@ export default async function LeadsPage() {
   // Lead Qualifier sees their assigned + new. CEO + Ops see everything.
   let query = supabase
     .from("leads")
-    .select("id, first_name, last_name, phone, email, status, source_page, created_at, duplicate_of")
+    .select("id, first_name, last_name, phone, email, status, source_page, created_at, duplicate_of, fraud_risk")
     .order("created_at", { ascending: false })
     .limit(200);
 
@@ -72,6 +72,9 @@ export default async function LeadsPage() {
                     <div className="text-xs text-[#6B7280]">{l.email}</div>
                     {l.duplicate_of ? (
                       <div className="text-xs text-amber-700 mt-1">⚠ duplicate of an earlier lead</div>
+                    ) : null}
+                    {l.fraud_risk ? (
+                      <div className="text-xs text-red-700 mt-1">⚠ fraud risk detected</div>
                     ) : null}
                   </td>
                   <td><StatusPill status={l.status as string} /></td>

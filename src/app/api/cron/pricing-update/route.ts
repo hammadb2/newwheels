@@ -20,12 +20,14 @@ export async function GET(req: Request) {
 
   const { data: rows } = await supabase
     .from("leads")
-    .select("id, tier, available_at, current_price_cents, verified")
+    .select("id, tier, available_at, current_price_cents, verified, price_override_cents")
     .eq("status", "available");
 
   const now = new Date();
   let updated = 0;
   for (const r of rows ?? []) {
+    // CEO manually set a price — leave it alone.
+    if (r.price_override_cents != null) continue;
     const tier = (r.tier as LeadTier) ?? "standard";
     const price = currentPriceFor({
       tier,
