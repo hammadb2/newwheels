@@ -22,6 +22,7 @@ const NAV: readonly NavItem[] = [
   { href: "/crm/outreach",  label: "Outreach log",    roles: ["ceo", "community_outreach"] },
   { href: "/crm/content",   label: "Content queue",   roles: ["ceo", "content_seo"] },
   { href: "/crm/hr",        label: "Team performance",roles: ["ceo", "hr"] },
+  { href: "/crm/invoices",  label: "Invoices",         roles: ["ceo", "lead_qualifier", "community_outreach", "content_seo", "bdr", "platform_ops", "hr"] },
   { href: "/crm/reports",   label: "Reports",         roles: ["ceo"] },
   { href: "/crm/admin/team",label: "Team members",    roles: ["ceo"] },
 ] as const;

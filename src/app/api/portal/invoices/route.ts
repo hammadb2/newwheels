@@ -46,7 +46,7 @@ export async function POST(req: Request) {
 
   const { data: purchases, error } = await supabase
     .from("purchases")
-    .select("id, amount_cents, tier, purchased_at, lead:lead_id(first_name, last_name)")
+    .select("id, amount_cents, tier, purchased_at, invoice_number, card_brand, card_last4, lead:lead_id(first_name, last_name, phone)")
     .eq("buyer_id", buyer.id)
     .eq("status", "paid")
     .gte("purchased_at", startDate)
@@ -63,7 +63,10 @@ export async function POST(req: Request) {
     amount_cents: number;
     tier: string;
     purchased_at: string;
-    lead: { first_name: string; last_name: string } | null;
+    invoice_number: string | null;
+    card_brand: string | null;
+    card_last4: string | null;
+    lead: { first_name: string; last_name: string; phone: string | null } | null;
   };
   const rows = (purchases ?? []) as unknown as PurchaseRow[];
 
@@ -84,9 +87,13 @@ export async function POST(req: Request) {
     purchases: rows.map((r) => ({
       date: new Date(r.purchased_at).toLocaleDateString("en-CA"),
       leadName: r.lead ? `${r.lead.first_name} ${r.lead.last_name}`.trim() : "—",
+      leadPhone: r.lead?.phone ?? null,
       tier: r.tier.toUpperCase(),
       amount: priceCentsToDisplay(r.amount_cents),
       amountCents: r.amount_cents,
+      invoiceNumber: r.invoice_number ?? null,
+      cardBrand: r.card_brand ?? null,
+      cardLast4: r.card_last4 ?? null,
     })),
     totalDisplay: priceCentsToDisplay(totalCents),
     totalCents,

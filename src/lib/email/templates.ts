@@ -192,6 +192,7 @@ export function purchaseConfirmationEmail(opts: {
     qualifierName?: string | null;
   };
   dashboardUrl: string;
+  invoiceUrl?: string;
 }): string {
   const body = `
     <h1 style="margin:0 0 8px;font-size:22px;font-weight:800;color:${B.ink};">
@@ -218,6 +219,7 @@ export function purchaseConfirmationEmail(opts: {
       </td></tr>
     </table>
     ${ctaButton(opts.dashboardUrl, "Open lead in portal")}
+    ${opts.invoiceUrl ? ctaButton(opts.invoiceUrl, "Download invoice") : ""}
     <p style="margin:0;font-size:12px;color:${B.muted};line-height:1.5;">
       Lead purchases are final. If the number is bad you have 24 hours to file a dispute from your dashboard.
     </p>

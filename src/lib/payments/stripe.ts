@@ -99,6 +99,22 @@ export async function retrievePaymentIntent(id: string): Promise<PaymentIntent> 
   return stripeGet<PaymentIntent>(`/payment_intents/${encodeURIComponent(id)}`);
 }
 
+export type PaymentMethodCard = { brand: string; last4: string };
+export async function retrievePaymentMethodCard(id: string): Promise<PaymentMethodCard | null> {
+  try {
+    const pm = await stripeGet<{ card?: { brand?: string; last4?: string } }>(`/payment_methods/${encodeURIComponent(id)}`);
+    if (pm.card?.brand && pm.card?.last4) return { brand: pm.card.brand, last4: pm.card.last4 };
+    return null;
+  } catch { return null; }
+}
+
+export type Refund = { id: string; status: string };
+export async function createRefund(opts: { payment_intent: string; reason?: string }): Promise<Refund> {
+  const body: Record<string, string> = { payment_intent: opts.payment_intent };
+  if (opts.reason) body.reason = opts.reason;
+  return stripePost<Refund>("/refunds", body);
+}
+
 export type StripeEvent = {
   id: string;
   type: string;
