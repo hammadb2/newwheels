@@ -25,7 +25,7 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
 
   const { data: lead } = await supabase
     .from("leads")
-    .select("id, first_name, last_name, email, phone, status, source_page, created_at, duplicate_of, tier, score, current_price_cents, available_at, retell_call_id, retell_call_status, retell_recording_url, retell_call_duration_seconds, sin_encrypted, fraud_risk, fraud_flags, credit_bracket")
+    .select("id, first_name, last_name, email, phone, status, source_page, created_at, duplicate_of, tier, score, current_price_cents, available_at, retell_call_id, retell_call_status, retell_recording_url, retell_call_duration_seconds, sin_encrypted")
     .eq("id", id)
     .single();
   if (!lead) return notFound();
@@ -133,24 +133,9 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
         </div>
       ) : null}
 
-      {/* Fraud risk banner */}
-      {isCeoOrOps && lead.fraud_risk ? (
-        <div className="rounded-2xl border border-red-300 bg-red-50 p-4">
-          <h2 className="font-extrabold text-red-800 mb-1">Fraud risk flagged</h2>
-          <p className="text-sm text-red-700">
-            {Array.isArray(lead.fraud_flags) ? (lead.fraud_flags as string[]).join(", ") : "Suspicious activity detected"}
-          </p>
-        </div>
-      ) : null}
+      {/* Fraud risk banner — requires fraud_risk, fraud_flags columns (future migration) */}
 
-      {/* Credit bracket from Equifax */}
-      {isCeoOrOps && lead.credit_bracket ? (
-        <div className="crm-card">
-          <h2>Credit bracket</h2>
-          <p className="text-lg font-bold capitalize text-[#0A2818]">{lead.credit_bracket as string}</p>
-          <p className="text-xs text-[#6B7280]">Equifax soft pull — does not affect applicant&apos;s credit score</p>
-        </div>
-      ) : null}
+      {/* Credit bracket from Equifax — requires credit_bracket column (future migration) */}
 
       {/* Lender match — CEO / Ops only */}
       {isCeoOrOps && lenderMatches.length > 0 ? (
