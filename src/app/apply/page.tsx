@@ -17,28 +17,35 @@ export const dynamic = "force-dynamic";
 
 export default function ApplyIndexPage() {
   return (
-    <main className="min-h-screen bg-[#0E3D24] px-6 py-16 text-white">
+    <main className="min-h-screen bg-brand-creamSoft px-6 py-16 text-brand-ink">
       <div className="mx-auto max-w-2xl space-y-6">
-        <h1 className="text-3xl font-extrabold tracking-tight">
+        <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-forest">
+          NewWheels application
+        </p>
+        <h1 className="text-3xl font-extrabold tracking-tight text-brand-ink">
           Use the link in your confirmation email
         </h1>
-        <p className="text-base leading-relaxed text-white/85">
-          To check your application status or upload documents, open the
-          email we sent right after you applied. It contains a personal
-          link that takes you to your application.
-        </p>
-        <p className="text-sm text-white/75">
-          Haven&apos;t received it? Check your spam folder, or
-          {" "}
-          <Link href="https://newwheels.ca/apply" className="text-[#D9FF4E] underline">
-            re-submit your application
-          </Link>
-          {" "}— we&apos;ll call within 1 hour.
-        </p>
-        <p className="text-sm text-white/70">
-          Need help right now? Call <a className="text-[#D9FF4E] underline" href="tel:+15879006051">(587) 900-6051</a>{" "}
-          or email <a className="text-[#D9FF4E] underline" href="mailto:hello@newwheels.ca">hello@newwheels.ca</a>.
-        </p>
+        <div className="rounded-2xl bg-white p-6 shadow-card ring-1 ring-brand-line space-y-4">
+          <p className="text-base leading-relaxed text-brand-ink/80">
+            To check your application status or upload documents, open the
+            email we sent right after you applied. It contains a personal
+            link that takes you to your application.
+          </p>
+          <p className="text-sm text-brand-muted">
+            Haven&apos;t received it? Check your spam folder, or
+            {" "}
+            <Link href="https://newwheels.ca/apply" className="text-brand-forest font-semibold underline">
+              re-submit your application
+            </Link>
+            {" "}— we&apos;ll call within 1 hour.
+          </p>
+        </div>
+        <div className="rounded-2xl bg-white p-6 shadow-card ring-1 ring-brand-line">
+          <p className="text-sm text-brand-ink/80">
+            Need help right now? Call <a className="text-brand-forest font-semibold underline" href="tel:+15879006051">(587) 900-6051</a>{" "}
+            or email <a className="text-brand-forest font-semibold underline" href="mailto:hello@newwheels.ca">hello@newwheels.ca</a>.
+          </p>
+        </div>
       </div>
     </main>
   );
