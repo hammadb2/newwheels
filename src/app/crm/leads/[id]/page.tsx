@@ -12,6 +12,7 @@ import { canReadLeadNotes, canWriteLeadNotes, listLeadNotes } from "@/lib/crm/le
 import { priceCentsToDisplay } from "@/lib/crm/pricing";
 import { RetellCallPlayer } from "@/components/crm/RetellCallPlayer";
 import { SinRevealButton } from "@/components/crm/SinRevealButton";
+import { LeadPriceOverride } from "@/components/crm/LeadPriceOverride";
 import { maskSin, decryptSin } from "@/lib/crm/security/sin";
 import { matchLenders } from "@/lib/crm/lender-match";
 
@@ -25,7 +26,7 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
 
   const { data: lead } = await supabase
     .from("leads")
-    .select("id, first_name, last_name, email, phone, status, source_page, created_at, duplicate_of, tier, score, current_price_cents, available_at, retell_call_id, retell_call_status, retell_recording_url, retell_call_duration_seconds, retell_transcript, retell_transcript_object, retell_call_summary, retell_user_sentiment, retell_call_analysis, follow_up_needed, preferred_contact_time, sin_encrypted")
+    .select("id, first_name, last_name, email, phone, status, source_page, created_at, duplicate_of, tier, score, current_price_cents, available_at, retell_call_id, retell_call_status, retell_recording_url, retell_call_duration_seconds, retell_transcript, retell_transcript_object, retell_call_summary, retell_user_sentiment, retell_call_analysis, follow_up_needed, preferred_contact_time, sin_encrypted, price_override_cents, fraud_risk, fraud_flags")
     .eq("id", id)
     .single();
   if (!lead) return notFound();
@@ -136,6 +137,15 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
               <p className="font-bold">{lead.current_price_cents ? priceCentsToDisplay(lead.current_price_cents) : "—"}</p>
             </div>
           </div>
+          {subject.role === "ceo" ? (
+            <div className="mt-4 border-t border-[#E5E1D8] pt-4">
+              <LeadPriceOverride
+                leadId={id}
+                currentPriceCents={(lead.current_price_cents as number) ?? null}
+                overrideCents={(lead.price_override_cents as number) ?? null}
+              />
+            </div>
+          ) : null}
         </div>
       ) : null}
 
@@ -147,7 +157,19 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
         </div>
       ) : null}
 
-      {/* Fraud risk banner — requires fraud_risk, fraud_flags columns (future migration) */}
+      {/* Fraud risk banner */}
+      {isCeoOrOps && lead.fraud_risk ? (
+        <div className="rounded-lg border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-900">
+          <span className="font-semibold">Fraud risk detected</span>
+          {Array.isArray(lead.fraud_flags) && (lead.fraud_flags as string[]).length > 0 ? (
+            <ul className="mt-1 list-disc pl-5 space-y-0.5 text-xs">
+              {(lead.fraud_flags as string[]).map((flag, i) => (
+                <li key={i}>{flag}</li>
+              ))}
+            </ul>
+          ) : null}
+        </div>
+      ) : null}
 
       {/* Credit bracket from Equifax — requires credit_bracket column (future migration) */}
 

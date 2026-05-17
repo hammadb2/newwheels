@@ -15,6 +15,7 @@ import { leadAssignedEmail, leadReceivedEmail } from "@/lib/email/templates";
 import { applyPortalUrl } from "@/lib/crm/leads/apply";
 import { SITE_NAME } from "@/lib/site";
 import { createRetellCall, isRetellConfigured } from "@/lib/crm/retell/config";
+import { runFraudChecks } from "@/lib/crm/leads/fraud";
 
 export type IntakeInput = {
   first_name: string;
@@ -86,6 +87,28 @@ export async function intakeLead(input: IntakeInput): Promise<IntakeResult> {
   const leadId = created.id as string;
   const applyToken = (created.apply_token as string | null) ?? null;
   const applyUrl = applyToken ? applyPortalUrl(applyToken) : undefined;
+
+  // Run fraud checks and update the lead record.
+  try {
+    const fraud = await runFraudChecks(supabase, email, input.phone);
+    if (fraud.fraud_risk) {
+      await supabase
+        .from("leads")
+        .update({
+          fraud_risk: true,
+          fraud_flags: fraud.fraud_flags,
+        })
+        .eq("id", leadId);
+
+      await supabase.from("lead_audit_log").insert({
+        lead_id: leadId,
+        event: "fraud_flagged",
+        detail: { flags: fraud.fraud_flags } as Record<string, unknown>,
+      });
+    }
+  } catch (err) {
+    console.warn("intakeLead: fraud check error (non-blocking)", err);
+  }
 
   // Assign to a Lead Qualifier round-robin (least leads in progress wins).
   const assignedTo = await pickQualifier(supabase);

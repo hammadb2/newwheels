@@ -38,7 +38,7 @@ export async function loadMarketplace(filters: MarketplaceFilters = {}): Promise
 
   const { data, error } = await supabase
     .from("leads")
-    .select("id, first_name, score, tier, current_price_cents, starting_price_cents, available_at, raw_payload, status")
+    .select("id, first_name, score, tier, current_price_cents, starting_price_cents, available_at, raw_payload, status, fraud_risk, duplicate_of")
     .eq("status", "available")
     .order("score", { ascending: false })
     .order("available_at", { ascending: false })
@@ -51,6 +51,8 @@ export async function loadMarketplace(filters: MarketplaceFilters = {}): Promise
 
   const cards: MarketplaceLeadCard[] = [];
   for (const lead of data ?? []) {
+    // Never sell fraud-flagged or duplicate leads.
+    if (lead.fraud_risk === true || lead.duplicate_of != null) continue;
     const tier = (lead.tier as LeadTier) ?? "standard";
 
     if (filters.tier && filters.tier !== "all" && filters.tier !== tier) continue;
