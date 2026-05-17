@@ -45,6 +45,11 @@ export default async function AccountPage() {
         {card ? (
           <p className="text-sm text-[#0A2818]">
             Card on file: <span className="font-semibold capitalize">{card.brand}</span> •••• {card.last4}
+            {card.created ? (
+              <span className="ml-2 text-[#6B7280]">
+                · added {new Date(card.created * 1000).toLocaleDateString("en-CA")}
+              </span>
+            ) : null}
           </p>
         ) : (
           <p className="text-sm text-[#0A2818]">
