@@ -355,6 +355,38 @@ export function buyerApplicationEmail(opts: {
 }
 
 // -----------------------------------------------------------------
+// Buyer: invoice emailed
+// -----------------------------------------------------------------
+export function invoiceEmail(opts: {
+  buyerName: string;
+  startDate: string;
+  endDate: string;
+  totalDisplay: string;
+  purchaseCount: number;
+}): string {
+  const body = `
+    <h1 style="margin:0 0 8px;font-size:22px;font-weight:800;color:${B.ink};">
+      Your invoice is ready
+    </h1>
+    <p style="margin:0 0 16px;font-size:15px;color:${B.ink};line-height:1.6;">
+      Hi ${escapeHtml(opts.buyerName)} — here is your ${SITE_NAME} invoice for <strong>${escapeHtml(opts.startDate)}</strong> to <strong>${escapeHtml(opts.endDate)}</strong>.
+    </p>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:${B.creamSoft};border-radius:12px;border:1px solid ${B.line};margin-bottom:16px;">
+      <tr><td style="padding:16px;">
+        <p style="margin:0 0 4px;font-size:13px;color:${B.muted};">Leads purchased</p>
+        <p style="margin:0 0 12px;font-size:15px;color:${B.ink};font-weight:600;">${opts.purchaseCount}</p>
+        <p style="margin:0 0 4px;font-size:13px;color:${B.muted};">Total</p>
+        <p style="margin:0;font-size:22px;color:${B.ink};font-weight:800;">${escapeHtml(opts.totalDisplay)}</p>
+      </td></tr>
+    </table>
+    <p style="margin:0;font-size:13px;color:${B.muted};line-height:1.6;">
+      You can generate another invoice any time from your buyer portal under <strong>My Leads</strong>. All amounts are in Canadian dollars (CAD).
+    </p>
+  `;
+  return systemEmailWrapper(body);
+}
+
+// -----------------------------------------------------------------
 // Helpers
 // -----------------------------------------------------------------
 function escapeHtml(s: string): string {
