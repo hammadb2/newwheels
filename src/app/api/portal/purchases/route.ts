@@ -14,7 +14,7 @@ import { z } from "zod";
 import { requireBuyer } from "@/lib/crm/auth/rbac";
 import { getServerSupabase } from "@/lib/crm/supabase/server";
 import { currentPriceFor, priceCentsToDisplay } from "@/lib/crm/pricing";
-import { createPaymentIntent, createRefund, isStripeConfigured } from "@/lib/payments/stripe";
+import { createPaymentIntent, createRefund, isStripeConfigured, retrievePaymentMethodCard } from "@/lib/payments/stripe";
 import { sendEmail } from "@/lib/email/resend";
 import { purchaseConfirmationEmail } from "@/lib/email/templates";
 import type { LeadTier } from "@/lib/crm/types";
@@ -68,6 +68,9 @@ export async function POST(req: Request) {
   }
   const effectivePrice = overrideCents ?? price.price_cents;
 
+  // Grab card details for the invoice before charging.
+  const card = await retrievePaymentMethodCard(buyer.default_payment_method_id as string);
+
   // Lock the lead optimistically. If another buyer beats us, the UPDATE
   // affects 0 rows.
   const { data: claimed, error: claimErr } = await supabase
@@ -107,6 +110,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, error: "payment_failed", detail: msg }, { status: 402 });
   }
 
+  const invoiceNumber = String(Math.floor(100000 + Math.random() * 900000));
+
   const { data: purchase, error: pErr } = await supabase
     .from("purchases")
     .insert({
@@ -118,6 +123,9 @@ export async function POST(req: Request) {
       status: "paid",
       stripe_payment_intent_id: payment_intent_id,
       purchased_at: new Date().toISOString(),
+      invoice_number: invoiceNumber,
+      card_brand: card?.brand ?? null,
+      card_last4: card?.last4 ?? null,
     })
     .select("id")
     .single();
@@ -150,6 +158,7 @@ export async function POST(req: Request) {
         summary: (((lead.raw_payload as Record<string, unknown> | null) ?? {}).situation_summary as string) ?? "",
       },
       dashboardUrl: `${portalUrl}/portal/purchases/${purchase.id}`,
+      invoiceUrl: `${portalUrl}/api/portal/invoices/${purchase.id}/pdf`,
     }),
     tags: [{ name: "type", value: "purchase_confirmation" }],
   });
