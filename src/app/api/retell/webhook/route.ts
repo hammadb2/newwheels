@@ -1,13 +1,14 @@
-// POST /api/retell/webhook — receives call completion events from Retell AI.
+// POST /api/retell/webhook — account-level webhook for all Retell call events.
 //
-// When a qualification call completes, this webhook:
-// 1. Verifies the signature
-// 2. Updates retell_call_id and retell_call_status on the lead
-// 3. Stores the recording URL and call duration
-// 4. If qualification data is present, runs submitQualification() which
-//    triggers scoring, pricing, marketplace listing, and the
-//    qualification_complete email to CEO + Platform Ops
-// 5. If the call was unanswered, fires SMS fallback via Twilio
+// Handles four event types:
+//   call_started      — marks lead in_progress, logs to audit
+//   call_ended        — stores recording (fetched to Supabase storage),
+//                       transcript, duration, timestamps; fires SMS fallback
+//                       on no-answer via Twilio
+//   call_analyzed     — stores call_analysis JSON (summary, sentiment,
+//                       custom extraction); triggers scoring + qualification
+//                       email if qualification data is complete
+//   transcript_updated — upserts latest transcript on the lead record
 
 import { NextResponse } from "next/server";
 import { getServerSupabase } from "@/lib/crm/supabase/server";
@@ -16,24 +17,41 @@ import {
   RetellWebhookPayloadSchema,
   RetellQualificationSchema,
   mapRetellToQualification,
+  NO_ANSWER_REASONS,
+  RECORDINGS_BUCKET,
 } from "@/lib/crm/retell/config";
-import type { RetellCallStatus } from "@/lib/crm/retell/config";
+import type { RetellCallStatus, RetellWebhookPayload } from "@/lib/crm/retell/config";
 import { verifyRetellSignature } from "@/lib/crm/retell/verify";
 import { sendSmsFallback } from "@/lib/crm/retell/sms-fallback";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-// Retell webhook events we handle.
-const CALL_ENDED = "call_ended";
-const CALL_ANALYZED = "call_analyzed";
+const HANDLED_EVENTS = new Set([
+  "call_started",
+  "call_ended",
+  "call_analyzed",
+  "transcript_updated",
+]);
+
+type LeadRow = {
+  id: string;
+  first_name: string;
+  phone: string;
+  apply_token: string;
+  status: string;
+  assigned_qualifier_id: string | null;
+  preferred_contact_time: string | null;
+};
+
+const LEAD_SELECT =
+  "id, first_name, phone, apply_token, status, assigned_qualifier_id, preferred_contact_time";
 
 export async function POST(req: Request) {
   const rawBody = await req.text();
 
-  // Verify webhook signature.
   const signature = req.headers.get("x-retell-signature");
-  if (!verifyRetellSignature(rawBody, signature)) {
+  if (!(await verifyRetellSignature(rawBody, signature))) {
     return NextResponse.json(
       { ok: false, error: "invalid_signature" },
       { status: 401 },
@@ -61,8 +79,7 @@ export async function POST(req: Request) {
 
   const { event, call } = parsed.data;
 
-  // We only handle call_ended and call_analyzed events.
-  if (event !== CALL_ENDED && event !== CALL_ANALYZED) {
+  if (!HANDLED_EVENTS.has(event)) {
     return NextResponse.json({ ok: true, skipped: true, event });
   }
 
@@ -74,98 +91,170 @@ export async function POST(req: Request) {
     );
   }
 
-  // Look up the lead by retell_call_id — the call_id was stored when the
-  // call was initiated via the Retell API.
+  const lead = await findLeadForCall(supabase, call);
+  if (!lead) {
+    console.warn("retell webhook: no lead found for call_id", call.call_id);
+    return NextResponse.json({ ok: true, skipped: true, reason: "no_lead" });
+  }
+
+  switch (event) {
+    case "call_started":
+      return handleCallStarted(supabase, lead, call);
+    case "call_ended":
+      return handleCallEnded(supabase, lead, call);
+    case "call_analyzed":
+      return handleCallAnalyzed(supabase, lead, call);
+    case "transcript_updated":
+      return handleTranscriptUpdated(supabase, lead, call);
+    default:
+      return NextResponse.json({ ok: true, skipped: true, event });
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Lead lookup
+// ---------------------------------------------------------------------------
+
+async function findLeadForCall(
+  supabase: NonNullable<ReturnType<typeof getServerSupabase>>,
+  call: RetellWebhookPayload["call"],
+): Promise<LeadRow | null> {
   const { data: lead } = await supabase
     .from("leads")
-    .select("id, first_name, phone, apply_token, status, assigned_qualifier_id")
+    .select(LEAD_SELECT)
     .eq("retell_call_id", call.call_id)
     .maybeSingle();
 
-  if (!lead) {
-    // If no lead has this call_id yet, try to find it via metadata.
-    // The Retell agent is configured to pass lead_id in call metadata.
-    const metaLeadId =
-      call.metadata && typeof call.metadata === "object"
-        ? (call.metadata as Record<string, unknown>).lead_id
-        : null;
+  if (lead) return lead as LeadRow;
 
-    if (!metaLeadId || typeof metaLeadId !== "string") {
-      console.warn("retell webhook: no lead found for call_id", call.call_id);
-      return NextResponse.json({ ok: true, skipped: true, reason: "no_lead" });
-    }
+  const metaLeadId =
+    call.metadata && typeof call.metadata === "object"
+      ? (call.metadata as Record<string, unknown>).lead_id
+      : null;
 
-    // Link the call_id to the lead.
-    const { data: metaLead } = await supabase
-      .from("leads")
-      .select("id, first_name, phone, apply_token, status, assigned_qualifier_id")
-      .eq("id", metaLeadId)
-      .maybeSingle();
+  if (!metaLeadId || typeof metaLeadId !== "string") return null;
 
-    if (!metaLead) {
-      console.warn("retell webhook: lead from metadata not found", metaLeadId);
-      return NextResponse.json({ ok: true, skipped: true, reason: "no_lead" });
-    }
+  const { data: metaLead } = await supabase
+    .from("leads")
+    .select(LEAD_SELECT)
+    .eq("id", metaLeadId)
+    .maybeSingle();
 
-    return handleCallEvent(supabase, metaLead, call, event);
-  }
-
-  return handleCallEvent(supabase, lead, call, event);
+  return (metaLead as LeadRow) ?? null;
 }
 
-async function handleCallEvent(
-  supabase: ReturnType<typeof getServerSupabase> & object,
-  lead: {
-    id: string;
-    first_name: string;
-    phone: string;
-    apply_token: string;
-    status: string;
-    assigned_qualifier_id: string | null;
-  },
-  call: {
-    call_id: string;
-    call_status: string;
-    duration_ms?: number | null;
-    recording_url?: string | null;
-    call_analysis?: {
-      call_successful?: boolean;
-      custom_analysis_data?: unknown;
-    } | null;
-  },
-  event: string,
-) {
-  const callStatus = mapCallStatus(call.call_status);
-  const durationSeconds = call.duration_ms
-    ? Math.round(call.duration_ms / 1000)
-    : null;
+// ---------------------------------------------------------------------------
+// call_started
+// ---------------------------------------------------------------------------
 
-  // Update lead with call metadata.
+async function handleCallStarted(
+  supabase: NonNullable<ReturnType<typeof getServerSupabase>>,
+  lead: LeadRow,
+  call: RetellWebhookPayload["call"],
+) {
   await supabase
     .from("leads")
     .update({
       retell_call_id: call.call_id,
-      retell_call_status: callStatus,
-      retell_recording_url: call.recording_url ?? null,
-      retell_call_duration_seconds: durationSeconds,
+      retell_call_status: "in_progress" as RetellCallStatus,
     })
     .eq("id", lead.id);
 
-  // Log the event.
   await supabase.from("lead_audit_log").insert({
     lead_id: lead.id,
-    event: `retell_${event}`,
+    event: "retell_call_started",
+    detail: { call_id: call.call_id } as Record<string, unknown>,
+  });
+
+  return NextResponse.json({
+    ok: true,
+    action: "call_started",
+    lead_id: lead.id,
+  });
+}
+
+// ---------------------------------------------------------------------------
+// call_ended
+// ---------------------------------------------------------------------------
+
+async function handleCallEnded(
+  supabase: NonNullable<ReturnType<typeof getServerSupabase>>,
+  lead: LeadRow,
+  call: RetellWebhookPayload["call"],
+) {
+  const isNoAnswer = call.disconnection_reason
+    ? NO_ANSWER_REASONS.has(call.disconnection_reason)
+    : false;
+  const callStatus: RetellCallStatus = isNoAnswer
+    ? "no_answer"
+    : mapCallStatus(call.call_status);
+  const durationSeconds = call.duration_ms
+    ? Math.round(call.duration_ms / 1000)
+    : null;
+
+  // Fetch and store recording in Supabase storage. Retell recording URLs are
+  // only accessible for ~10 minutes, so we download immediately.
+  let storedRecordingUrl: string | null = null;
+  if (call.recording_url) {
+    try {
+      const audioRes = await fetch(call.recording_url);
+      if (audioRes.ok) {
+        const audioBuffer = Buffer.from(await audioRes.arrayBuffer());
+        const objectKey = `${lead.id}/${call.call_id}-${Date.now()}.wav`;
+        const { error: uploadErr } = await supabase.storage
+          .from(RECORDINGS_BUCKET)
+          .upload(objectKey, audioBuffer, {
+            contentType: "audio/wav",
+            upsert: false,
+          });
+        if (!uploadErr) {
+          storedRecordingUrl = objectKey;
+        } else {
+          console.warn("retell webhook: recording upload failed", uploadErr.message);
+          storedRecordingUrl = call.recording_url;
+        }
+      } else {
+        storedRecordingUrl = call.recording_url;
+      }
+    } catch (err) {
+      console.warn("retell webhook: recording fetch failed", err);
+      storedRecordingUrl = call.recording_url;
+    }
+  }
+
+  const updateData: Record<string, unknown> = {
+    retell_call_id: call.call_id,
+    retell_call_status: callStatus,
+    retell_recording_url: storedRecordingUrl,
+    retell_call_duration_seconds: durationSeconds,
+    retell_call_start_timestamp: call.start_timestamp ?? null,
+    retell_call_end_timestamp: call.end_timestamp ?? null,
+    retell_transcript: call.transcript ?? null,
+  };
+
+  if (isNoAnswer) {
+    updateData.follow_up_needed = true;
+  }
+
+  await supabase
+    .from("leads")
+    .update(updateData)
+    .eq("id", lead.id);
+
+  await supabase.from("lead_audit_log").insert({
+    lead_id: lead.id,
+    event: "retell_call_ended",
     detail: {
       call_id: call.call_id,
       call_status: callStatus,
+      disconnection_reason: call.disconnection_reason ?? null,
       duration_seconds: durationSeconds,
-      has_recording: Boolean(call.recording_url),
-      has_analysis: Boolean(call.call_analysis?.custom_analysis_data),
+      has_recording: Boolean(storedRecordingUrl),
     } as Record<string, unknown>,
   });
 
-  // Handle no-answer / voicemail — send SMS fallback.
-  if (callStatus === "no_answer" || callStatus === "voicemail") {
+  // No-answer handling: SMS fallback via Twilio + follow-up flag.
+  if (isNoAnswer) {
     void sendSmsFallback({
       toNumber: lead.phone,
       applyToken: lead.apply_token,
@@ -176,18 +265,66 @@ async function handleCallEvent(
 
     return NextResponse.json({
       ok: true,
-      action: "sms_fallback",
+      action: "no_answer_sms_fallback",
       lead_id: lead.id,
       call_status: callStatus,
+      disconnection_reason: call.disconnection_reason,
     });
   }
 
-  // Handle completed call with analysis data — run qualification.
-  if (
-    event === CALL_ANALYZED &&
-    callStatus === "completed" &&
-    call.call_analysis?.custom_analysis_data
-  ) {
+  return NextResponse.json({
+    ok: true,
+    action: "call_ended",
+    lead_id: lead.id,
+    call_status: callStatus,
+  });
+}
+
+// ---------------------------------------------------------------------------
+// call_analyzed
+// ---------------------------------------------------------------------------
+
+async function handleCallAnalyzed(
+  supabase: NonNullable<ReturnType<typeof getServerSupabase>>,
+  lead: LeadRow,
+  call: RetellWebhookPayload["call"],
+) {
+  // Store the full call_analysis JSON.
+  const analysisUpdate: Record<string, unknown> = {};
+  if (call.call_analysis) {
+    analysisUpdate.retell_call_analysis = call.call_analysis as Record<string, unknown>;
+    if (call.call_analysis.call_summary) {
+      analysisUpdate.retell_call_summary = call.call_analysis.call_summary;
+    }
+    if (call.call_analysis.user_sentiment) {
+      analysisUpdate.retell_user_sentiment = call.call_analysis.user_sentiment;
+    }
+  }
+  if (call.transcript) {
+    analysisUpdate.retell_transcript = call.transcript;
+  }
+
+  if (Object.keys(analysisUpdate).length > 0) {
+    await supabase
+      .from("leads")
+      .update(analysisUpdate)
+      .eq("id", lead.id);
+  }
+
+  await supabase.from("lead_audit_log").insert({
+    lead_id: lead.id,
+    event: "retell_call_analyzed",
+    detail: {
+      call_id: call.call_id,
+      has_analysis: Boolean(call.call_analysis),
+      has_custom_data: Boolean(call.call_analysis?.custom_analysis_data),
+      call_summary: call.call_analysis?.call_summary ?? null,
+      user_sentiment: call.call_analysis?.user_sentiment ?? null,
+    } as Record<string, unknown>,
+  });
+
+  // If qualification data is present in post-call analysis, run scoring.
+  if (call.call_analysis?.custom_analysis_data) {
     const qualParsed = RetellQualificationSchema.safeParse(
       call.call_analysis.custom_analysis_data,
     );
@@ -205,7 +342,7 @@ async function handleCallEvent(
       });
     }
 
-    // Skip if lead is already qualified/sold/expired.
+    // Skip if lead is already processed.
     if (
       lead.status === "available" ||
       lead.status === "sold" ||
@@ -221,13 +358,7 @@ async function handleCallEvent(
     }
 
     const payload = mapRetellToQualification(qualParsed.data);
-
-    // Use the assigned qualifier as the qualifier_id, or null for
-    // Retell-only qualifications (the lead_qualifications.qualified_by
-    // column is nullable).
     const qualifierId = lead.assigned_qualifier_id;
-
-    // Look up qualifier display name if we have one.
     let qualifierName = "Retell AI";
     if (qualifierId) {
       const { data: tm } = await supabase
@@ -239,6 +370,10 @@ async function handleCallEvent(
         qualifierName = tm.display_name as string;
       }
     }
+
+    const durationSeconds = call.duration_ms
+      ? Math.round(call.duration_ms / 1000)
+      : null;
 
     const result = await submitQualification({
       lead_id: lead.id,
@@ -261,11 +396,45 @@ async function handleCallEvent(
 
   return NextResponse.json({
     ok: true,
-    action: "status_updated",
+    action: "analysis_stored",
     lead_id: lead.id,
-    call_status: callStatus,
   });
 }
+
+// ---------------------------------------------------------------------------
+// transcript_updated — fires multiple times during call, upsert.
+// ---------------------------------------------------------------------------
+
+async function handleTranscriptUpdated(
+  supabase: NonNullable<ReturnType<typeof getServerSupabase>>,
+  lead: LeadRow,
+  call: RetellWebhookPayload["call"],
+) {
+  const updateData: Record<string, unknown> = {};
+  if (call.transcript) {
+    updateData.retell_transcript = call.transcript;
+  }
+  if (call.transcript_object) {
+    updateData.retell_transcript_object = call.transcript_object;
+  }
+
+  if (Object.keys(updateData).length > 0) {
+    await supabase
+      .from("leads")
+      .update(updateData)
+      .eq("id", lead.id);
+  }
+
+  return NextResponse.json({
+    ok: true,
+    action: "transcript_updated",
+    lead_id: lead.id,
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
 
 function mapCallStatus(retellStatus: string): RetellCallStatus {
   switch (retellStatus) {

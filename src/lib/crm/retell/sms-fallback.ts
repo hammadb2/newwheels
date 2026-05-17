@@ -37,9 +37,9 @@ export async function sendSmsFallback(opts: {
 
   const applyUrl = applyPortalUrl(opts.applyToken);
   const body =
-    `Hi ${opts.firstName}, this is ${SITE_NAME}. ` +
-    `We tried calling you about your vehicle financing application but couldn't reach you. ` +
-    `Complete your application here: ${applyUrl}`;
+    `Hi ${opts.firstName}, we just tried to reach you from ${SITE_NAME} about your ` +
+    `vehicle financing application. Here is your application link: ` +
+    `${applyUrl} — reply STOP to opt out.`;
 
   try {
     const url = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`;
