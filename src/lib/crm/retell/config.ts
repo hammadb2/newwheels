@@ -27,6 +27,7 @@ export function isRetellConfigured(): boolean {
 
 // Retell call statuses we track on the lead record.
 export type RetellCallStatus =
+  | "initiated"
   | "scheduled"
   | "in_progress"
   | "completed"
@@ -36,6 +37,7 @@ export type RetellCallStatus =
   | "error";
 
 export const RETELL_CALL_STATUSES: readonly RetellCallStatus[] = [
+  "initiated",
   "scheduled",
   "in_progress",
   "completed",
@@ -44,6 +46,14 @@ export const RETELL_CALL_STATUSES: readonly RetellCallStatus[] = [
   "failed",
   "error",
 ] as const;
+
+// Phone number E.164 normalisation for Canadian numbers.
+export function normalizeToE164(phone: string): string {
+  const digits = phone.replace(/[^\d]/g, "");
+  if (digits.startsWith("1") && digits.length === 11) return `+${digits}`;
+  if (digits.length === 10) return `+1${digits}`;
+  return `+${digits}`;
+}
 
 // The structured data schema that Retell returns after a completed call.
 // Field names match the Retell agent prompt configuration.
@@ -85,12 +95,12 @@ export const RetellQualificationSchema = z.object({
 
 export type RetellQualificationData = z.infer<typeof RetellQualificationSchema>;
 
-// The Retell webhook payload for a completed call.
+// The Retell webhook payload for call lifecycle events.
 export const RetellWebhookPayloadSchema = z.object({
   event: z.string(),
   call: z.object({
     call_id: z.string(),
-    agent_id: z.string(),
+    agent_id: z.string().optional().nullable(),
     call_status: z.string(),
     start_timestamp: z.number().optional().nullable(),
     end_timestamp: z.number().optional().nullable(),
@@ -98,16 +108,106 @@ export const RetellWebhookPayloadSchema = z.object({
     recording_url: z.string().url().optional().nullable(),
     from_number: z.string().optional().nullable(),
     to_number: z.string().optional().nullable(),
+    direction: z.string().optional().nullable(),
+    disconnection_reason: z.string().optional().nullable(),
     metadata: z.record(z.unknown()).optional().nullable(),
+    retell_llm_dynamic_variables: z.record(z.string()).optional().nullable(),
     call_analysis: z.object({
       call_successful: z.boolean().optional(),
+      call_summary: z.string().optional().nullable(),
+      user_sentiment: z.string().optional().nullable(),
       custom_analysis_data: z.unknown().optional(),
     }).optional().nullable(),
     transcript: z.string().optional().nullable(),
+    transcript_object: z.array(z.object({
+      role: z.string(),
+      content: z.string(),
+    }).passthrough()).optional().nullable(),
+    transcript_with_tool_calls: z.array(z.unknown()).optional().nullable(),
   }),
 });
 
 export type RetellWebhookPayload = z.infer<typeof RetellWebhookPayloadSchema>;
+
+// Disconnection reasons that indicate no-answer / unreachable.
+export const NO_ANSWER_REASONS = new Set([
+  "dial_no_answer",
+  "dial_failed",
+  "dial_busy",
+]);
+
+// Retell API call creation. Fires an outbound phone call via the Retell API.
+export type CreateRetellCallInput = {
+  toNumber: string;
+  leadId: string;
+  leadName: string;
+  applyToken: string;
+  preferredLanguage?: string | null;
+};
+
+export type CreateRetellCallResult =
+  | { ok: true; callId: string }
+  | { ok: false; error: string };
+
+export async function createRetellCall(
+  input: CreateRetellCallInput,
+): Promise<CreateRetellCallResult> {
+  const { apiKey, agentId } = retellEnv();
+  const fromNumber = process.env.RETELL_PHONE_NUMBER || "";
+
+  if (!apiKey || !agentId || !fromNumber) {
+    return { ok: false, error: "retell_not_configured" };
+  }
+
+  const toE164 = normalizeToE164(input.toNumber);
+
+  const body: Record<string, unknown> = {
+    from_number: fromNumber,
+    to_number: toE164,
+    override_agent_id: agentId,
+    metadata: {
+      lead_id: input.leadId,
+      lead_name: input.leadName,
+      apply_token: input.applyToken,
+    },
+  };
+
+  if (input.preferredLanguage && input.preferredLanguage !== "english") {
+    body.retell_llm_dynamic_variables = {
+      preferred_language: input.preferredLanguage,
+    };
+  }
+
+  try {
+    const res = await fetch("https://api.retellai.com/v2/create-phone-call", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (!res.ok) {
+      const text = await res.text().catch(() => "");
+      return { ok: false, error: `retell_api_${res.status}: ${text}` };
+    }
+
+    const json = (await res.json()) as { call_id?: string };
+    if (!json.call_id) {
+      return { ok: false, error: "retell_no_call_id" };
+    }
+    return { ok: true, callId: json.call_id };
+  } catch (err) {
+    return {
+      ok: false,
+      error: err instanceof Error ? err.message : String(err),
+    };
+  }
+}
+
+// Recording bucket in Supabase storage.
+export const RECORDINGS_BUCKET = "recordings";
 
 // Map the Retell structured response to the QualificationPayload.
 // This is a straight 1:1 mapping — the Retell agent is configured to return

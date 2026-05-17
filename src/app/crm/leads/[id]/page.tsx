@@ -25,7 +25,7 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
 
   const { data: lead } = await supabase
     .from("leads")
-    .select("id, first_name, last_name, email, phone, status, source_page, created_at, duplicate_of, tier, score, current_price_cents, available_at, retell_call_id, retell_call_status, retell_recording_url, retell_call_duration_seconds, sin_encrypted")
+    .select("id, first_name, last_name, email, phone, status, source_page, created_at, duplicate_of, tier, score, current_price_cents, available_at, retell_call_id, retell_call_status, retell_recording_url, retell_call_duration_seconds, retell_transcript, retell_transcript_object, retell_call_summary, retell_user_sentiment, retell_call_analysis, follow_up_needed, preferred_contact_time, sin_encrypted")
     .eq("id", id)
     .single();
   if (!lead) return notFound();
@@ -92,7 +92,7 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
         ) : null}
       </div>
 
-      {/* Retell call recording — CEO / Ops only. */}
+      {/* Retell call — CEO / Ops only. */}
       {isCeoOrOps && lead.retell_call_id ? (
         <div className="crm-card">
           <RetellCallPlayer
@@ -100,7 +100,21 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
             callStatus={(lead.retell_call_status as string) ?? ""}
             durationSeconds={(lead.retell_call_duration_seconds as number) ?? null}
             callId={lead.retell_call_id as string}
+            transcript={(lead.retell_transcript as string) ?? null}
+            transcriptObject={(lead.retell_transcript_object as { role: string; content: string }[]) ?? null}
+            callSummary={(lead.retell_call_summary as string) ?? null}
+            userSentiment={(lead.retell_user_sentiment as string) ?? null}
           />
+        </div>
+      ) : null}
+
+      {/* Follow-up needed banner */}
+      {isCeoOrOps && lead.follow_up_needed ? (
+        <div className="rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          <span className="font-semibold">Follow-up needed</span> — applicant did not answer the qualification call.
+          {lead.preferred_contact_time ? (
+            <span> Preferred contact time: <strong>{lead.preferred_contact_time as string}</strong></span>
+          ) : null}
         </div>
       ) : null}
 

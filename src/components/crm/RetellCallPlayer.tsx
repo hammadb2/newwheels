@@ -1,15 +1,24 @@
 "use client";
 
-// Audio player for Retell AI call recordings. Visible to CEO and Platform Ops
-// only on the lead detail page.
+// Retell AI call player — recording, transcript, sentiment, and call summary.
+// Visible to CEO and Platform Ops only on the lead detail page.
 
 import { useState } from "react";
+
+type TranscriptEntry = {
+  role: string;
+  content: string;
+};
 
 type Props = {
   recordingUrl: string;
   callStatus: string;
   durationSeconds: number | null;
   callId: string;
+  transcript?: string | null;
+  transcriptObject?: TranscriptEntry[] | null;
+  callSummary?: string | null;
+  userSentiment?: string | null;
 };
 
 function formatDuration(seconds: number): string {
@@ -19,6 +28,7 @@ function formatDuration(seconds: number): string {
 }
 
 const STATUS_LABEL: Record<string, string> = {
+  initiated: "Initiated",
   completed: "Completed",
   no_answer: "No answer",
   voicemail: "Voicemail",
@@ -28,22 +38,50 @@ const STATUS_LABEL: Record<string, string> = {
   error: "Error",
 };
 
-export function RetellCallPlayer({ recordingUrl, callStatus, durationSeconds, callId }: Props) {
+const STATUS_DOT: Record<string, string> = {
+  initiated: "bg-blue-400",
+  in_progress: "bg-amber-500",
+  completed: "bg-emerald-500",
+  no_answer: "bg-red-400",
+  voicemail: "bg-orange-400",
+  failed: "bg-red-500",
+  error: "bg-red-500",
+};
+
+const SENTIMENT_LABEL: Record<string, { text: string; color: string }> = {
+  Positive: { text: "Positive", color: "text-emerald-600" },
+  Negative: { text: "Negative", color: "text-red-600" },
+  Neutral: { text: "Neutral", color: "text-[#6B7280]" },
+  Unknown: { text: "Unknown", color: "text-[#6B7280]" },
+};
+
+export function RetellCallPlayer({
+  recordingUrl,
+  callStatus,
+  durationSeconds,
+  callId,
+  transcript,
+  transcriptObject,
+  callSummary,
+  userSentiment,
+}: Props) {
   const [expanded, setExpanded] = useState(false);
+  const [showTranscript, setShowTranscript] = useState(false);
+
+  const sentimentInfo = userSentiment
+    ? SENTIMENT_LABEL[userSentiment] ?? { text: userSentiment, color: "text-[#6B7280]" }
+    : null;
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
+      {/* Header: status + duration + sentiment */}
       <div className="flex items-center justify-between">
-        <h2 className="text-base font-bold text-[#0A2818]">Call recording</h2>
+        <h2 className="text-base font-bold text-[#0A2818]">Retell call</h2>
         <div className="flex items-center gap-3 text-sm">
           <span className="inline-flex items-center gap-1.5">
             <span
               className={`inline-block h-2 w-2 rounded-full ${
-                callStatus === "completed"
-                  ? "bg-emerald-500"
-                  : callStatus === "in_progress"
-                    ? "bg-amber-500"
-                    : "bg-red-400"
+                STATUS_DOT[callStatus] ?? "bg-gray-400"
               }`}
             />
             {STATUS_LABEL[callStatus] ?? callStatus}
@@ -51,9 +89,25 @@ export function RetellCallPlayer({ recordingUrl, callStatus, durationSeconds, ca
           {durationSeconds !== null && durationSeconds > 0 && (
             <span className="text-[#6B7280]">{formatDuration(durationSeconds)}</span>
           )}
+          {sentimentInfo && (
+            <span className={`font-medium ${sentimentInfo.color}`}>
+              {sentimentInfo.text}
+            </span>
+          )}
         </div>
       </div>
 
+      {/* Call summary from post-call analysis */}
+      {callSummary && (
+        <div className="rounded-lg border border-[#E5E7EB] bg-[#F9FAFB] p-3">
+          <p className="text-xs font-medium text-[#6B7280] uppercase tracking-wider mb-1">
+            Call summary
+          </p>
+          <p className="text-sm text-[#0A2818]">{callSummary}</p>
+        </div>
+      )}
+
+      {/* Audio player */}
       {recordingUrl ? (
         <div>
           <audio
@@ -85,8 +139,43 @@ export function RetellCallPlayer({ recordingUrl, callStatus, durationSeconds, ca
         <p className="text-sm text-[#6B7280]">
           {callStatus === "completed"
             ? "Recording is being processed..."
-            : "No recording available for this call."}
+            : callStatus === "in_progress"
+              ? "Call is in progress..."
+              : callStatus === "initiated"
+                ? "Call is being connected..."
+                : "No recording available for this call."}
         </p>
+      )}
+
+      {/* Transcript — speaker-labelled, scrollable */}
+      {(transcriptObject || transcript) && (
+        <div>
+          <button
+            type="button"
+            onClick={() => setShowTranscript((v) => !v)}
+            className="text-sm font-medium text-[#0A2818] underline hover:no-underline"
+          >
+            {showTranscript ? "Hide transcript" : "Show transcript"}
+          </button>
+          {showTranscript && (
+            <div className="mt-2 max-h-96 overflow-y-auto rounded-lg border border-[#E5E7EB] bg-white p-4 space-y-3">
+              {transcriptObject && transcriptObject.length > 0 ? (
+                transcriptObject.map((entry, i) => (
+                  <div key={i} className="text-sm">
+                    <span className={`font-semibold ${
+                      entry.role === "agent" ? "text-emerald-700" : "text-[#0A2818]"
+                    }`}>
+                      {entry.role === "agent" ? "Alex (AI)" : "Lead"}:
+                    </span>{" "}
+                    <span className="text-[#374151]">{entry.content}</span>
+                  </div>
+                ))
+              ) : transcript ? (
+                <pre className="whitespace-pre-wrap text-sm text-[#374151]">{transcript}</pre>
+              ) : null}
+            </div>
+          )}
+        </div>
       )}
     </div>
   );

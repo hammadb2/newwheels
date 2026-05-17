@@ -1,32 +1,28 @@
 // Retell webhook signature verification.
 //
-// Retell signs webhook payloads with HMAC-SHA256 using the webhook secret.
-// The signature is sent in the `x-retell-signature` header as a hex string.
+// Uses the official retell-sdk Retell.verify() method. The SDK expects the
+// raw body string (not JSON.stringify(req.body)) and the API key to produce
+// a valid HMAC-SHA256 comparison.
 
-import { createHmac } from "crypto";
+import Retell from "retell-sdk";
 import { retellEnv } from "./config";
 
-export function verifyRetellSignature(
+export async function verifyRetellSignature(
   rawBody: string | Buffer,
   signature: string | null,
-): boolean {
-  const { webhookSecret } = retellEnv();
+): Promise<boolean> {
+  const { apiKey } = retellEnv();
 
-  // If no webhook secret is configured, skip verification (dev mode).
-  if (!webhookSecret) return true;
+  // If no API key is configured, skip verification (dev mode).
+  if (!apiKey) return true;
 
   if (!signature) return false;
 
   const body = typeof rawBody === "string" ? rawBody : rawBody.toString("utf-8");
-  const expected = createHmac("sha256", webhookSecret)
-    .update(body)
-    .digest("hex");
 
-  // Constant-time comparison to prevent timing attacks.
-  if (expected.length !== signature.length) return false;
-  let mismatch = 0;
-  for (let i = 0; i < expected.length; i++) {
-    mismatch |= expected.charCodeAt(i) ^ signature.charCodeAt(i);
+  try {
+    return await Retell.verify(body, apiKey, signature);
+  } catch {
+    return false;
   }
-  return mismatch === 0;
 }

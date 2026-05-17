@@ -14,6 +14,7 @@ import { sendEmail } from "@/lib/email/resend";
 import { leadAssignedEmail, leadReceivedEmail } from "@/lib/email/templates";
 import { applyPortalUrl } from "@/lib/crm/leads/apply";
 import { SITE_NAME } from "@/lib/site";
+import { createRetellCall, isRetellConfigured } from "@/lib/crm/retell/config";
 
 export type IntakeInput = {
   first_name: string;
@@ -135,6 +136,53 @@ export async function intakeLead(input: IntakeInput): Promise<IntakeResult> {
   ]).catch((err) => {
     console.warn("intakeLead email side-effect failed", err);
   });
+
+  // Fire Retell qualification call inline — target is <60s from form submit.
+  // Never block lead intake on Retell failure.
+  if (isRetellConfigured()) {
+    try {
+      const retellResult = await createRetellCall({
+        toNumber: input.phone,
+        leadId: leadId,
+        leadName: `${input.first_name} ${input.last_name}`.trim(),
+        applyToken: applyToken ?? "",
+      });
+
+      if (retellResult.ok) {
+        await supabase
+          .from("leads")
+          .update({
+            retell_call_id: retellResult.callId,
+            retell_call_status: "initiated",
+          })
+          .eq("id", leadId);
+
+        await supabase.from("lead_audit_log").insert({
+          lead_id: leadId,
+          event: "retell_call_initiated",
+          detail: { call_id: retellResult.callId } as Record<string, unknown>,
+        });
+      } else {
+        console.warn("intakeLead: Retell call failed", retellResult.error);
+        await supabase
+          .from("leads")
+          .update({ retell_call_status: "failed" })
+          .eq("id", leadId);
+
+        await supabase.from("lead_audit_log").insert({
+          lead_id: leadId,
+          event: "retell_call_failed",
+          detail: { error: retellResult.error } as Record<string, unknown>,
+        });
+      }
+    } catch (err) {
+      console.warn("intakeLead: Retell call error", err);
+      await supabase
+        .from("leads")
+        .update({ retell_call_status: "failed" })
+        .eq("id", leadId);
+    }
+  }
 
   return { ok: true, lead_id: leadId, ...(dup ? { duplicate_of: dup.id as string } : {}) };
 }
