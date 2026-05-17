@@ -97,10 +97,15 @@ export async function POST(req: Request) {
       file: idDoc,
     });
 
-    await supabase.from("buyer_verification_docs").insert([
+    const { error: docInsertErr } = await supabase.from("buyer_verification_docs").insert([
       { buyer_id, doc_kind: "amvic_licence", ...amvicUploaded },
       { buyer_id, doc_kind: "gov_id", ...idUploaded },
     ]);
+    if (docInsertErr) {
+      console.error("buyer_verification_docs insert failed", docInsertErr);
+      await supabase.from("buyer_accounts").delete().eq("id", buyer_id);
+      return NextResponse.json({ ok: false, error: "doc_insert_failed" }, { status: 500 });
+    }
   } catch (e) {
     // Roll back the buyer record if the uploads fail so we don't leave a
     // pending buyer with no documents.
