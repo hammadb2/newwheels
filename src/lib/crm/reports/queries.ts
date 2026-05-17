@@ -280,6 +280,7 @@ export type BuyerReport = {
     last_purchase_at: string | null;
     lifetime_spend_cents: number;
     status: string;
+    churn_flag: boolean;
   }[];
 };
 
@@ -307,9 +308,38 @@ export async function loadBuyerReport(range: DateRange): Promise<BuyerReport> {
     byBuyer.set(id, cur);
   }
 
+  // Compute weekly purchase counts for churn detection
+  const twoWeeksAgo = new Date(range.end.getTime() - 14 * 24 * 60 * 60 * 1000);
+  const oneWeekAgo = new Date(range.end.getTime() - 7 * 24 * 60 * 60 * 1000);
+  const { data: prevWeek } = await supabase
+    .from("purchases")
+    .select("buyer_id")
+    .eq("status", "paid")
+    .gte("purchased_at", iso(twoWeeksAgo))
+    .lt("purchased_at", iso(oneWeekAgo));
+  const { data: thisWeek } = await supabase
+    .from("purchases")
+    .select("buyer_id")
+    .eq("status", "paid")
+    .gte("purchased_at", iso(oneWeekAgo))
+    .lt("purchased_at", iso(range.end));
+  const prevCounts = new Map<string, number>();
+  for (const p of prevWeek ?? []) {
+    const id = p.buyer_id as string;
+    prevCounts.set(id, (prevCounts.get(id) ?? 0) + 1);
+  }
+  const thisCounts = new Map<string, number>();
+  for (const p of thisWeek ?? []) {
+    const id = p.buyer_id as string;
+    thisCounts.set(id, (thisCounts.get(id) ?? 0) + 1);
+  }
+
   const rows = (buyers ?? []).map((b) => {
     const id = b.id as string;
     const v = byBuyer.get(id) ?? { spend: 0, count: 0 };
+    const prev = prevCounts.get(id) ?? 0;
+    const curr = thisCounts.get(id) ?? 0;
+    const churn_flag = prev > 0 && curr < prev * 0.5;
     return {
       id,
       kind: (b.kind as string) ?? "individual",
@@ -320,6 +350,7 @@ export async function loadBuyerReport(range: DateRange): Promise<BuyerReport> {
       last_purchase_at: (b.last_purchase_at as string) ?? null,
       lifetime_spend_cents: Number(b.lifetime_spend_cents) || 0,
       status: (b.status as string) ?? "active",
+      churn_flag,
     };
   });
   return { buyers: rows.sort((a, b) => b.spend_cents - a.spend_cents) };
