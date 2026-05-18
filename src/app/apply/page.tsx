@@ -6,7 +6,6 @@
 
 import Link from "next/link";
 import type { Metadata } from "next";
-import { SITE_URL } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "NewWheels — Application portal",
@@ -18,34 +17,70 @@ export const dynamic = "force-dynamic";
 
 export default function ApplyIndexPage() {
   return (
-    <main className="min-h-screen bg-brand-creamSoft px-6 py-16 text-brand-ink">
-      <div className="mx-auto max-w-2xl space-y-6">
-        <div className="flex items-center gap-2">
-          <img src={`${SITE_URL}/logo-horizontal.png`} alt="NewWheels" width={140} height={40} className="h-8 w-auto" />
+    <main className="flex min-h-screen flex-col items-center justify-center bg-brand-creamSoft px-6 py-16 text-brand-ink">
+      <div className="w-full max-w-md space-y-8">
+        <div className="flex flex-col items-center gap-4 text-center">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-primary">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#D9FF4E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+              <polyline points="22,6 12,13 2,6" />
+            </svg>
+          </div>
+          <h1 className="text-2xl font-extrabold tracking-tight text-brand-ink sm:text-3xl">
+            Check your email
+          </h1>
+          <p className="text-base leading-relaxed text-brand-muted">
+            We sent you a personal link to view your application status and
+            upload documents.
+          </p>
         </div>
-        <h1 className="text-3xl font-extrabold tracking-tight text-brand-ink">
-          Use the link in your confirmation email
-        </h1>
+
         <div className="rounded-2xl bg-white p-6 shadow-card ring-1 ring-brand-line space-y-4">
-          <p className="text-base leading-relaxed text-brand-ink/80">
-            To check your application status or upload documents, open the
-            email we sent right after you applied. It contains a personal
-            link that takes you to your application.
+          <div className="flex items-start gap-3">
+            <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand-accent text-xs font-bold text-brand-ink">1</span>
+            <p className="text-sm leading-relaxed text-brand-ink/80">
+              Open the confirmation email from <strong>NewWheels</strong>.
+            </p>
+          </div>
+          <div className="flex items-start gap-3">
+            <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand-accent text-xs font-bold text-brand-ink">2</span>
+            <p className="text-sm leading-relaxed text-brand-ink/80">
+              Tap the <strong>&ldquo;View my application&rdquo;</strong> button in the email.
+            </p>
+          </div>
+          <div className="flex items-start gap-3">
+            <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand-accent text-xs font-bold text-brand-ink">3</span>
+            <p className="text-sm leading-relaxed text-brand-ink/80">
+              Upload your documents to speed up your approval.
+            </p>
+          </div>
+        </div>
+
+        <div className="rounded-2xl bg-white p-5 shadow-card ring-1 ring-brand-line text-center space-y-3">
+          <p className="text-sm font-semibold text-brand-ink">
+            Didn&apos;t get the email?
           </p>
           <p className="text-sm text-brand-muted">
-            Haven&apos;t received it? Check your spam folder, or
-            {" "}
+            Check your spam folder, or{" "}
             <Link href="https://newwheels.ca/apply" className="text-brand-forest font-semibold underline">
               re-submit your application
             </Link>
-            {" "}— we&apos;ll call within 1 hour.
+            . We&apos;ll call within 1 hour.
           </p>
         </div>
-        <div className="rounded-2xl bg-white p-6 shadow-card ring-1 ring-brand-line">
-          <p className="text-sm text-brand-ink/80">
-            Need help right now? Call <a className="text-brand-forest font-semibold underline" href="tel:+15879006051">(587) 900-6051</a>{" "}
-            or email <a className="text-brand-forest font-semibold underline" href="mailto:hello@newwheels.ca">hello@newwheels.ca</a>.
+
+        <div className="text-center text-sm text-brand-muted">
+          <p>
+            Need help?{" "}
+            <a className="text-brand-forest font-semibold underline" href="tel:+15879006051">(587) 900-6051</a>
+            {" · "}
+            <a className="text-brand-forest font-semibold underline" href="mailto:hello@newwheels.ca">hello@newwheels.ca</a>
           </p>
+          <p className="mt-1 text-xs">Mon–Sat 9 AM – 7 PM MT</p>
+        </div>
+
+        <div className="flex justify-center pt-2">
+          <img src="https://newwheels.ca/logo-horizontal.png" alt="NewWheels" width={120} height={34} className="h-7 w-auto opacity-40" />
         </div>
       </div>
     </main>

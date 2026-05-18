@@ -125,7 +125,7 @@ export async function POST(req: Request) {
     return NextResponse.json(
       {
         result: "lead_not_found",
-        message: "The applicant can go directly to apply.newwheels.ca and type in their email address to find their application and upload documents there.",
+        message: "I was not able to find the applicant record. Please ask the applicant to check their email for the document upload link we sent when they applied.",
       },
       { status: 404 },
     );
@@ -227,7 +227,7 @@ export async function POST(req: Request) {
       result: "email_sent",
       lead_id,
       apply_url: applyUrl,
-      message: "SMS delivery failed but we sent the link to the applicant's email on file. The applicant can also go directly to apply.newwheels.ca and use their email to find their application.",
+      message: "SMS delivery failed but we sent the document upload link to the applicant's email on file. Let the applicant know to check their email for the link.",
     });
   }
 
@@ -235,6 +235,6 @@ export async function POST(req: Request) {
     result: "delivery_failed",
     lead_id,
     apply_url: applyUrl,
-    message: "Both SMS and email delivery failed. Tell the applicant they can go directly to apply.newwheels.ca and type in their email address to find their application and upload documents there.",
+    message: "Both SMS and email delivery failed. Let the applicant know they will receive an email with the document upload link shortly, or they can call us at (587) 900-6051 for help.",
   });
 }
