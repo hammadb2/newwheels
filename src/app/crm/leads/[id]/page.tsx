@@ -10,7 +10,7 @@ import { QualificationForm } from "@/components/crm/QualificationForm";
 import { LeadNotesThread } from "@/components/crm/LeadNotesThread";
 import { canReadLeadNotes, canWriteLeadNotes, listLeadNotes } from "@/lib/crm/leads/notes";
 import { priceCentsToDisplay } from "@/lib/crm/pricing";
-import { RetellCallPlayer } from "@/components/crm/RetellCallPlayer";
+import { CallPlayer } from "@/components/crm/CallPlayer";
 import { SinRevealButton } from "@/components/crm/SinRevealButton";
 import { LeadPriceOverride } from "@/components/crm/LeadPriceOverride";
 import { maskSin, decryptSin } from "@/lib/crm/security/sin";
@@ -93,10 +93,10 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
         ) : null}
       </div>
 
-      {/* Retell call — CEO / Ops only. */}
+      {/* Qualification call — CEO / Ops only. */}
       {isCeoOrOps && lead.retell_call_id ? (
         <div className="crm-card">
-          <RetellCallPlayer
+          <CallPlayer
             leadId={id}
             recordingUrl={(lead.retell_recording_url as string) ?? ""}
             callStatus={(lead.retell_call_status as string) ?? ""}

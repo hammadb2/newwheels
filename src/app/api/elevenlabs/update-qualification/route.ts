@@ -1,13 +1,16 @@
-// POST /api/retell/update-qualification — Retell Custom Function endpoint.
+// POST /api/elevenlabs/update-qualification — ElevenLabs webhook tool endpoint.
 //
-// Called by the Retell agent after each qualification section completes.
+// Called by the ElevenLabs agent after each qualification section completes.
 // Writes structured data to the lead_qualifications row in real time so the
 // CRM updates live during the call.
+//
+// Auth: shared secret in Authorization header (Bearer token).
+// ElevenLabs sends: { tool_call_id, tool_name, parameters, conversation_id }
 
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getServerSupabase } from "@/lib/crm/supabase/server";
-import { verifyRetellSignature } from "@/lib/crm/retell/verify";
+import { verifyToolSecret } from "@/lib/crm/elevenlabs/verify";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -15,14 +18,18 @@ export const dynamic = "force-dynamic";
 const SECTIONS = ["identity", "financial", "credit", "vehicle", "logistics"] as const;
 type Section = (typeof SECTIONS)[number];
 
-const Body = z.object({
-  call_id: z.string().min(1),
-  lead_id: z.string().uuid(),
-  section: z.enum(SECTIONS),
-  data: z.record(z.unknown()),
+const ToolCallBody = z.object({
+  tool_call_id: z.string().optional(),
+  tool_name: z.string().optional(),
+  conversation_id: z.string().optional(),
+  parameters: z.object({
+    call_id: z.string().min(1),
+    lead_id: z.string().uuid(),
+    section: z.enum(SECTIONS),
+    data: z.record(z.unknown()),
+  }),
 });
 
-// Map section names to the lead_qualifications columns they write.
 const SECTION_FIELDS: Record<Section, string[]> = {
   identity: ["visa_status", "time_in_canada", "has_ab_licence"],
   financial: ["monthly_income", "income_type", "time_at_income", "monthly_debt"],
@@ -47,35 +54,31 @@ const SECTION_FIELDS: Record<Section, string[]> = {
 };
 
 export async function POST(req: Request) {
-  const rawBody = await req.text();
-
-  const signature = req.headers.get("x-retell-signature");
-  if (!(await verifyRetellSignature(rawBody, signature))) {
-    return NextResponse.json({ ok: false, error: "invalid_signature" }, { status: 401 });
+  if (!verifyToolSecret(req)) {
+    return NextResponse.json({ result: "invalid_secret" }, { status: 401 });
   }
 
   let json: unknown;
   try {
-    json = JSON.parse(rawBody);
+    json = await req.json();
   } catch {
-    return NextResponse.json({ ok: false, error: "invalid_json" }, { status: 400 });
+    return NextResponse.json({ result: "invalid_json" }, { status: 400 });
   }
 
-  const parsed = Body.safeParse(json);
+  const parsed = ToolCallBody.safeParse(json);
   if (!parsed.success) {
     return NextResponse.json(
-      { ok: false, error: "invalid_input", issues: parsed.error.issues },
+      { result: "invalid_input", issues: parsed.error.issues },
       { status: 400 },
     );
   }
 
-  const { call_id, lead_id, section, data } = parsed.data;
+  const { call_id, lead_id, section, data } = parsed.data.parameters;
   const supabase = getServerSupabase();
   if (!supabase) {
-    return NextResponse.json({ ok: false, error: "not_configured" }, { status: 503 });
+    return NextResponse.json({ result: "not_configured" }, { status: 503 });
   }
 
-  // Only write fields that belong to this section.
   const allowedFields = SECTION_FIELDS[section];
   const filteredData: Record<string, unknown> = {};
   for (const key of allowedFields) {
@@ -83,11 +86,9 @@ export async function POST(req: Request) {
   }
 
   if (Object.keys(filteredData).length === 0) {
-    return NextResponse.json({ ok: true, action: "no_fields" });
+    return NextResponse.json({ result: "no_fields" });
   }
 
-  // Upsert into lead_qualifications: create row if it doesn't exist yet,
-  // otherwise merge the new section data into the existing row.
   const { data: existing } = await supabase
     .from("lead_qualifications")
     .select("id")
@@ -107,17 +108,17 @@ export async function POST(req: Request) {
 
   await supabase.from("lead_audit_log").insert({
     lead_id,
-    event: "retell_section_update",
+    event: "elevenlabs_section_update",
     detail: {
       call_id,
+      conversation_id: parsed.data.conversation_id ?? null,
       section,
       fields: Object.keys(filteredData),
     } as Record<string, unknown>,
   });
 
   return NextResponse.json({
-    ok: true,
-    action: "section_updated",
+    result: "section_updated",
     section,
     fields_written: Object.keys(filteredData),
   });

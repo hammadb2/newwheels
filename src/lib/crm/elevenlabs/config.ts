@@ -1,32 +1,34 @@
-// Retell AI agent configuration and field mapping.
+// ElevenLabs Conversational AI agent configuration and field mapping.
 //
-// Maps the structured response from the Retell AI qualification call to the
-// 28-field QualificationPayload used by the scoring engine. The Retell agent
-// is configured to collect these fields during the phone call and return them
-// as structured JSON in the call.analyzed webhook event.
+// Maps the structured response from the ElevenLabs qualification call to the
+// 28-field QualificationPayload used by the scoring engine. The ElevenLabs
+// agent is configured to collect these fields during the phone call via
+// webhook tool calls that fire section-by-section.
 //
-// This file is the single source of truth for the mapping — if the Retell
+// This file is the single source of truth for the mapping — if the ElevenLabs
 // agent prompt changes field names, update the FIELD_MAP here.
 
 import { z } from "zod";
 import type { QualificationPayload } from "../types";
 
 // Environment
-export function retellEnv() {
+export function elevenlabsEnv() {
   return {
-    apiKey: process.env.RETELL_API_KEY || "",
-    agentId: process.env.RETELL_AGENT_ID || "",
-    webhookSecret: process.env.RETELL_WEBHOOK_SECRET || "",
+    apiKey: process.env.ELEVENLABS_API_KEY || "",
+    agentId: process.env.ELEVENLABS_AGENT_ID || "",
+    phoneNumberId: process.env.ELEVENLABS_PHONE_NUMBER_ID || "",
+    webhookSecret: process.env.ELEVENLABS_WEBHOOK_SECRET || "",
+    toolSecret: process.env.ELEVENLABS_TOOL_SECRET || "",
   };
 }
 
-export function isRetellConfigured(): boolean {
-  const { apiKey, agentId } = retellEnv();
-  return Boolean(apiKey) && Boolean(agentId);
+export function isElevenLabsConfigured(): boolean {
+  const { apiKey, agentId, phoneNumberId } = elevenlabsEnv();
+  return Boolean(apiKey) && Boolean(agentId) && Boolean(phoneNumberId);
 }
 
-// Retell call statuses we track on the lead record.
-export type RetellCallStatus =
+// Call statuses we track on the lead record (same DB column as before).
+export type CallStatus =
   | "initiated"
   | "scheduled"
   | "in_progress"
@@ -36,7 +38,7 @@ export type RetellCallStatus =
   | "failed"
   | "error";
 
-export const RETELL_CALL_STATUSES: readonly RetellCallStatus[] = [
+export const CALL_STATUSES: readonly CallStatus[] = [
   "initiated",
   "scheduled",
   "in_progress",
@@ -55,9 +57,9 @@ export function normalizeToE164(phone: string): string {
   return `+${digits}`;
 }
 
-// The structured data schema that Retell returns after a completed call.
-// Field names match the Retell agent prompt configuration.
-export const RetellQualificationSchema = z.object({
+// The structured data schema that the agent collects via webhook tools.
+// Field names match QualificationPayload exactly.
+export const QualificationSchema = z.object({
   visa_status: z.enum([
     "citizen", "permanent_resident", "open_work_permit",
     "lmia", "pgwp", "study_permit", "refugee_claimant", "other",
@@ -93,51 +95,53 @@ export const RetellQualificationSchema = z.object({
   notes: z.string().max(300).optional().nullable(),
 });
 
-export type RetellQualificationData = z.infer<typeof RetellQualificationSchema>;
+export type QualificationData = z.infer<typeof QualificationSchema>;
 
-// The Retell webhook payload for call lifecycle events.
-export const RetellWebhookPayloadSchema = z.object({
-  event: z.string(),
-  call: z.object({
-    call_id: z.string(),
+// ElevenLabs post-call webhook payload schema.
+export const ElevenLabsWebhookPayloadSchema = z.object({
+  type: z.string(),
+  event_timestamp: z.number().optional().nullable(),
+  data: z.object({
     agent_id: z.string().optional().nullable(),
-    call_status: z.string(),
-    start_timestamp: z.number().optional().nullable(),
-    end_timestamp: z.number().optional().nullable(),
-    duration_ms: z.number().optional().nullable(),
-    recording_url: z.string().url().optional().nullable(),
-    from_number: z.string().optional().nullable(),
-    to_number: z.string().optional().nullable(),
-    direction: z.string().optional().nullable(),
-    disconnection_reason: z.string().optional().nullable(),
-    metadata: z.record(z.unknown()).optional().nullable(),
-    retell_llm_dynamic_variables: z.record(z.string()).optional().nullable(),
-    call_analysis: z.object({
-      call_successful: z.boolean().optional(),
-      call_summary: z.string().optional().nullable(),
-      user_sentiment: z.string().optional().nullable(),
-      custom_analysis_data: z.unknown().optional(),
-    }).optional().nullable(),
-    transcript: z.string().optional().nullable(),
-    transcript_object: z.array(z.object({
+    conversation_id: z.string(),
+    status: z.string().optional().nullable(),
+    transcript: z.array(z.object({
       role: z.string(),
-      content: z.string(),
+      message: z.string(),
+      time_in_call_secs: z.number().optional(),
     }).passthrough()).optional().nullable(),
-    transcript_with_tool_calls: z.array(z.unknown()).optional().nullable(),
+    metadata: z.record(z.unknown()).optional().nullable(),
+    analysis: z.object({
+      call_successful: z.boolean().optional(),
+      transcript_summary: z.string().optional().nullable(),
+      data_collection_results: z.record(z.unknown()).optional().nullable(),
+      evaluation_criteria_results: z.record(z.unknown()).optional().nullable(),
+    }).optional().nullable(),
+    conversation_initiation_metadata: z.object({
+      conversation_config_override: z.record(z.unknown()).optional().nullable(),
+      dynamic_variables: z.record(z.string()).optional().nullable(),
+    }).passthrough().optional().nullable(),
+    call_duration_secs: z.number().optional().nullable(),
+    cost: z.number().optional().nullable(),
+    recording_url: z.string().optional().nullable(),
+    termination_reason: z.string().optional().nullable(),
   }),
 });
 
-export type RetellWebhookPayload = z.infer<typeof RetellWebhookPayloadSchema>;
+export type ElevenLabsWebhookPayload = z.infer<typeof ElevenLabsWebhookPayloadSchema>;
 
-// Disconnection reasons that indicate no-answer / unreachable.
+// Termination reasons that indicate no-answer / unreachable.
 export const NO_ANSWER_REASONS = new Set([
+  "no_answer",
   "dial_no_answer",
   "dial_failed",
   "dial_busy",
+  "user_busy",
+  "rejected",
 ]);
 
-// Retell API call creation. Fires an outbound phone call via the Retell API.
-export type CreateRetellCallInput = {
+// ElevenLabs outbound call creation via Twilio integration.
+export type CreateElevenLabsCallInput = {
   toNumber: string;
   leadId: string;
   leadName: string;
@@ -145,59 +149,55 @@ export type CreateRetellCallInput = {
   preferredLanguage?: string | null;
 };
 
-export type CreateRetellCallResult =
-  | { ok: true; callId: string }
+export type CreateElevenLabsCallResult =
+  | { ok: true; conversationId: string }
   | { ok: false; error: string };
 
-export async function createRetellCall(
-  input: CreateRetellCallInput,
-): Promise<CreateRetellCallResult> {
-  const { apiKey, agentId } = retellEnv();
-  const fromNumber = process.env.RETELL_PHONE_NUMBER || "";
+export async function createElevenLabsCall(
+  input: CreateElevenLabsCallInput,
+): Promise<CreateElevenLabsCallResult> {
+  const { apiKey, agentId, phoneNumberId } = elevenlabsEnv();
 
-  if (!apiKey || !agentId || !fromNumber) {
-    return { ok: false, error: "retell_not_configured" };
+  if (!apiKey || !agentId || !phoneNumberId) {
+    return { ok: false, error: "elevenlabs_not_configured" };
   }
 
   const toE164 = normalizeToE164(input.toNumber);
 
   const body: Record<string, unknown> = {
-    from_number: fromNumber,
+    agent_id: agentId,
+    agent_phone_number_id: phoneNumberId,
     to_number: toE164,
-    override_agent_id: agentId,
-    metadata: {
-      lead_id: input.leadId,
+    dynamic_variables: {
       lead_name: input.leadName,
+      lead_id: input.leadId,
       apply_token: input.applyToken,
     },
   };
 
-  if (input.preferredLanguage && input.preferredLanguage !== "english") {
-    body.retell_llm_dynamic_variables = {
-      preferred_language: input.preferredLanguage,
-    };
-  }
-
   try {
-    const res = await fetch("https://api.retellai.com/v2/create-phone-call", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
+    const res = await fetch(
+      "https://api.elevenlabs.io/v1/convai/twilio/outbound-call",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "xi-api-key": apiKey,
+        },
+        body: JSON.stringify(body),
       },
-      body: JSON.stringify(body),
-    });
+    );
 
     if (!res.ok) {
       const text = await res.text().catch(() => "");
-      return { ok: false, error: `retell_api_${res.status}: ${text}` };
+      return { ok: false, error: `elevenlabs_api_${res.status}: ${text}` };
     }
 
-    const json = (await res.json()) as { call_id?: string };
-    if (!json.call_id) {
-      return { ok: false, error: "retell_no_call_id" };
+    const json = (await res.json()) as { conversation_id?: string };
+    if (!json.conversation_id) {
+      return { ok: false, error: "elevenlabs_no_conversation_id" };
     }
-    return { ok: true, callId: json.call_id };
+    return { ok: true, conversationId: json.conversation_id };
   } catch (err) {
     return {
       ok: false,
@@ -209,11 +209,9 @@ export async function createRetellCall(
 // Recording bucket in Supabase storage.
 export const RECORDINGS_BUCKET = "recordings";
 
-// Map the Retell structured response to the QualificationPayload.
-// This is a straight 1:1 mapping — the Retell agent is configured to return
-// field names that match QualificationPayload exactly.
-export function mapRetellToQualification(
-  data: RetellQualificationData,
+// Map the structured qualification data to QualificationPayload.
+export function mapQualificationToPayload(
+  data: QualificationData,
 ): QualificationPayload {
   return {
     visa_status: data.visa_status,
@@ -242,8 +240,7 @@ export function mapRetellToQualification(
   };
 }
 
-// The 28 qualification fields that the Retell agent must collect.
-// Used to validate agent configuration completeness.
+// The 22 qualification fields that the agent must collect.
 export const QUALIFICATION_FIELDS = [
   "visa_status",
   "time_in_canada",

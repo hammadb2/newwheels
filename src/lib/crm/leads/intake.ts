@@ -14,7 +14,7 @@ import { sendEmail } from "@/lib/email/resend";
 import { leadAssignedEmail, leadReceivedEmail } from "@/lib/email/templates";
 import { applyPortalUrl } from "@/lib/crm/leads/apply";
 import { SITE_NAME } from "@/lib/site";
-import { createRetellCall, isRetellConfigured } from "@/lib/crm/retell/config";
+import { createElevenLabsCall, isElevenLabsConfigured } from "@/lib/crm/elevenlabs/config";
 import { runFraudChecks } from "@/lib/crm/leads/fraud";
 
 export type IntakeInput = {
@@ -160,33 +160,33 @@ export async function intakeLead(input: IntakeInput): Promise<IntakeResult> {
     console.warn("intakeLead email side-effect failed", err);
   });
 
-  // Fire Retell qualification call inline — target is <60s from form submit.
-  // Never block lead intake on Retell failure.
-  if (isRetellConfigured()) {
+  // Fire ElevenLabs qualification call inline — target is <60s from form submit.
+  // Never block lead intake on call failure.
+  if (isElevenLabsConfigured()) {
     try {
-      const retellResult = await createRetellCall({
+      const callResult = await createElevenLabsCall({
         toNumber: input.phone,
         leadId: leadId,
         leadName: `${input.first_name} ${input.last_name}`.trim(),
         applyToken: applyToken ?? "",
       });
 
-      if (retellResult.ok) {
+      if (callResult.ok) {
         await supabase
           .from("leads")
           .update({
-            retell_call_id: retellResult.callId,
+            retell_call_id: callResult.conversationId,
             retell_call_status: "initiated",
           })
           .eq("id", leadId);
 
         await supabase.from("lead_audit_log").insert({
           lead_id: leadId,
-          event: "retell_call_initiated",
-          detail: { call_id: retellResult.callId } as Record<string, unknown>,
+          event: "elevenlabs_call_initiated",
+          detail: { conversation_id: callResult.conversationId } as Record<string, unknown>,
         });
       } else {
-        console.warn("intakeLead: Retell call failed", retellResult.error);
+        console.warn("intakeLead: ElevenLabs call failed", callResult.error);
         await supabase
           .from("leads")
           .update({ retell_call_status: "failed" })
@@ -194,12 +194,12 @@ export async function intakeLead(input: IntakeInput): Promise<IntakeResult> {
 
         await supabase.from("lead_audit_log").insert({
           lead_id: leadId,
-          event: "retell_call_failed",
-          detail: { error: retellResult.error } as Record<string, unknown>,
+          event: "elevenlabs_call_failed",
+          detail: { error: callResult.error } as Record<string, unknown>,
         });
       }
     } catch (err) {
-      console.warn("intakeLead: Retell call error", err);
+      console.warn("intakeLead: ElevenLabs call error", err);
       await supabase
         .from("leads")
         .update({ retell_call_status: "failed" })
