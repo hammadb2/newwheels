@@ -7,10 +7,7 @@
 //    Authorization header (Bearer token configured in ElevenLabs tool
 //    definition).
 
-import { ElevenLabsClient } from "@elevenlabs/elevenlabs-js";
 import { elevenlabsEnv } from "./config";
-
-const client = new ElevenLabsClient();
 
 export async function verifyElevenLabsWebhookSignature(
   rawBody: string,
@@ -22,6 +19,8 @@ export async function verifyElevenLabsWebhookSignature(
   if (!signature) return false;
 
   try {
+    const { ElevenLabsClient } = await import("@elevenlabs/elevenlabs-js");
+    const client = new ElevenLabsClient({ apiKey: elevenlabsEnv().apiKey ?? "" });
     await client.webhooks.constructEvent(rawBody, signature, webhookSecret);
     return true;
   } catch {
