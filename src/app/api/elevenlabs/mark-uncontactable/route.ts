@@ -19,7 +19,7 @@ const ToolCallBody = z.object({
   conversation_id: z.string().optional(),
   parameters: z.object({
     lead_id: z.string().uuid(),
-    call_id: z.string().min(1),
+    call_id: z.string().min(1).optional(),
     reason: z.string().min(1).max(200),
   }),
 });
