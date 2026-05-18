@@ -252,12 +252,10 @@ async function handlePostCallTranscription(
     });
   }
 
-  // Skip qualification if lead is already processed.
+  // Skip qualification if lead is already in a terminal state.
   if (
-    lead.status === "available" ||
     lead.status === "sold" ||
-    lead.status === "expired" ||
-    lead.status === "qualified"
+    lead.status === "expired"
   ) {
     return NextResponse.json({
       ok: true,

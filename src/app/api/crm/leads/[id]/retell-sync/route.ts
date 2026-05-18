@@ -10,8 +10,9 @@
 import { NextResponse } from "next/server";
 import { requireTeam } from "@/lib/crm/auth/rbac";
 import { getServerSupabase } from "@/lib/crm/supabase/server";
-import { elevenlabsEnv } from "@/lib/crm/elevenlabs/config";
+import { elevenlabsEnv, QualificationSchema, mapQualificationToPayload } from "@/lib/crm/elevenlabs/config";
 import type { CallStatus } from "@/lib/crm/elevenlabs/config";
+import { submitQualification } from "@/lib/crm/leads/qualify";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -30,7 +31,7 @@ export async function POST(
 
   const { data: lead } = await supabase
     .from("leads")
-    .select("id, retell_call_id, retell_call_status")
+    .select("id, retell_call_id, retell_call_status, status, assigned_qualifier_id")
     .eq("id", leadId)
     .maybeSingle();
 
@@ -154,11 +155,76 @@ export async function POST(
     } as Record<string, unknown>,
   });
 
+  // Run qualification if the call completed and the lead is still in a
+  // qualifiable state (qualifying or available).
+  let qualAction: string | null = null;
+  if (
+    newStatus === "completed" &&
+    lead.status !== "sold" &&
+    lead.status !== "expired"
+  ) {
+    // Try qualification from analysis data, then from lead_qualifications.
+    let qualData: Record<string, unknown> | null = null;
+
+    if (analysis?.data_collection_results) {
+      const dcr = analysis.data_collection_results as Record<string, unknown>;
+      if (Object.keys(dcr).length > 0) {
+        const qualParsed = QualificationSchema.safeParse(dcr);
+        if (qualParsed.success) {
+          qualData = qualParsed.data as Record<string, unknown>;
+        }
+      }
+    }
+
+    if (!qualData) {
+      const { data: existingQual } = await supabase
+        .from("lead_qualifications")
+        .select("*")
+        .eq("lead_id", leadId)
+        .maybeSingle();
+
+      if (existingQual) {
+        const qualParsed = QualificationSchema.safeParse(existingQual);
+        if (qualParsed.success) {
+          qualData = qualParsed.data as Record<string, unknown>;
+        }
+      }
+    }
+
+    if (qualData) {
+      const parsed2 = QualificationSchema.parse(qualData);
+      const payload = mapQualificationToPayload(parsed2);
+      const qualifierId = (lead.assigned_qualifier_id as string) ?? "";
+      let qualifierName = "ElevenLabs AI";
+      if (qualifierId) {
+        const { data: tm } = await supabase
+          .from("team_members")
+          .select("display_name")
+          .eq("id", qualifierId)
+          .maybeSingle();
+        if (tm?.display_name) {
+          qualifierName = tm.display_name as string;
+        }
+      }
+
+      const durationVal = durationSecs ? Math.round(durationSecs) : undefined;
+      const result = await submitQualification({
+        lead_id: leadId,
+        qualifier_id: qualifierId,
+        qualifier_display_name: qualifierName,
+        payload,
+        call_duration_seconds: durationVal,
+      });
+      qualAction = result.ok ? "qualified" : `qual_failed:${result.error}`;
+    }
+  }
+
   return NextResponse.json({
     ok: true,
     action: "synced",
     lead_id: leadId,
     previous_status: lead.retell_call_status,
     new_status: newStatus,
+    qualification: qualAction,
   });
 }
