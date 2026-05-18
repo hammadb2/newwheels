@@ -1,6 +1,6 @@
 "use client";
 
-// Retell AI call player — recording, transcript, sentiment, and call summary.
+// Qualification call player — recording, transcript, sentiment, and call summary.
 // Visible to CEO and Platform Ops only on the lead detail page.
 
 import { useState } from "react";
@@ -56,7 +56,7 @@ const SENTIMENT_LABEL: Record<string, { text: string; color: string }> = {
   Unknown: { text: "Unknown", color: "text-[#6B7280]" },
 };
 
-export function RetellCallPlayer({
+export function CallPlayer({
   recordingUrl,
   callStatus,
   durationSeconds,
@@ -79,7 +79,7 @@ export function RetellCallPlayer({
     <div className="space-y-4">
       {/* Header: status + duration + sentiment */}
       <div className="flex items-center justify-between">
-        <h2 className="text-base font-bold text-[#0A2818]">Retell call</h2>
+        <h2 className="text-base font-bold text-[#0A2818]">Qualification call</h2>
         <div className="flex items-center gap-3 text-sm">
           <span className="inline-flex items-center gap-1.5">
             <span
@@ -132,7 +132,7 @@ export function RetellCallPlayer({
           }}
           className="inline-flex items-center gap-1.5 rounded-lg border border-[#E5E1D8] bg-white px-3 py-1.5 text-xs font-medium text-[#0A2818] hover:bg-[#FAF7F0] disabled:opacity-50"
         >
-          {syncing ? "Syncing…" : "Sync from Retell"}
+          {syncing ? "Syncing…" : "Sync call status"}
         </button>
       )}
 
