@@ -11,6 +11,7 @@ type DocKey =
 type Props = {
   token: string;
   initialDocuments: Record<DocKey, boolean>;
+  visaStatus?: string | null;
 };
 
 type Slot = {
@@ -18,6 +19,9 @@ type Slot = {
   label: string;
   helper: string;
   acceptsImageOnly?: boolean;
+  multiUpload?: boolean;
+  maxFiles?: number;
+  condition?: (visaStatus: string | null) => boolean;
 };
 
 const SLOTS: Slot[] = [
@@ -36,14 +40,15 @@ const SLOTS: Slot[] = [
   {
     key: "work_permit",
     label: "Work or study permit",
-    helper:
-      "Skip if you're a citizen or permanent resident. Otherwise upload a photo of your permit.",
+    helper: "Upload a photo or scan of your valid permit.",
+    condition: (visa) => visa !== null && visa !== "citizen" && visa !== "permanent_resident",
   },
   {
     key: "proof_of_income",
     label: "Proof of income",
-    helper:
-      "Pay stub, Notice of Assessment, or last bank statement. PDF or photo is fine.",
+    helper: "Upload 3–4 recent pay stubs, or your latest bank statements. You can upload multiple files.",
+    multiUpload: true,
+    maxFiles: 4,
   },
 ];
 
@@ -54,18 +59,22 @@ type SlotState = {
   uploading: boolean;
   uploaded: boolean;
   error: string | null;
+  fileCount: number;
 };
 
-export function DocumentUploadForm({ token, initialDocuments }: Props) {
+export function DocumentUploadForm({ token, initialDocuments, visaStatus }: Props) {
+  const visibleSlots = useMemo(
+    () => SLOTS.filter((s) => !s.condition || s.condition(visaStatus ?? null)),
+    [visaStatus],
+  );
+
   const [state, setState] = useState<Record<DocKey, SlotState>>(() => ({
-    drivers_licence_front: { uploading: false, uploaded: initialDocuments.drivers_licence_front, error: null },
-    drivers_licence_back: { uploading: false, uploaded: initialDocuments.drivers_licence_back, error: null },
-    work_permit: { uploading: false, uploaded: initialDocuments.work_permit, error: null },
-    proof_of_income: { uploading: false, uploaded: initialDocuments.proof_of_income, error: null },
+    drivers_licence_front: { uploading: false, uploaded: initialDocuments.drivers_licence_front, error: null, fileCount: initialDocuments.drivers_licence_front ? 1 : 0 },
+    drivers_licence_back: { uploading: false, uploaded: initialDocuments.drivers_licence_back, error: null, fileCount: initialDocuments.drivers_licence_back ? 1 : 0 },
+    work_permit: { uploading: false, uploaded: initialDocuments.work_permit, error: null, fileCount: initialDocuments.work_permit ? 1 : 0 },
+    proof_of_income: { uploading: false, uploaded: initialDocuments.proof_of_income, error: null, fileCount: initialDocuments.proof_of_income ? 1 : 0 },
   }));
 
-  // When the page becomes visible again (eg. user comes back from camera),
-  // refresh the latest doc state in case an upload completed elsewhere.
   useEffect(() => {
     function onVisible() {
       if (document.visibilityState !== "visible") return;
@@ -85,7 +94,7 @@ export function DocumentUploadForm({ token, initialDocuments }: Props) {
 
   const uploadFile = useCallback(
     async (kind: DocKey, file: File) => {
-      setState((prev) => ({ ...prev, [kind]: { uploading: true, uploaded: prev[kind].uploaded, error: null } }));
+      setState((prev) => ({ ...prev, [kind]: { ...prev[kind], uploading: true, error: null } }));
 
       const form = new FormData();
       form.append("kind", kind);
@@ -101,90 +110,115 @@ export function DocumentUploadForm({ token, initialDocuments }: Props) {
           setState((prev) => ({
             ...prev,
             [kind]: {
+              ...prev[kind],
               uploading: false,
-              uploaded: prev[kind].uploaded,
               error: payload.error ? humanError(payload.error) : "Upload failed. Please try again.",
             },
           }));
           return;
         }
-        setState((prev) => ({ ...prev, [kind]: { uploading: false, uploaded: true, error: null } }));
+        setState((prev) => ({
+          ...prev,
+          [kind]: { uploading: false, uploaded: true, error: null, fileCount: prev[kind].fileCount + 1 },
+        }));
       } catch {
         setState((prev) => ({
           ...prev,
-          [kind]: { uploading: false, uploaded: prev[kind].uploaded, error: "Network error. Please try again." },
+          [kind]: { ...prev[kind], uploading: false, error: "Network error. Please try again." },
         }));
       }
     },
     [token],
   );
 
+  const uploadMultipleFiles = useCallback(
+    async (kind: DocKey, files: FileList) => {
+      for (let i = 0; i < files.length; i++) {
+        await uploadFile(kind, files[i]);
+      }
+    },
+    [uploadFile],
+  );
+
   const completedCount = useMemo(
-    () => Object.values(state).filter((s) => s.uploaded).length,
-    [state],
+    () => visibleSlots.filter((s) => state[s.key].uploaded).length,
+    [state, visibleSlots],
   );
 
   return (
     <div className="space-y-4">
       <div className="rounded-xl bg-brand-cream px-4 py-3 text-sm ring-1 ring-brand-line">
-        <span className="font-semibold text-brand-ink">{completedCount} of {SLOTS.length}</span>
+        <span className="font-semibold text-brand-ink">{completedCount} of {visibleSlots.length}</span>
         <span className="text-brand-muted"> documents received</span>
       </div>
 
-      {SLOTS.map((slot) => {
+      {visibleSlots.map((slot) => {
         const s = state[slot.key];
         const accept = slot.acceptsImageOnly ? ACCEPT_IMAGE : ACCEPT_ALL;
         const inputId = `file-${slot.key}`;
+        const isMulti = slot.multiUpload;
+        const maxFiles = slot.maxFiles ?? 1;
+        const canUploadMore = isMulti ? s.fileCount < maxFiles : !s.uploaded;
+
         return (
           <div
             key={slot.key}
             className="rounded-2xl bg-white p-5 shadow-card ring-1 ring-brand-line space-y-3"
           >
-            <div className="flex items-start justify-between gap-3">
-              <div className="min-w-0">
-                <h3 className="text-base font-semibold">{slot.label}</h3>
-                <p className="mt-1 text-xs text-brand-muted">{slot.helper}</p>
+            <div className="flex items-start justify-between gap-2">
+              <div>
+                <p className="font-semibold text-brand-ink text-sm">{slot.label}</p>
+                <p className="text-xs text-brand-muted mt-0.5">{slot.helper}</p>
               </div>
-              <Badge state={s} />
+              {s.uploaded && (
+                <span className="shrink-0 rounded-full bg-brand-accent px-2 py-0.5 text-xs font-bold text-brand-ink">
+                  {isMulti && s.fileCount > 1 ? `${s.fileCount} files` : "Received"}
+                </span>
+              )}
             </div>
-            <div>
+
+            {s.error && (
+              <p className="text-xs text-red-600 bg-red-50 rounded-lg px-3 py-2">{s.error}</p>
+            )}
+
+            {canUploadMore && (
               <label
                 htmlFor={inputId}
-                className={`inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold transition ${
-                  s.uploading
-                    ? "bg-brand-cream text-brand-muted"
-                    : s.uploaded
-                    ? "border border-brand-forest bg-transparent text-brand-forest hover:bg-brand-cream"
-                    : "bg-brand-accent text-brand-ink hover:bg-brand-accentSoft"
-                }`}
-                aria-disabled={s.uploading || undefined}
+                className={`
+                  flex cursor-pointer items-center justify-center gap-2 rounded-xl border-2 border-dashed px-4 py-4 text-sm font-semibold transition-colors
+                  ${s.uploading ? "border-brand-line bg-brand-cream text-brand-muted" : "border-brand-forest/30 text-brand-forest hover:border-brand-forest hover:bg-brand-cream"}
+                `}
               >
-                {s.uploading
-                  ? "Uploading…"
-                  : s.uploaded
-                  ? "Replace file"
-                  : "Choose file or take photo"}
+                {s.uploading ? (
+                  <>
+                    <Spinner /> Uploading...
+                  </>
+                ) : (
+                  <>
+                    <UploadIcon />
+                    {s.uploaded && isMulti ? "Add another file" : "Choose file or take photo"}
+                  </>
+                )}
+                <input
+                  id={inputId}
+                  type="file"
+                  accept={accept}
+                  multiple={isMulti}
+                  className="sr-only"
+                  disabled={s.uploading}
+                  onChange={(e) => {
+                    const files = e.target.files;
+                    if (!files || files.length === 0) return;
+                    if (isMulti) {
+                      void uploadMultipleFiles(slot.key, files);
+                    } else {
+                      void uploadFile(slot.key, files[0]);
+                    }
+                    e.target.value = "";
+                  }}
+                />
               </label>
-              <input
-                id={inputId}
-                type="file"
-                accept={accept}
-                capture={slot.acceptsImageOnly ? "environment" : undefined}
-                className="sr-only"
-                disabled={s.uploading}
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (!file) return;
-                  void uploadFile(slot.key, file);
-                  e.target.value = "";
-                }}
-              />
-            </div>
-            {s.error ? (
-              <p className="text-xs text-red-600" role="alert">
-                {s.error}
-              </p>
-            ) : null}
+            )}
           </div>
         );
       })}
@@ -192,49 +226,46 @@ export function DocumentUploadForm({ token, initialDocuments }: Props) {
   );
 }
 
-function Badge({ state }: { state: SlotState }) {
-  if (state.uploading) {
-    return (
-      <span className="shrink-0 rounded-full border border-brand-line px-2 py-0.5 text-xs text-brand-muted">
-        Uploading…
-      </span>
-    );
-  }
-  if (state.uploaded) {
-    return (
-      <span className="shrink-0 rounded-full bg-brand-accent px-2 py-0.5 text-xs font-bold text-brand-ink">
-        Received
-      </span>
-    );
-  }
-  return (
-    <span className="shrink-0 rounded-full border border-brand-line px-2 py-0.5 text-xs text-brand-muted">
-      Needed
-    </span>
-  );
-}
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
 
 function humanError(code: string): string {
-  if (code === "file_too_large") return "That file is larger than 25 MB. Please try a smaller one.";
-  if (code === "unsupported_mime") return "We accept JPG, PNG, HEIC, WebP, and PDF.";
-  if (code === "empty_file") return "Hmm, that file looks empty. Try again.";
-  if (code === "invalid_kind") return "Unknown document type.";
-  if (code === "not_found") return "We couldn't find your application. Try the link in your email again.";
-  if (code.startsWith("storage:")) return "Storage error — please try again in a moment.";
-  return "Upload failed. Please try again.";
+  switch (code) {
+    case "file_too_large": return "File is too large. Maximum size is 25 MB.";
+    case "invalid_kind": return "Invalid document type.";
+    case "invalid_form": return "Invalid form data. Please try again.";
+    case "uploads_closed": return "Uploads are closed for this application.";
+    default: return "Something went wrong. Please try again.";
+  }
 }
 
 async function refreshDocs(token: string): Promise<Record<DocKey, boolean> | null> {
   try {
-    const res = await fetch(`/api/apply/${encodeURIComponent(token)}/status`, {
-      cache: "no-store",
-    });
+    const res = await fetch(`/api/apply/${encodeURIComponent(token)}/status`);
     if (!res.ok) return null;
-    const payload = (await res.json()) as {
-      documents?: Record<DocKey, boolean>;
-    };
-    return payload.documents ?? null;
+    const json = (await res.json()) as { documents?: Record<DocKey, boolean> };
+    return json.documents ?? null;
   } catch {
     return null;
   }
+}
+
+function UploadIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+      <polyline points="17 8 12 3 7 8" />
+      <line x1="12" y1="3" x2="12" y2="15" />
+    </svg>
+  );
+}
+
+function Spinner() {
+  return (
+    <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+    </svg>
+  );
 }

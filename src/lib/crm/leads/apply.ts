@@ -48,10 +48,12 @@ export type ApplicantStatus =
   | "unknown";
 
 export type ApplicantStatusPayload = {
+  lead_id: string;
   status: ApplicantStatus;
   status_label: string;
   status_blurb: string;
   first_name: string;
+  visa_status: string | null;
   documents: {
     drivers_licence_front: boolean;
     drivers_licence_back: boolean;
@@ -106,11 +108,24 @@ export async function getApplicantStatus(
   const status = mapInternalStatusToApplicant(lead);
   const labels = APPLICANT_STATUS_LABELS[status];
 
+  // Fetch visa_status from qualifications if available
+  let visaStatus: string | null = null;
+  if (supabase) {
+    const { data: qual } = await supabase
+      .from("lead_qualifications")
+      .select("visa_status")
+      .eq("lead_id", lead.id)
+      .maybeSingle();
+    visaStatus = (qual?.visa_status as string) ?? null;
+  }
+
   return {
+    lead_id: lead.id,
     status,
     status_label: labels.label,
     status_blurb: labels.blurb,
     first_name: lead.first_name ?? "there",
+    visa_status: visaStatus,
     documents: {
       drivers_licence_front: docs.has("drivers_licence_front"),
       drivers_licence_back: docs.has("drivers_licence_back"),
@@ -290,6 +305,56 @@ export async function saveLeadDocument(input: SaveDocumentInput): Promise<SaveDo
   }
 
   return { ok: true, document_id: row.id as string, storage_object_key: objectKey };
+}
+
+// -----------------------------------------------------------------
+// Signed URL helpers for CRM + buyer portal document viewing
+// -----------------------------------------------------------------
+
+export type LeadDocumentRow = {
+  id: string;
+  kind: string;
+  original_filename: string | null;
+  mime_type: string;
+  storage_object_key: string;
+  created_at: string;
+};
+
+export type LeadDocumentWithUrl = LeadDocumentRow & {
+  signed_url: string | null;
+};
+
+export async function getLeadDocumentsWithUrls(
+  leadId: string,
+  ttlSec = 600,
+): Promise<LeadDocumentWithUrl[]> {
+  const supabase = getServerSupabase();
+  if (!supabase) return [];
+
+  const { data: docs } = await supabase
+    .from("lead_documents")
+    .select("id, kind, original_filename, mime_type, storage_object_key, created_at")
+    .eq("lead_id", leadId)
+    .order("created_at", { ascending: true });
+
+  if (!docs || docs.length === 0) return [];
+
+  const results: LeadDocumentWithUrl[] = [];
+  for (const doc of docs) {
+    const { data } = await supabase.storage
+      .from(APPLICANT_DOCS_BUCKET)
+      .createSignedUrl(doc.storage_object_key as string, ttlSec);
+    results.push({
+      id: doc.id as string,
+      kind: doc.kind as string,
+      original_filename: doc.original_filename as string | null,
+      mime_type: doc.mime_type as string,
+      storage_object_key: doc.storage_object_key as string,
+      created_at: doc.created_at as string,
+      signed_url: data?.signedUrl ?? null,
+    });
+  }
+  return results;
 }
 
 function mimeToExt(mime: string): string {

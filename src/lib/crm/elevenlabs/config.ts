@@ -1,9 +1,20 @@
 // ElevenLabs Conversational AI agent configuration and field mapping.
 //
-// Maps the structured response from the ElevenLabs qualification call to the
-// 28-field QualificationPayload used by the scoring engine. The ElevenLabs
-// agent is configured to collect these fields during the phone call via
-// webhook tool calls that fire section-by-section.
+// NEW FLOW (2025-05): Applicants self-qualify via the multi-step web form at
+// apply.newwheels.ca/<token>. The ElevenLabs agent now only performs a SHORT
+// confirmation call (2-3 questions) to verify the applicant's identity and
+// employment before marking the lead as fully verified.
+//
+// The agent should:
+// 1. Greet the applicant by name (via dynamic_variables.lead_name)
+// 2. Confirm they submitted the application ("Did you just apply online?")
+// 3. Confirm their employment ("Still working at [employer]? Full-time?")
+// 4. Thank them and let them know next steps / partner matching timeline
+//
+// The full 22-field qualification is now collected via the self-service form
+// and no longer needs to be collected on the call. The webhook tools still
+// exist for backwards compatibility but the agent prompt should be updated
+// in the ElevenLabs dashboard to only ask 2-3 confirmation questions.
 //
 // This file is the single source of truth for the mapping — if the ElevenLabs
 // agent prompt changes field names, update the FIELD_MAP here.
@@ -241,6 +252,32 @@ export function mapQualificationToPayload(
     notes: data.notes ?? null,
   };
 }
+
+// -----------------------------------------------------------------
+// Slimmed-down confirmation-only prompt for the ElevenLabs agent.
+// Copy this into the ElevenLabs dashboard "System Prompt" field.
+// -----------------------------------------------------------------
+export const CONFIRMATION_AGENT_PROMPT = `You are a friendly NewWheels verification specialist. The applicant has already completed their full qualification form online. Your only job is a quick 60-second call to:
+
+1. Confirm their identity — greet them by name (provided as {{lead_name}}).
+2. Confirm they submitted the application — "Did you just apply for vehicle financing on our website?"
+3. Confirm employment — "And you mentioned you're currently employed — is that still the case?"
+
+If they confirm all three, thank them warmly and tell them:
+- "You're all set! Our team is now matching you with the best financing options."
+- "You'll hear from us within 24 hours with next steps."
+- If they haven't uploaded documents yet: "One last thing — please upload your driver's licence and a couple of pay stubs from the link we texted you. It really speeds things up."
+
+Keep it SHORT, FRIENDLY, and PROFESSIONAL. Do NOT re-ask any qualification questions — they already answered everything in the form. If they have questions, answer briefly and offer to have a specialist call them back.
+
+Speak in English by default unless the applicant switches language.`;
+
+// The 2-3 fields the agent now confirms (not collects).
+export const CONFIRMATION_ONLY_FIELDS = [
+  "identity_confirmed",
+  "application_confirmed",
+  "employment_confirmed",
+] as const;
 
 // The 22 qualification fields that the agent must collect.
 export const QUALIFICATION_FIELDS = [
