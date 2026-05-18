@@ -252,64 +252,94 @@ async function handlePostCallTranscription(
     });
   }
 
-  // If analysis includes qualification data, run scoring.
+  // Skip qualification if lead is already processed.
+  if (
+    lead.status === "available" ||
+    lead.status === "sold" ||
+    lead.status === "expired" ||
+    lead.status === "qualified"
+  ) {
+    return NextResponse.json({
+      ok: true,
+      action: "already_processed",
+      lead_id: lead.id,
+      lead_status: lead.status,
+    });
+  }
+
+  // Try to qualify from analysis data first, then fall back to
+  // lead_qualifications rows written during the call.
+  let qualData: Record<string, unknown> | null = null;
+
   if (data.analysis?.data_collection_results) {
     const qualParsed = QualificationSchema.safeParse(
       data.analysis.data_collection_results,
     );
-
     if (qualParsed.success) {
-      if (
-        lead.status === "available" ||
-        lead.status === "sold" ||
-        lead.status === "expired" ||
-        lead.status === "qualified"
-      ) {
-        return NextResponse.json({
-          ok: true,
-          action: "already_processed",
-          lead_id: lead.id,
-          lead_status: lead.status,
-        });
-      }
-
-      const payload = mapQualificationToPayload(qualParsed.data);
-      const qualifierId = lead.assigned_qualifier_id;
-      let qualifierName = "ElevenLabs AI";
-      if (qualifierId) {
-        const { data: tm } = await supabase
-          .from("team_members")
-          .select("display_name")
-          .eq("id", qualifierId)
-          .maybeSingle();
-        if (tm?.display_name) {
-          qualifierName = tm.display_name as string;
-        }
-      }
-
-      const result = await submitQualification({
-        lead_id: lead.id,
-        qualifier_id: qualifierId ?? "",
-        qualifier_display_name: qualifierName,
-        payload,
-        call_duration_seconds: durationSeconds ?? undefined,
-      });
-
-      return NextResponse.json({
-        ok: result.ok,
-        action: "qualified",
-        lead_id: lead.id,
-        ...(result.ok && result.status === "available"
-          ? { status: "available" }
-          : {}),
-        ...(!result.ok ? { error: result.error } : {}),
-      });
+      qualData = qualParsed.data as Record<string, unknown>;
     } else {
-      console.error(
-        "elevenlabs webhook: qualification data invalid",
+      console.warn(
+        "elevenlabs webhook: analysis data invalid, falling back to lead_qualifications",
         qualParsed.error.issues,
       );
     }
+  }
+
+  // Fallback: read qualification data collected during the call via the
+  // update_qualification_section tool.
+  if (!qualData) {
+    const { data: existingQual } = await supabase
+      .from("lead_qualifications")
+      .select("*")
+      .eq("lead_id", lead.id)
+      .maybeSingle();
+
+    if (existingQual) {
+      const qualParsed = QualificationSchema.safeParse(existingQual);
+      if (qualParsed.success) {
+        qualData = qualParsed.data as Record<string, unknown>;
+      } else {
+        console.warn(
+          "elevenlabs webhook: lead_qualifications data incomplete, skipping qualification",
+          qualParsed.error.issues,
+        );
+      }
+    }
+  }
+
+  if (qualData) {
+    const parsed2 = QualificationSchema.parse(qualData);
+    const payload = mapQualificationToPayload(parsed2);
+    const qualifierId = lead.assigned_qualifier_id;
+    let qualifierName = "ElevenLabs AI";
+    if (qualifierId) {
+      const { data: tm } = await supabase
+        .from("team_members")
+        .select("display_name")
+        .eq("id", qualifierId)
+        .maybeSingle();
+      if (tm?.display_name) {
+        qualifierName = tm.display_name as string;
+      }
+    }
+
+    const result = await submitQualification({
+      lead_id: lead.id,
+      qualifier_id: qualifierId ?? "",
+      qualifier_display_name: qualifierName,
+      payload,
+      call_duration_seconds: durationSeconds ?? undefined,
+    });
+
+    return NextResponse.json({
+      ok: result.ok,
+      action: "qualified",
+      lead_id: lead.id,
+      ...(result.ok && result.status === "available"
+        ? { status: "available" }
+        : {}),
+      ...(!result.ok ? { error: result.error } : {}),
+    });
   }
 
   return NextResponse.json({
