@@ -1,5 +1,6 @@
 import "./globals.css";
 import type { Metadata, Viewport } from "next";
+import { headers } from "next/headers";
 import { Bricolage_Grotesque } from "next/font/google";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -8,6 +9,8 @@ import ApplyAnchorScroll from "@/components/ApplyAnchorScroll";
 import MarketingChrome from "@/components/MarketingChrome";
 import { TrackingBody, TrackingHead } from "@/components/Tracking";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, TRACKING } from "@/lib/site";
+
+const APP_SUBDOMAINS = ["crm", "portal", "apply", "team", "docs"];
 
 const bricolage = Bricolage_Grotesque({
   subsets: ["latin"],
@@ -40,7 +43,11 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const hdrs = await headers();
+  const host = (hdrs.get("host") ?? "").split(":")[0].toLowerCase();
+  const hideChrome = APP_SUBDOMAINS.some((s) => host.startsWith(`${s}.`));
+
   return (
     <html lang="en-CA" className={bricolage.variable}>
       <head>
@@ -49,13 +56,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="bg-brand-creamSoft font-sans text-brand-ink">
         <a className="skip-link" href="#main">Skip to content</a>
         <TrackingBody />
-        <MarketingChrome>
+        <MarketingChrome hidden={hideChrome}>
           <Header />
           <CallClickTracker />
           <ApplyAnchorScroll />
         </MarketingChrome>
         <main id="main">{children}</main>
-        <MarketingChrome>
+        <MarketingChrome hidden={hideChrome}>
           <Footer />
         </MarketingChrome>
       </body>
