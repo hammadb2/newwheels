@@ -23,11 +23,12 @@ const ToolCallBody = z.object({
   tool_name: z.string().optional(),
   conversation_id: z.string().optional(),
   parameters: z.object({
-    call_id: z.string().min(1),
     lead_id: z.string().uuid(),
     section: z.enum(SECTIONS),
-    data: z.record(z.unknown()),
-  }),
+    data: z.record(z.unknown()).optional(),
+    // Allow individual fields at the top level of parameters too, so the
+    // agent can send them either nested inside `data` or flat.
+  }).passthrough(),
 });
 
 const SECTION_FIELDS: Record<Section, string[]> = {
@@ -73,16 +74,20 @@ export async function POST(req: Request) {
     );
   }
 
-  const { call_id, lead_id, section, data } = parsed.data.parameters;
+  const { lead_id, section, data, ...rest } = parsed.data.parameters;
   const supabase = getServerSupabase();
   if (!supabase) {
     return NextResponse.json({ result: "not_configured" }, { status: 503 });
   }
 
+  // Merge fields from `data` object and any flat top-level fields the agent
+  // may have sent (ElevenLabs sometimes sends fields either way).
+  const merged: Record<string, unknown> = { ...(data ?? {}), ...rest };
+
   const allowedFields = SECTION_FIELDS[section];
   const filteredData: Record<string, unknown> = {};
   for (const key of allowedFields) {
-    if (key in data) filteredData[key] = data[key];
+    if (key in merged) filteredData[key] = merged[key];
   }
 
   if (Object.keys(filteredData).length === 0) {
@@ -101,6 +106,8 @@ export async function POST(req: Request) {
       .update(filteredData)
       .eq("lead_id", lead_id);
   } else {
+    // First insert for this lead — columns have DB defaults so partial
+    // section data (e.g. only identity fields) will succeed.
     await supabase
       .from("lead_qualifications")
       .insert({ lead_id, ...filteredData });
@@ -110,7 +117,6 @@ export async function POST(req: Request) {
     lead_id,
     event: "elevenlabs_section_update",
     detail: {
-      call_id,
       conversation_id: parsed.data.conversation_id ?? null,
       section,
       fields: Object.keys(filteredData),

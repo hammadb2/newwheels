@@ -38,16 +38,38 @@ export async function submitQualification(opts: {
     return { ok: false, error: "lead_closed" };
   }
 
-  // Insert qualification row.
-  const { error: insErr } = await supabase.from("lead_qualifications").insert({
+  // Upsert qualification row — a partial row may already exist from
+  // real-time section updates during the call.
+  const qualRow = {
     lead_id: opts.lead_id,
-    qualified_by: opts.qualifier_id,
+    qualified_by: opts.qualifier_id || null,
     ...opts.payload,
     call_duration_seconds: opts.call_duration_seconds ?? null,
-  });
-  if (insErr) {
-    console.error("submitQualification insert failed", insErr);
-    return { ok: false, error: "db_error" };
+  };
+
+  const { data: existingQual } = await supabase
+    .from("lead_qualifications")
+    .select("id")
+    .eq("lead_id", opts.lead_id)
+    .maybeSingle();
+
+  if (existingQual) {
+    const { error: updErr2 } = await supabase
+      .from("lead_qualifications")
+      .update(qualRow)
+      .eq("lead_id", opts.lead_id);
+    if (updErr2) {
+      console.error("submitQualification update failed", updErr2);
+      return { ok: false, error: "db_error" };
+    }
+  } else {
+    const { error: insErr } = await supabase
+      .from("lead_qualifications")
+      .insert(qualRow);
+    if (insErr) {
+      console.error("submitQualification insert failed", insErr);
+      return { ok: false, error: "db_error" };
+    }
   }
 
   // Compute score → tier → starting price. Verified leads (full doc set
