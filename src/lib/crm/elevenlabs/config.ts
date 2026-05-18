@@ -168,10 +168,12 @@ export async function createElevenLabsCall(
     agent_id: agentId,
     agent_phone_number_id: phoneNumberId,
     to_number: toE164,
-    dynamic_variables: {
-      lead_name: input.leadName,
-      lead_id: input.leadId,
-      apply_token: input.applyToken,
+    conversation_initiation_client_data: {
+      dynamic_variables: {
+        lead_name: input.leadName,
+        lead_id: input.leadId,
+        apply_token: input.applyToken,
+      },
     },
   };
 
