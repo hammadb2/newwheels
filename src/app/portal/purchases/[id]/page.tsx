@@ -8,6 +8,7 @@ import { priceCentsToDisplay } from "@/lib/crm/pricing";
 import { maskSin, decryptSin } from "@/lib/crm/security/sin";
 import { BuyerSinRevealButton } from "@/components/portal/SinRevealButton";
 import { matchLenders } from "@/lib/crm/lender-match";
+import { getLeadDocumentsWithUrls } from "@/lib/crm/leads/apply";
 
 export const dynamic = "force-dynamic";
 
@@ -66,6 +67,9 @@ export default async function PurchaseDetailPage({ params }: { params: Promise<{
       lenderMatches = matchLenders(qual as Parameters<typeof matchLenders>[0]);
     } catch { /* qualification data may be incomplete */ }
   }
+
+  // Lead documents with signed URLs
+  const leadDocuments = await getLeadDocumentsWithUrls(purchase.lead_id as string);
 
   return (
     <div className="space-y-6">
@@ -152,6 +156,40 @@ export default async function PurchaseDetailPage({ params }: { params: Promise<{
               <div key={m.lender} className="flex items-start gap-3 rounded-lg border border-[#E5E1D8] bg-[#FAF7F0] px-4 py-3">
                 <span className="text-sm font-bold text-[#0A2818]">{m.lender}</span>
                 <span className="text-xs text-[#6B7280]">{m.reason}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : null}
+
+      {/* Applicant documents */}
+      {leadDocuments.length > 0 ? (
+        <div className="rounded-2xl border border-[#E5E7EB] bg-white p-6">
+          <h2 className="font-extrabold text-[#0A2818] mb-1">Applicant documents</h2>
+          <p className="text-xs text-[#6B7280] mb-3">Uploaded by the applicant. Links expire in 10 minutes.</p>
+          <div className="space-y-2">
+            {leadDocuments.map((doc) => (
+              <div key={doc.id} className="flex items-center justify-between rounded-lg border border-[#E5E1D8] bg-[#FAF7F0] px-4 py-3">
+                <div>
+                  <p className="text-sm font-semibold text-[#0A2818]">
+                    {doc.kind.replace(/_/g, " ")}
+                  </p>
+                  <p className="text-xs text-[#6B7280]">
+                    {doc.original_filename ?? "file"} · {new Date(doc.created_at).toLocaleString("en-CA")}
+                  </p>
+                </div>
+                {doc.signed_url ? (
+                  <a
+                    href={doc.signed_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="rounded-lg bg-[#0E3D24] px-3 py-1.5 text-xs font-bold text-white hover:bg-[#155235]"
+                  >
+                    View
+                  </a>
+                ) : (
+                  <span className="text-xs text-[#6B7280]">Unavailable</span>
+                )}
               </div>
             ))}
           </div>

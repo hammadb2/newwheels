@@ -15,6 +15,7 @@ import { SinRevealButton } from "@/components/crm/SinRevealButton";
 import { LeadPriceOverride } from "@/components/crm/LeadPriceOverride";
 import { maskSin, decryptSin } from "@/lib/crm/security/sin";
 import { matchLenders } from "@/lib/crm/lender-match";
+import { getLeadDocumentsWithUrls } from "@/lib/crm/leads/apply";
 
 export const dynamic = "force-dynamic";
 
@@ -66,6 +67,9 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
       } catch { /* scoring data may be incomplete */ }
     }
   }
+
+  // Lead documents with signed URLs
+  const leadDocuments = await getLeadDocumentsWithUrls(id);
 
   return (
     <div className="space-y-6">
@@ -184,6 +188,40 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
               <div key={m.lender} className="flex items-start gap-3 rounded-lg border border-[#E5E1D8] bg-[#FAF7F0] px-4 py-3">
                 <span className="text-sm font-bold text-[#0A2818]">{m.lender}</span>
                 <span className="text-xs text-[#6B7280]">{m.reason}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : null}
+
+      {/* Uploaded documents with signed URLs */}
+      {leadDocuments.length > 0 ? (
+        <div className="crm-card">
+          <h2>Uploaded documents</h2>
+          <p className="text-xs text-[#6B7280] mb-3">Applicant-uploaded files. Links expire in 10 minutes.</p>
+          <div className="space-y-2">
+            {leadDocuments.map((doc) => (
+              <div key={doc.id} className="flex items-center justify-between rounded-lg border border-[#E5E1D8] bg-[#FAF7F0] px-4 py-3">
+                <div>
+                  <p className="text-sm font-semibold text-[#0A2818]">
+                    {doc.kind.replace(/_/g, " ")}
+                  </p>
+                  <p className="text-xs text-[#6B7280]">
+                    {doc.original_filename ?? "file"} · {doc.mime_type} · {new Date(doc.created_at).toLocaleString("en-CA")}
+                  </p>
+                </div>
+                {doc.signed_url ? (
+                  <a
+                    href={doc.signed_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="rounded-lg bg-[#0E3D24] px-3 py-1.5 text-xs font-bold text-white hover:bg-[#155235]"
+                  >
+                    View
+                  </a>
+                ) : (
+                  <span className="text-xs text-[#6B7280]">Unavailable</span>
+                )}
               </div>
             ))}
           </div>

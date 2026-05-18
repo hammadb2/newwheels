@@ -80,7 +80,7 @@ export default async function ApplyDocumentsPage({ params }: Props) {
           </p>
         </header>
 
-        <DocumentUploadForm token={token} initialDocuments={status.documents} />
+        <DocumentUploadForm token={token} initialDocuments={status.documents} visaStatus={status.visa_status} />
 
         <p className="pt-4 text-xs leading-relaxed text-brand-muted">
           Accepted formats: JPG, PNG, HEIC, WebP, PDF. Max 25 MB each.
