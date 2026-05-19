@@ -64,9 +64,7 @@ export default function LeadForm({
         const body = await res.json().catch(() => ({}));
         throw new Error(body.error || "Submission failed");
       }
-      setStatus("success");
-      form.reset();
-      setConsent(false);
+      const json = (await res.json()) as { ok: boolean; apply_token?: string };
       type LeadWindow = Window & {
         dataLayer?: unknown[];
         fbq?: (action: string, name: string, params?: Record<string, unknown>) => void;
@@ -81,6 +79,15 @@ export default function LeadForm({
       } catch {
         // Best-effort. Never block the success state.
       }
+      // Redirect to qualification form if token available
+      if (json.apply_token) {
+        const applyHost = process.env.NEXT_PUBLIC_APPLY_URL || "https://apply.newwheels.ca";
+        window.location.href = `${applyHost}/${encodeURIComponent(json.apply_token)}`;
+        return;
+      }
+      setStatus("success");
+      form.reset();
+      setConsent(false);
     } catch (err) {
       setStatus("error");
       setErrorMsg(err instanceof Error ? err.message : "Something went wrong. Please call us.");

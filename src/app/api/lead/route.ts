@@ -140,7 +140,7 @@ export async function POST(req: Request) {
   // Fan-out: also forward to the CRM lead-intake pipeline so the lead becomes
   // visible to the Lead Qualifier inside the CRM. This is fire-and-forget — a
   // failure here must NOT break the marketing-site form response.
-  let crmForwardResult: { ok: true; lead_id?: string } | { ok: false; error: string } = { ok: false, error: "skipped" };
+  let crmForwardResult: { ok: true; lead_id?: string; apply_token?: string } | { ok: false; error: string } = { ok: false, error: "skipped" };
   try {
     const { intakeLead } = await import("@/lib/crm/leads/intake");
     const crm = await intakeLead({
@@ -153,7 +153,7 @@ export async function POST(req: Request) {
       raw_payload: { ...safe, timestamp },
     });
     crmForwardResult = crm.ok
-      ? { ok: true, lead_id: crm.lead_id }
+      ? { ok: true, lead_id: crm.lead_id, apply_token: crm.apply_token }
       : { ok: false, error: (crm as { ok: false; error?: string }).error ?? "crm_intake_failed" };
   } catch (e) {
     crmForwardResult = { ok: false, error: e instanceof Error ? e.message : "crm_intake_threw" };
@@ -173,6 +173,7 @@ export async function POST(req: Request) {
 
   return NextResponse.json({
     ok: true,
+    apply_token: crmForwardResult.ok ? crmForwardResult.apply_token : undefined,
     integrations: {
       notify: notifyResult,
       sheet: sheetResult,

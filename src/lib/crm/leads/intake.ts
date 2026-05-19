@@ -28,7 +28,7 @@ export type IntakeInput = {
 };
 
 export type IntakeResult =
-  | { ok: true; lead_id: string; duplicate_of?: string }
+  | { ok: true; lead_id: string; apply_token?: string; duplicate_of?: string }
   | { ok: false; error: string };
 
 const DUPLICATE_WINDOW_DAYS = 60;
@@ -207,7 +207,7 @@ export async function intakeLead(input: IntakeInput): Promise<IntakeResult> {
     }
   }
 
-  return { ok: true, lead_id: leadId, ...(dup ? { duplicate_of: dup.id as string } : {}) };
+  return { ok: true, lead_id: leadId, ...(applyToken ? { apply_token: applyToken } : {}), ...(dup ? { duplicate_of: dup.id as string } : {}) };
 }
 
 async function pickQualifier(supabase: SupabaseClient): Promise<{
